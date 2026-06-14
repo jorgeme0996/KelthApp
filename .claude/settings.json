@@ -28,7 +28,14 @@
       "Bash(nvm ls *)",
       "Bash(npx eas-cli *)",
       "Bash(pg_isready -h localhost -p 5432)",
-      "Bash(echo \"exit:$?\")"
+      "Bash(echo \"exit:$?\")",
+      "Bash(curl -s -D - https://elmejormenu.railway.app/ -o /tmp/root.html)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -D - https://elmejormenu.railway.app/health -o /dev/null)",
+      "Bash(curl -s -D - -X POST https://elmejormenu.railway.app/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"test123@test.com\",\"password\":\"123456\",\"name\":\"Test\"}' -o /tmp/register.html)",
+      "Bash(railway --version)",
+      "Bash(curl -s -D - https://elmejormenu-production.up.railway.app/health -o /tmp/health2.html)",
+      "Bash(curl -s -D - -X POST https://elmejormenu-production.up.railway.app/api/auth/register -H \"Content-Type: application/json\" -H \"Origin: https://el-mejor-menu--qqrfgmmftw.expo.app\" -d '{\"email\":\"test_cors_check@test.com\",\"password\":\"123456\",\"name\":\"Test\"}' -o /tmp/register2.html)"
     ]
   }
 }
