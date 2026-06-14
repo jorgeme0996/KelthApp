@@ -1,0 +1,75 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  mealsPerDay  Int      @default(4)
+  dietType     String   @default("lowcarb")
+  createdAt    DateTime @default(now())
+
+  mealPlans    MealPlan[]
+  chatMessages ChatMessage[]
+}
+
+model Recipe {
+  id          String   @id @default(uuid())
+  name        String
+  mealSlots   String[] // e.g. ["desayuno", "colacion_am"]
+  cuisineTags String[] // e.g. ["mexicano"]
+  ingredients Json     // [{ name, qty, unit, category }]
+  steps       String[]
+  equivalents Json     // { cereal: 1, proteina: 1, grasa: 1, ... }
+  weeklyLimited Boolean @default(false) // true for recipes using res/cerdo/mariscos (max 1x/semana)
+  dietType    String   @default("lowcarb")
+  source      String   @default("seed") // seed | recipe_book | ai_generated
+  createdAt   DateTime @default(now())
+
+  entries MealPlanEntry[]
+}
+
+model MealPlan {
+  id          String   @id @default(uuid())
+  userId      String
+  weekStart   DateTime
+  mealsPerDay Int
+  createdAt   DateTime @default(now())
+
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries MealPlanEntry[]
+
+  @@index([userId])
+}
+
+model MealPlanEntry {
+  id         String @id @default(uuid())
+  mealPlanId String
+  dayIndex   Int // 0-6 (Mon-Sun)
+  mealSlot   String // desayuno | colacion_am | comida | colacion_pm | cena
+  recipeId   String
+
+  mealPlan MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe   Recipe   @relation(fields: [recipeId], references: [id])
+
+  @@index([mealPlanId])
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  role      String // user | assistant
+  content   String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}

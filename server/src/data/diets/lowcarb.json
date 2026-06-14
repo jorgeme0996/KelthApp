@@ -1,0 +1,175 @@
+{
+  "id": "lowcarb",
+  "name": "Low Carb",
+  "source": "Semáforo Low Carb - KelthSense",
+  "description": "Plan de alimentación bajo en carbohidratos. Evita harinas refinadas, azúcares y frituras; controla el consumo de leguminosas, cereales, lácteos, frutas y grasas por medio de 'equivalentes'; y permite libremente verduras, proteínas magras, hierbas y bebidas sin azúcar.",
+
+  "prohibited": {
+    "reposteria": [
+      "Panadería artesanal", "Pan dulce", "Harinas refinadas", "Postres",
+      "Lácteos enteros", "Leche de vaca entera", "Tortillas de harina", "Pan blanco"
+    ],
+    "modosPreparacion": ["Frito", "Empanizado", "Rebozado", "Capeado"],
+    "frituras": ["Papas fritas", "Chicharrones", "Churritos y botanas industrializadas"],
+    "embutidos": ["Chorizo", "Longaniza", "Chistorra", "Salami"],
+    "bebidas": [
+      "Bebidas con azúcar añadida", "Refrescos", "Jugos industrializados", "Bebidas alcohólicas"
+    ],
+    "grasas": ["Margarina", "Queso Philadelphia", "Dulces, chocolates y golosinas"],
+    "aderezosSalsasDulces": [
+      "Catsup", "Miel", "Chamoy", "Salsa BBQ", "Miguelito", "Salsa teriyaki"
+    ]
+  },
+
+  "moderateEquivalents": {
+    "_notes": "El semáforo define el tamaño de cada 'equivalente' pero no un total diario fijo (eso lo ajusta normalmente un nutriólogo según calorías). Los 'dailyBudget' de abajo son valores genéricos razonables para un plan low-carb estándar y son los que usa el generador de menús; pueden ajustarse a futuro por usuario.",
+    "leguminosas": {
+      "label": "Leguminosas",
+      "items": ["Frijoles", "Lentejas", "Garbanzos", "Habas"],
+      "portion": "½ taza cocida",
+      "dailyBudget": 1
+    },
+    "cereales": {
+      "label": "Cereales",
+      "items": [
+        { "name": "Pasta o arroz", "portion": "½ taza" },
+        { "name": "Avena natural en hojuelas", "portion": "1/3 taza" },
+        { "name": "Quínoa cocida o amaranto", "portion": "3 cdas" },
+        { "name": "Pan de caja", "portion": "2 piezas" },
+        { "name": "Bolillo", "portion": "½ pieza" },
+        { "name": "Tortilla o tostada horneada", "portion": "1 pieza" }
+      ],
+      "dailyBudget": 2
+    },
+    "oleaginosas": {
+      "label": "Oleaginosas",
+      "items": [
+        { "name": "Ajonjolí", "portion": "2 cdas" },
+        { "name": "Almendras", "portion": "10 piezas" },
+        { "name": "Nueces", "portion": "7 mitades" },
+        { "name": "Pistaches", "portion": "5 piezas" },
+        { "name": "Cacahuates naturales", "portion": "10 piezas" },
+        { "name": "Nuez de la India", "portion": "7 piezas" }
+      ],
+      "dailyBudget": 1
+    },
+    "lacteos": {
+      "label": "Lácteos",
+      "items": [
+        { "name": "Leche light", "portion": "1 taza" },
+        { "name": "Leche de almendra", "portion": "1 taza" },
+        { "name": "Leche de coco", "portion": "1 taza" },
+        { "name": "Leche de soya sin azúcar", "portion": "1 taza" },
+        { "name": "Yoghurt natural bajo en grasa sin azúcar", "portion": "1 taza" },
+        { "name": "Yoghurt griego sin azúcar (Fage, Chobani zero)", "portion": "½ taza" }
+      ],
+      "dailyBudget": 2
+    },
+    "quesos": {
+      "label": "Quesos",
+      "items": ["Panela", "Oaxaca", "Cottage", "Manchego", "Gouda"],
+      "portion": "30 g (1 rebanada)",
+      "dailyBudget": 1
+    },
+    "verdurasModeradas": {
+      "label": "Verduras (de preferencia crudas)",
+      "items": [
+        { "name": "Betabel o berenjena", "portion": "½ pieza" },
+        { "name": "Zanahoria chica", "portion": "2 piezas" }
+      ],
+      "dailyBudget": 1
+    },
+    "tuberculos": {
+      "label": "Tubérculos",
+      "items": [
+        { "name": "Papa chica", "portion": "1 pieza" },
+        { "name": "Camote o yuca", "portion": "½ taza" }
+      ],
+      "dailyBudget": 1
+    },
+    "frutas": {
+      "label": "Frutas",
+      "items": ["Cualquier fruta de temporada"],
+      "portion": "1 pieza o 1 taza",
+      "dailyBudget": 2
+    },
+    "aceitesGrasas": {
+      "label": "Aceites y grasas",
+      "items": [
+        { "name": "Aguacate (como aceite)", "portion": "1 cdita" },
+        { "name": "Aceite de canola", "portion": "1 cdita" },
+        { "name": "Aceite de cártamo", "portion": "1 cdita" },
+        { "name": "Aceite de soya", "portion": "1 cdita" },
+        { "name": "Aceite de oliva (como aderezo)", "portion": "1 cdita" },
+        { "name": "Crema", "portion": "1 cda" },
+        { "name": "Mayonesa", "portion": "1 cda" },
+        { "name": "Aguacate (entero)", "portion": "1/3 pieza" },
+        { "name": "Crema de cacahuate o avellanas", "portion": "1 cda" },
+        { "name": "Chicharrón 100% de cerdo", "portion": "15 g" },
+        { "name": "Mantequilla 100% de vaca", "portion": "1 cdita" }
+      ],
+      "dailyBudget": 3
+    },
+    "verdurasCocidas": {
+      "label": "Verduras cocidas",
+      "items": [
+        "Champiñones", "Chayote", "Coliflor", "Ejote", "Pimientos",
+        "Tomate", "Jitomate", "Cebolla", "Huitlacoche"
+      ],
+      "portion": "1 taza",
+      "dailyBudget": 1
+    },
+    "embutidosMagros": {
+      "label": "Embutidos magros",
+      "items": [
+        { "name": "Pechuga de pavo", "portion": "30 g" },
+        { "name": "Salchicha de pavo", "portion": "1 pieza" },
+        { "name": "Chilorio", "portion": "30 g" },
+        { "name": "Paté", "portion": "30 g" }
+      ],
+      "dailyBudget": 1
+    }
+  },
+
+  "free": {
+    "verdurasCrudas": {
+      "label": "Verduras (libres, de preferencia crudas)",
+      "items": [
+        "Acelgas", "Espinacas", "Lechuga", "Berros", "Alcachofa", "Espárragos",
+        "Germen de alfalfa", "Pepino", "Nopal", "Rábano", "Brócoli", "Calabaza", "Flor de calabaza"
+      ]
+    },
+    "proteinas": {
+      "label": "Proteínas",
+      "libres": ["Proteína cero carb", "Huevo completo o claras de huevo", "Pollo", "Pescado", "Pavo", "Pato", "Codorniz"],
+      "limitadas1xSemana": ["Res", "Cerdo", "Mariscos", "Calamar", "Pulpo", "Camarón"]
+    },
+    "bebidas": {
+      "label": "Bebidas libres",
+      "items": [
+        "Agua de limón", "Agua de pepino", "Agua de apio", "Agua de jamaica",
+        "Agua mineral", "Café de grano", "Té verde o negro",
+        "Licuados verdes (sólo verduras permitidas)"
+      ]
+    },
+    "otros": {
+      "label": "Otros",
+      "items": [
+        "Chiles", "Tajín", "Valentina", "Salsa Maggi", "Salsa inglesa", "Gelatina light"
+      ]
+    },
+    "salsasEspecias": {
+      "label": "Salsas y especias",
+      "items": [
+        "Salsa pasilla", "Salsa guajillo", "Salsa morita", "Salsa verde", "Salsa roja", "Salsa mexicana",
+        "Hierbas finas", "Sal del Himalaya", "Pimienta", "Hierbas de olor", "Comino", "Clavo"
+      ]
+    }
+  },
+
+  "mealSlotsByMealsPerDay": {
+    "3": ["desayuno", "comida", "cena"],
+    "4": ["desayuno", "comida", "colacion_pm", "cena"],
+    "5": ["desayuno", "colacion_am", "comida", "colacion_pm", "cena"]
+  }
+}
