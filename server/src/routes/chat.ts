@@ -11,7 +11,6 @@ const router = Router();
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const MODEL = "claude-sonnet-4-6";
 const HISTORY_LIMIT = 20;
-const DAILY_QUESTION_LIMIT = 5;
 
 router.get("/history", authMiddleware, async (req: AuthRequest, res) => {
   const messages = await prisma.chatMessage.findMany({
@@ -37,19 +36,21 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
+  if (user.dailyChatLimit != null) {
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
 
-  const todayQuestionCount = await prisma.chatMessage.count({
-    where: { userId: user.id, role: "user", createdAt: { gte: startOfDay } },
-  });
-
-  if (todayQuestionCount >= DAILY_QUESTION_LIMIT) {
-    return res.status(429).json({
-      error: "Si tienes más preguntas consulta con uno de nuestros nutriólogos",
-      code: "DAILY_LIMIT_REACHED",
-      nutriologos: NUTRIOLOGOS,
+    const todayQuestionCount = await prisma.chatMessage.count({
+      where: { userId: user.id, role: "user", createdAt: { gte: startOfDay } },
     });
+
+    if (todayQuestionCount >= user.dailyChatLimit) {
+      return res.status(429).json({
+        error: "Si tienes más preguntas consulta con uno de nuestros nutriólogos",
+        code: "DAILY_LIMIT_REACHED",
+        nutriologos: NUTRIOLOGOS,
+      });
+    }
   }
 
   const mealPlan = await prisma.mealPlan.findFirst({

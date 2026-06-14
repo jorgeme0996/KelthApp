@@ -14,6 +14,7 @@ model User {
   name         String
   mealsPerDay  Int      @default(4)
   dietType     String   @default("lowcarb")
+  dailyChatLimit Int?   // null = unlimited; max number of user chat messages per day
   createdAt    DateTime @default(now())
 
   mealPlans    MealPlan[]

@@ -23,7 +23,12 @@
       "Bash(curl -s -m 3 http://localhost:4000/health)",
       "Bash(curl -s -o /tmp/web-bundle.log -w \"HTTP %{http_code}\\\\n\" \"http://localhost:8083/\" --max-time 180)",
       "Bash(curl -s -o /tmp/web-js-bundle.log -w \"HTTP %{http_code}\\\\n\" \"http://localhost:8083/node_modules/expo-router/entry.bundle?platform=web&dev=true&hot=false&lazy=true&transform.engine=hermes&transform.routerRoot=app&unstable_transformProfile=hermes-stable\" --max-time 180)",
-      "Bash(npx expo *)"
+      "Bash(npx expo *)",
+      "WebSearch",
+      "Bash(nvm ls *)",
+      "Bash(npx eas-cli *)",
+      "Bash(pg_isready -h localhost -p 5432)",
+      "Bash(echo \"exit:$?\")"
     ]
   }
 }
