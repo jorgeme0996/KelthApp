@@ -35,7 +35,18 @@
       "Bash(curl -s -D - -X POST https://elmejormenu.railway.app/api/auth/register -H \"Content-Type: application/json\" -d '{\"email\":\"test123@test.com\",\"password\":\"123456\",\"name\":\"Test\"}' -o /tmp/register.html)",
       "Bash(railway --version)",
       "Bash(curl -s -D - https://elmejormenu-production.up.railway.app/health -o /tmp/health2.html)",
-      "Bash(curl -s -D - -X POST https://elmejormenu-production.up.railway.app/api/auth/register -H \"Content-Type: application/json\" -H \"Origin: https://el-mejor-menu--qqrfgmmftw.expo.app\" -d '{\"email\":\"test_cors_check@test.com\",\"password\":\"123456\",\"name\":\"Test\"}' -o /tmp/register2.html)"
+      "Bash(curl -s -D - -X POST https://elmejormenu-production.up.railway.app/api/auth/register -H \"Content-Type: application/json\" -H \"Origin: https://el-mejor-menu--qqrfgmmftw.expo.app\" -d '{\"email\":\"test_cors_check@test.com\",\"password\":\"123456\",\"name\":\"Test\"}' -o /tmp/register2.html)",
+      "Bash(command -v volta)",
+      "Read(//usr/local/n/versions/**)",
+      "Bash(/usr/local/bin/node --version)",
+      "Bash(curl -s https://el-mejor-menu.expo.app/ -o /tmp/prod_index.html -w \"HTTP %{http_code}\\\\n\")",
+      "Bash(python3 -c ' *)",
+      "Bash(getent hosts *)",
+      "Bash(ping -c 1 -W 2 postgres.railway.internal)",
+      "Bash(DATABASE_URL=\"postgresql://postgres:AUHRQOlAhnWlVVMwtszJZdWhnRGevXqP@autorack.proxy.rlwy.net:23442/railway\" npx prisma db execute --stdin <<< \"SELECT count\\(*\\) FROM \\\\\"Recipe\\\\\";\")",
+      "Bash(psql \"postgresql://postgres:AUHRQOlAhnWlVVMwtszJZdWhnRGevXqP@autorack.proxy.rlwy.net:23442/railway\" -c 'SELECT count\\(*\\) FROM \"Recipe\";')",
+      "Bash(DATABASE_URL=\"postgresql://postgres:AUHRQOlAhnWlVVMwtszJZdWhnRGevXqP@autorack.proxy.rlwy.net:23442/railway\" npm run seed)",
+      "Bash(psql \"postgresql://postgres:AUHRQOlAhnWlVVMwtszJZdWhnRGevXqP@autorack.proxy.rlwy.net:23442/railway\" -c 'SELECT count\\(*\\), \"dietType\" FROM \"Recipe\" GROUP BY \"dietType\";')"
     ]
   }
 }

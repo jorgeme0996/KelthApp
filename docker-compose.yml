@@ -7,9 +7,29 @@ services:
       POSTGRES_PASSWORD: elmejormenu
       POSTGRES_DB: elmejormenu
     ports:
-      - "5432:5432"
+      - "5434:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U elmejormenu"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    build:
+      context: ./server
+    restart: unless-stopped
+    env_file:
+      - ./server/.env
+    environment:
+      DATABASE_URL: postgresql://elmejormenu:elmejormenu@db:5432/elmejormenu?schema=public
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:

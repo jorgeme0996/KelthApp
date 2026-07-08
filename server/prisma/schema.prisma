@@ -12,13 +12,33 @@ model User {
   email        String   @unique
   passwordHash String
   name         String
-  mealsPerDay  Int      @default(4)
-  dietType     String   @default("lowcarb")
-  dailyChatLimit Int?   // null = unlimited; max number of user chat messages per day
-  createdAt    DateTime @default(now())
+  mealsPerDay    Int      @default(4)
+  exerciseDaysPerWeek Int?
+  dietType       String   @default("lowcarb")
+  dailyChatLimit Int?
+  age            Int?
+  heightCm       Int?
+  weightKg       Float?
+  goal           String?  // bajar_peso | mantener_peso | subir_masa
+  createdAt      DateTime @default(now())
 
-  mealPlans    MealPlan[]
-  chatMessages ChatMessage[]
+  mealPlans           MealPlan[]
+  routines            Routine[]
+  chatMessages        ChatMessage[]
+  passwordResetTokens PasswordResetToken[]
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model Recipe {
@@ -61,6 +81,53 @@ model MealPlanEntry {
   recipe   Recipe   @relation(fields: [recipeId], references: [id])
 
   @@index([mealPlanId])
+}
+
+model Exercise {
+  id               String   @id // dataset id, e.g. "0001"
+  name             String
+  bodyPart         String
+  equipment        String
+  instructions     String
+  instructionSteps String[]
+  muscleGroup      String
+  secondaryMuscles String[]
+  target           String
+  image            String // relative path, e.g. "images/0001-2gPfomN.jpg"
+  gifUrl           String // relative path, e.g. "videos/0001-2gPfomN.gif"
+  attribution      String
+  createdAt        DateTime @default(now())
+
+  entries RoutineEntry[]
+}
+
+model Routine {
+  id          String   @id @default(uuid())
+  userId      String
+  weekStart   DateTime
+  daysPerWeek Int
+  createdAt   DateTime @default(now())
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries RoutineEntry[]
+
+  @@index([userId])
+}
+
+model RoutineEntry {
+  id              String @id @default(uuid())
+  routineId       String
+  dayIndex        Int // 0-6 (Mon-Sun); only workout days get entries
+  bodyPart        String // denormalized, mirrors mealSlot's role
+  exerciseId      String
+  sets            Int
+  reps            Int?
+  durationSeconds Int? // set for cardio-style entries instead of reps
+
+  routine  Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercise Exercise @relation(fields: [exerciseId], references: [id])
+
+  @@index([routineId])
 }
 
 model ChatMessage {
