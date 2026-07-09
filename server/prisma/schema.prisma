@@ -32,6 +32,7 @@ model User {
   routines            Routine[]
   chatMessages        ChatMessage[]
   passwordResetTokens PasswordResetToken[]
+  workoutCompletions  WorkoutCompletion[]
 }
 
 model PasswordResetToken {
@@ -116,8 +117,9 @@ model Routine {
   daysPerWeek Int
   createdAt   DateTime @default(now())
 
-  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entries RoutineEntry[]
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries     RoutineEntry[]
+  completions WorkoutCompletion[]
 
   @@index([userId])
 }
@@ -135,6 +137,22 @@ model RoutineEntry {
   routine  Routine  @relation(fields: [routineId], references: [id], onDelete: Cascade)
   exercise Exercise @relation(fields: [exerciseId], references: [id])
 
+  @@index([routineId])
+}
+
+model WorkoutCompletion {
+  id            String   @id @default(uuid())
+  userId        String
+  routineId     String
+  dayIndex      Int // 0-6 (Mon-Sun)
+  bodyParts     String[] // snapshot of body parts trained, kept even if the routine changes later
+  exerciseNames String[] // snapshot of exercise names trained
+  completedAt   DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routine Routine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
   @@index([routineId])
 }
 

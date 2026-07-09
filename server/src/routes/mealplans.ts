@@ -2,9 +2,10 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../prisma";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
-import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
+import { generateAndSaveMealPlan, regenerateMealPlanDay } from "../services/mealPlanGenerator";
 import { buildShoppingList } from "../services/shoppingList";
 import { startOfWeek } from "../lib/week";
+import { dietIdForGoal } from "../lib/dietGoal";
 
 const router = Router();
 
@@ -30,10 +31,44 @@ router.post("/generate", authMiddleware, async (req: AuthRequest, res) => {
       user.dietType,
       weekStart,
       user.dietaryRestrictions,
+      dietIdForGoal(user.goal),
     );
     res.status(201).json(mealPlan);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+const regenerateDaySchema = z.object({
+  mealPlanId: z.string().uuid(),
+  dayIndex: z.number().int().min(0).max(6),
+});
+
+// Regenerate a single day's meals in-place, leaving the rest of the week untouched.
+router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => {
+  const parsed = regenerateDaySchema.safeParse(req.body ?? {});
+  if (!parsed.success) return res.status(400).json({ error: "Datos inválidos" });
+
+  const mealPlan = await prisma.mealPlan.findFirst({
+    where: { id: parsed.data.mealPlanId, userId: req.userId },
+  });
+  if (!mealPlan) return res.status(404).json({ error: "Menú no encontrado" });
+
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  try {
+    const updated = await regenerateMealPlanDay(
+      mealPlan.id,
+      parsed.data.dayIndex,
+      mealPlan.mealsPerDay,
+      user.dietType,
+      user.dietaryRestrictions,
+      dietIdForGoal(user.goal),
+    );
+    res.json(updated);
+  } catch (err) {
+    res.status(400).json({ error: (err as Error).message });
   }
 });
 

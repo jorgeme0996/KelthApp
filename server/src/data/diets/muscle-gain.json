@@ -1,0 +1,403 @@
+{
+  "id": "lowcarb_masa_muscular",
+  "name": "Ganancia de Masa Muscular",
+  "source": "Ganancia de Masa Muscular - KelthSense",
+  "description": "Plan para GANANCIA DE MASA MUSCULAR con la PROTEÍNA como prioridad. Versión flexible y menos restrictiva: la proteína manda (fuentes libres y carne roja/cerdo permitidos casi a diario), acompañada de carbohidratos abundantes alrededor del entrenamiento para sostener el superávit calórico y el rendimiento. Se sigue evitando solo lo claramente contraproducente (azúcar añadida en exceso, frituras, alcohol y ultraprocesados). Se recomiendan 5 comidas al día.",
+  "goal": "ganancia_muscular",
+  "proteinGuidance": {
+    "prioridad": "La proteína es el eje del plan: debe cubrirse ANTES que cualquier otro grupo en cada comida.",
+    "objetivo": "1.8 a 2.4 g de proteína por kg de peso corporal al día",
+    "distribucion": "30-50 g de proteína en cada una de las 5 comidas. Empezar cada plato eligiendo primero la fuente proteica.",
+    "fuentesRecomendadas": [
+      "Pollo",
+      "Pavo",
+      "Pescado",
+      "Huevo/claras",
+      "Res magra",
+      "Cerdo magro",
+      "Yoghurt griego",
+      "Proteína en polvo (whey o cero carb)",
+      "Atún",
+      "Mariscos"
+    ],
+    "postEntrenamiento": "Fuente de proteína (30-40 g) + 1-2 equivalentes de cereal o fruta dentro de la hora posterior al entrenamiento.",
+    "notas": "Se admite proteína en polvo como colación o refuerzo. La carne roja y el cerdo dejan de estar limitados y pueden usarse casi a diario en cortes magros."
+  },
+  "prohibited": {
+    "_notes": "Lista de prohibidos reducida al mínimo para no frenar el aporte calórico/proteico. Solo se restringe lo claramente contraproducente.",
+    "azucaresYPostres": [
+      "Azúcar añadida en exceso",
+      "Postres y repostería industrial",
+      "Dulces, chocolates y golosinas industriales"
+    ],
+    "modosPreparacion": [
+      "Frito en abundante aceite",
+      "Capeado"
+    ],
+    "frituras": [
+      "Papas fritas",
+      "Churritos y botanas industrializadas"
+    ],
+    "embutidos": [
+      "Chorizo",
+      "Longaniza",
+      "Chistorra",
+      "Salami"
+    ],
+    "bebidas": [
+      "Refrescos",
+      "Jugos industrializados con azúcar",
+      "Bebidas alcohólicas"
+    ],
+    "grasas": [
+      "Margarina"
+    ]
+  },
+  "moderateEquivalents": {
+    "_notes": "Versión flexible para GANANCIA MUSCULAR: la proteína se maneja como libre/alta (ver proteinGuidance) y los carbohidratos son abundantes para generar superávit. Panes, tortillas y lácteos enteros están permitidos como equivalentes. Un nutriólogo puede afinar por calorías individuales.",
+    "leguminosas": {
+      "label": "Leguminosas",
+      "items": [
+        "Frijoles",
+        "Lentejas",
+        "Garbanzos",
+        "Habas"
+      ],
+      "portion": "½ taza cocida",
+      "dailyBudget": 3
+    },
+    "cereales": {
+      "label": "Cereales",
+      "items": [
+        {
+          "name": "Pasta o arroz",
+          "portion": "½ taza"
+        },
+        {
+          "name": "Avena natural en hojuelas",
+          "portion": "1/3 taza"
+        },
+        {
+          "name": "Quínoa cocida o amaranto",
+          "portion": "3 cdas"
+        },
+        {
+          "name": "Pan de caja o integral",
+          "portion": "2 piezas"
+        },
+        {
+          "name": "Bolillo",
+          "portion": "½ pieza"
+        },
+        {
+          "name": "Tortilla de maíz o de harina",
+          "portion": "1 pieza"
+        },
+        {
+          "name": "Tostada horneada",
+          "portion": "1 pieza"
+        }
+      ],
+      "dailyBudget": 6
+    },
+    "oleaginosas": {
+      "label": "Oleaginosas",
+      "items": [
+        {
+          "name": "Ajonjolí",
+          "portion": "2 cdas"
+        },
+        {
+          "name": "Almendras",
+          "portion": "10 piezas"
+        },
+        {
+          "name": "Nueces",
+          "portion": "7 mitades"
+        },
+        {
+          "name": "Pistaches",
+          "portion": "5 piezas"
+        },
+        {
+          "name": "Cacahuates naturales",
+          "portion": "10 piezas"
+        },
+        {
+          "name": "Nuez de la India",
+          "portion": "7 piezas"
+        }
+      ],
+      "dailyBudget": 2
+    },
+    "lacteos": {
+      "label": "Lácteos",
+      "items": [
+        {
+          "name": "Leche light o entera",
+          "portion": "1 taza"
+        },
+        {
+          "name": "Leche de almendra",
+          "portion": "1 taza"
+        },
+        {
+          "name": "Leche de coco",
+          "portion": "1 taza"
+        },
+        {
+          "name": "Leche de soya sin azúcar",
+          "portion": "1 taza"
+        },
+        {
+          "name": "Yoghurt natural sin azúcar",
+          "portion": "1 taza"
+        },
+        {
+          "name": "Yoghurt griego sin azúcar (Fage, Chobani zero)",
+          "portion": "½ taza"
+        }
+      ],
+      "dailyBudget": 3
+    },
+    "quesos": {
+      "label": "Quesos",
+      "items": [
+        "Panela",
+        "Oaxaca",
+        "Cottage",
+        "Manchego",
+        "Gouda"
+      ],
+      "portion": "30 g (1 rebanada)",
+      "dailyBudget": 2
+    },
+    "verdurasModeradas": {
+      "label": "Verduras (de preferencia crudas)",
+      "items": [
+        {
+          "name": "Betabel o berenjena",
+          "portion": "½ pieza"
+        },
+        {
+          "name": "Zanahoria chica",
+          "portion": "2 piezas"
+        }
+      ],
+      "dailyBudget": 1
+    },
+    "tuberculos": {
+      "label": "Tubérculos",
+      "items": [
+        {
+          "name": "Papa chica",
+          "portion": "1 pieza"
+        },
+        {
+          "name": "Camote o yuca",
+          "portion": "½ taza"
+        }
+      ],
+      "dailyBudget": 3
+    },
+    "frutas": {
+      "label": "Frutas",
+      "items": [
+        "Cualquier fruta de temporada"
+      ],
+      "portion": "1 pieza o 1 taza",
+      "dailyBudget": 4
+    },
+    "aceitesGrasas": {
+      "label": "Aceites y grasas",
+      "items": [
+        {
+          "name": "Aguacate (como aceite)",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Aceite de canola",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Aceite de cártamo",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Aceite de soya",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Aceite de oliva (como aderezo)",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Crema",
+          "portion": "1 cda"
+        },
+        {
+          "name": "Mayonesa",
+          "portion": "1 cda"
+        },
+        {
+          "name": "Aguacate (entero)",
+          "portion": "1/3 pieza"
+        },
+        {
+          "name": "Crema de cacahuate o avellanas",
+          "portion": "1 cda"
+        },
+        {
+          "name": "Chicharrón 100% de cerdo",
+          "portion": "15 g"
+        },
+        {
+          "name": "Mantequilla 100% de vaca",
+          "portion": "1 cdita"
+        }
+      ],
+      "dailyBudget": 4
+    },
+    "verdurasCocidas": {
+      "label": "Verduras cocidas",
+      "items": [
+        "Champiñones",
+        "Chayote",
+        "Coliflor",
+        "Ejote",
+        "Pimientos",
+        "Tomate",
+        "Jitomate",
+        "Cebolla",
+        "Huitlacoche"
+      ],
+      "portion": "1 taza",
+      "dailyBudget": 2
+    },
+    "embutidosMagros": {
+      "label": "Embutidos magros",
+      "items": [
+        {
+          "name": "Pechuga de pavo",
+          "portion": "30 g"
+        },
+        {
+          "name": "Salchicha de pavo",
+          "portion": "1 pieza"
+        },
+        {
+          "name": "Chilorio",
+          "portion": "30 g"
+        },
+        {
+          "name": "Paté",
+          "portion": "30 g"
+        }
+      ],
+      "dailyBudget": 2
+    }
+  },
+  "free": {
+    "verdurasCrudas": {
+      "label": "Verduras (libres, de preferencia crudas)",
+      "items": [
+        "Acelgas",
+        "Espinacas",
+        "Lechuga",
+        "Berros",
+        "Alcachofa",
+        "Espárragos",
+        "Germen de alfalfa",
+        "Pepino",
+        "Nopal",
+        "Rábano",
+        "Brócoli",
+        "Calabaza",
+        "Flor de calabaza"
+      ]
+    },
+    "proteinas": {
+      "label": "Proteínas (grupo prioritario)",
+      "libres": [
+        "Proteína en polvo (whey o cero carb)",
+        "Huevo completo o claras de huevo",
+        "Pollo",
+        "Pescado",
+        "Atún",
+        "Pavo",
+        "Pato",
+        "Codorniz",
+        "Res magra",
+        "Cerdo magro"
+      ],
+      "limitadas2a3xSemana": [
+        "Mariscos",
+        "Calamar",
+        "Pulpo",
+        "Camarón"
+      ]
+    },
+    "bebidas": {
+      "label": "Bebidas libres",
+      "items": [
+        "Agua de limón",
+        "Agua de pepino",
+        "Agua de apio",
+        "Agua de jamaica",
+        "Agua mineral",
+        "Café de grano",
+        "Té verde o negro",
+        "Licuados verdes (sólo verduras permitidas)",
+        "Licuado de proteína (agua o leche permitida)"
+      ]
+    },
+    "otros": {
+      "label": "Otros",
+      "items": [
+        "Chiles",
+        "Tajín",
+        "Valentina",
+        "Salsa Maggi",
+        "Salsa inglesa",
+        "Gelatina light"
+      ]
+    },
+    "salsasEspecias": {
+      "label": "Salsas y especias",
+      "items": [
+        "Salsa pasilla",
+        "Salsa guajillo",
+        "Salsa morita",
+        "Salsa verde",
+        "Salsa roja",
+        "Salsa mexicana",
+        "Hierbas finas",
+        "Sal del Himalaya",
+        "Pimienta",
+        "Hierbas de olor",
+        "Comino",
+        "Clavo"
+      ]
+    }
+  },
+  "mealSlotsByMealsPerDay": {
+    "3": [
+      "desayuno",
+      "comida",
+      "cena"
+    ],
+    "4": [
+      "desayuno",
+      "comida",
+      "colacion_pm",
+      "cena"
+    ],
+    "5": [
+      "desayuno",
+      "colacion_am",
+      "comida",
+      "colacion_pm",
+      "cena"
+    ]
+  }
+}

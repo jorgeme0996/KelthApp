@@ -9,6 +9,7 @@ import { sendPasswordResetEmail } from "../services/mailer";
 import { startOfWeek } from "../lib/week";
 import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
 import { generateAndSaveRoutine } from "../services/routineGenerator";
+import { dietIdForGoal } from "../lib/dietGoal";
 
 const router = Router();
 
@@ -379,9 +380,17 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
   const mealPlanNeedsRegen =
     (parsed.data.mealsPerDay !== undefined && parsed.data.mealsPerDay !== previous.mealsPerDay) ||
     (parsed.data.dietaryRestrictions !== undefined &&
-      !arraysEqual(parsed.data.dietaryRestrictions, previous.dietaryRestrictions));
+      !arraysEqual(parsed.data.dietaryRestrictions, previous.dietaryRestrictions)) ||
+    (parsed.data.goal !== undefined && parsed.data.goal !== previous.goal);
   if (mealPlanNeedsRegen) {
-    await generateAndSaveMealPlan(user.id, user.mealsPerDay, user.dietType, weekStart, user.dietaryRestrictions);
+    await generateAndSaveMealPlan(
+      user.id,
+      user.mealsPerDay,
+      user.dietType,
+      weekStart,
+      user.dietaryRestrictions,
+      dietIdForGoal(user.goal),
+    );
   }
 
   const routineNeedsRegen =

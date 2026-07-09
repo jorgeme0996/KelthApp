@@ -1,10 +1,14 @@
 import { Router } from "express";
 import lowcarb from "../data/diets/lowcarb.json";
+import maintenance from "../data/diets/maintenance.json";
+import muscleGain from "../data/diets/muscle-gain.json";
 
 const router = Router();
 
 const DIETS: Record<string, unknown> = {
   lowcarb,
+  maintenance,
+  "muscle-gain": muscleGain,
 };
 
 router.get("/", (_req, res) => {
