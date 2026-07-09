@@ -20,6 +20,12 @@ model User {
   heightCm       Int?
   weightKg       Float?
   goal           String?  // bajar_peso | mantener_peso | subir_masa
+  gender              String?  // hombre | mujer | prefiero_no_decir
+  splitType           String   @default("fullbody") // fullbody | split
+  equipmentPreference String   @default("gym")       // gym | home
+  dietaryRestrictions String[] @default([])          // vegetariano | vegano | sin_lacteos | sin_nueces | sin_mariscos | sin_gluten
+  trainingDays        Int[]    @default([])          // 0-6 (Lun-Dom), días específicos elegidos por el usuario
+  phone               String?
   createdAt      DateTime @default(now())
 
   mealPlans           MealPlan[]
@@ -50,6 +56,7 @@ model Recipe {
   steps       String[]
   equivalents Json     // { cereal: 1, proteina: 1, grasa: 1, ... }
   weeklyLimited Boolean @default(false) // true for recipes using res/cerdo/mariscos (max 1x/semana)
+  prepTimeMinutes Int?  // total time to prepare the dish, in minutes
   dietType    String   @default("lowcarb")
   source      String   @default("seed") // seed | recipe_book | ai_generated
   createdAt   DateTime @default(now())
@@ -71,11 +78,12 @@ model MealPlan {
 }
 
 model MealPlanEntry {
-  id         String @id @default(uuid())
-  mealPlanId String
-  dayIndex   Int // 0-6 (Mon-Sun)
-  mealSlot   String // desayuno | colacion_am | comida | colacion_pm | cena
-  recipeId   String
+  id          String    @id @default(uuid())
+  mealPlanId  String
+  dayIndex    Int // 0-6 (Mon-Sun)
+  mealSlot    String // desayuno | colacion_am | comida | colacion_pm | cena
+  recipeId    String
+  completedAt DateTime? // set when the user checks this meal off as done
 
   mealPlan MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
   recipe   Recipe   @relation(fields: [recipeId], references: [id])

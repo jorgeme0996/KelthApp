@@ -53,11 +53,18 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     }
   }
 
-  const mealPlan = await prisma.mealPlan.findFirst({
-    where: { userId: user.id },
-    orderBy: { createdAt: "desc" },
-    include: { entries: { include: { recipe: true } } },
-  });
+  const [mealPlan, routine] = await Promise.all([
+    prisma.mealPlan.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      include: { entries: { include: { recipe: true } } },
+    }),
+    prisma.routine.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+      include: { entries: { include: { exercise: true } } },
+    }),
+  ]);
 
   const history = await prisma.chatMessage.findMany({
     where: { userId: user.id },
@@ -66,7 +73,15 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
   });
   const orderedHistory = history.reverse();
 
-  const systemPrompt = buildSystemPrompt(user.mealsPerDay, mealPlan);
+  const systemPrompt = buildSystemPrompt(
+    user.mealsPerDay,
+    mealPlan,
+    routine,
+    user.gender,
+    user.splitType,
+    user.equipmentPreference,
+    user.dietaryRestrictions,
+  );
 
   await prisma.chatMessage.create({
     data: { userId: user.id, role: "user", content: parsed.data.message },

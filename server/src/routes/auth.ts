@@ -6,6 +6,9 @@ import { prisma } from "../prisma";
 import { signToken, authMiddleware, AuthRequest } from "../middleware/auth";
 import { passwordSchema } from "../lib/password";
 import { sendPasswordResetEmail } from "../services/mailer";
+import { startOfWeek } from "../lib/week";
+import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
+import { generateAndSaveRoutine } from "../services/routineGenerator";
 
 const router = Router();
 
@@ -17,6 +20,19 @@ function hashToken(token: string): string {
   return crypto.createHash("sha256").update(token).digest("hex");
 }
 
+function arraysEqual<T>(a: T[], b: T[]): boolean {
+  return a.length === b.length && a.every((value, i) => value === b[i]);
+}
+
+const genderSchema = z.enum(["hombre", "mujer", "prefiero_no_decir"]);
+const splitTypeSchema = z.enum(["fullbody", "split"]);
+const equipmentPreferenceSchema = z.enum(["gym", "home"]);
+const dietaryRestrictionsSchema = z.array(
+  z.enum(["vegetariano", "vegano", "sin_lacteos", "sin_nueces", "sin_mariscos", "sin_gluten"]),
+);
+const trainingDaysSchema = z.array(z.number().int().min(0).max(6)).min(3).max(5);
+const phoneSchema = z.string().min(7).max(20);
+
 const registerSchema = z.object({
   email: z.string().email(),
   password: passwordSchema,
@@ -27,6 +43,12 @@ const registerSchema = z.object({
   heightCm: z.number().int().min(50).max(300).optional(),
   weightKg: z.number().min(10).max(500).optional(),
   goal: z.enum(["bajar_peso", "mantener_peso", "subir_masa"]).optional(),
+  gender: genderSchema.optional(),
+  splitType: splitTypeSchema.optional(),
+  equipmentPreference: equipmentPreferenceSchema.optional(),
+  dietaryRestrictions: dietaryRestrictionsSchema.optional(),
+  trainingDays: trainingDaysSchema.optional(),
+  phone: phoneSchema.optional(),
 });
 
 router.post("/register", async (req, res) => {
@@ -34,7 +56,23 @@ router.post("/register", async (req, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: "Datos inválidos", details: parsed.error.flatten() });
   }
-  const { email, password, name, mealsPerDay, exerciseDaysPerWeek, age, heightCm, weightKg, goal } = parsed.data;
+  const {
+    email,
+    password,
+    name,
+    mealsPerDay,
+    exerciseDaysPerWeek,
+    age,
+    heightCm,
+    weightKg,
+    goal,
+    gender,
+    splitType,
+    equipmentPreference,
+    dietaryRestrictions,
+    trainingDays,
+    phone,
+  } = parsed.data;
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
@@ -43,7 +81,23 @@ router.post("/register", async (req, res) => {
 
   const passwordHash = await bcrypt.hash(password, 10);
   const user = await prisma.user.create({
-    data: { email, passwordHash, name, mealsPerDay: mealsPerDay ?? 4, exerciseDaysPerWeek, age, heightCm, weightKg, goal },
+    data: {
+      email,
+      passwordHash,
+      name,
+      mealsPerDay: mealsPerDay ?? 4,
+      exerciseDaysPerWeek: trainingDays && trainingDays.length > 0 ? trainingDays.length : exerciseDaysPerWeek,
+      age,
+      heightCm,
+      weightKg,
+      goal,
+      gender,
+      splitType: splitType ?? "fullbody",
+      equipmentPreference: equipmentPreference ?? "gym",
+      dietaryRestrictions: dietaryRestrictions ?? [],
+      trainingDays: trainingDays ?? [],
+      phone,
+    },
   });
 
   const token = signToken(user.id);
@@ -237,7 +291,25 @@ router.get("/reset-password", (req, res) => {
 </html>`);
 });
 
-const serializeUser = (user: { id: string; email: string; name: string; mealsPerDay: number; exerciseDaysPerWeek: number | null; dietType: string; dailyChatLimit: number | null; age: number | null; heightCm: number | null; weightKg: number | null; goal: string | null }) => ({
+const serializeUser = (user: {
+  id: string;
+  email: string;
+  name: string;
+  mealsPerDay: number;
+  exerciseDaysPerWeek: number | null;
+  dietType: string;
+  dailyChatLimit: number | null;
+  age: number | null;
+  heightCm: number | null;
+  weightKg: number | null;
+  goal: string | null;
+  gender: string | null;
+  splitType: string;
+  equipmentPreference: string;
+  dietaryRestrictions: string[];
+  trainingDays: number[];
+  phone: string | null;
+}) => ({
   id: user.id,
   email: user.email,
   name: user.name,
@@ -249,6 +321,12 @@ const serializeUser = (user: { id: string; email: string; name: string; mealsPer
   heightCm: user.heightCm,
   weightKg: user.weightKg,
   goal: user.goal,
+  gender: user.gender,
+  splitType: user.splitType,
+  equipmentPreference: user.equipmentPreference,
+  dietaryRestrictions: user.dietaryRestrictions,
+  trainingDays: user.trainingDays,
+  phone: user.phone,
 });
 
 router.get("/me", authMiddleware, async (req: AuthRequest, res) => {
@@ -265,6 +343,12 @@ const updateMeSchema = z.object({
   heightCm: z.number().int().min(50).max(300).optional(),
   weightKg: z.number().min(10).max(500).optional(),
   goal: z.enum(["bajar_peso", "mantener_peso", "subir_masa"]).optional(),
+  gender: genderSchema.optional(),
+  splitType: splitTypeSchema.optional(),
+  equipmentPreference: equipmentPreferenceSchema.optional(),
+  dietaryRestrictions: dietaryRestrictionsSchema.optional(),
+  trainingDays: trainingDaysSchema.optional(),
+  phone: phoneSchema.optional(),
 });
 
 router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
@@ -272,10 +356,52 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
   if (!parsed.success) {
     return res.status(400).json({ error: "Datos inválidos" });
   }
+
+  const previous = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!previous) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  // Días específicos de entreno reemplazan la cantidad: si el cliente manda
+  // trainingDays, exerciseDaysPerWeek se deriva de ahí en vez de aceptarse suelto.
+  const updateData = { ...parsed.data };
+  if (parsed.data.trainingDays !== undefined) {
+    (updateData as { exerciseDaysPerWeek?: number }).exerciseDaysPerWeek = parsed.data.trainingDays.length;
+  }
+
   const user = await prisma.user.update({
     where: { id: req.userId },
-    data: parsed.data,
+    data: updateData,
   });
+
+  const weekStart = startOfWeek(new Date());
+
+  // Preferencias que determinan cómo se arma el menú y la rutina: se
+  // regeneran solo cuando algo que las afecta cambió.
+  const mealPlanNeedsRegen =
+    (parsed.data.mealsPerDay !== undefined && parsed.data.mealsPerDay !== previous.mealsPerDay) ||
+    (parsed.data.dietaryRestrictions !== undefined &&
+      !arraysEqual(parsed.data.dietaryRestrictions, previous.dietaryRestrictions));
+  if (mealPlanNeedsRegen) {
+    await generateAndSaveMealPlan(user.id, user.mealsPerDay, user.dietType, weekStart, user.dietaryRestrictions);
+  }
+
+  const routineNeedsRegen =
+    (parsed.data.trainingDays !== undefined && !arraysEqual(parsed.data.trainingDays, previous.trainingDays)) ||
+    (parsed.data.trainingDays === undefined &&
+      parsed.data.exerciseDaysPerWeek !== undefined &&
+      parsed.data.exerciseDaysPerWeek !== previous.exerciseDaysPerWeek) ||
+    (parsed.data.splitType !== undefined && parsed.data.splitType !== previous.splitType) ||
+    (parsed.data.equipmentPreference !== undefined && parsed.data.equipmentPreference !== previous.equipmentPreference);
+  if (routineNeedsRegen) {
+    await generateAndSaveRoutine(
+      user.id,
+      user.exerciseDaysPerWeek ?? 3,
+      weekStart,
+      user.trainingDays,
+      user.splitType,
+      user.equipmentPreference,
+    );
+  }
+
   res.json(serializeUser(user));
 });
 

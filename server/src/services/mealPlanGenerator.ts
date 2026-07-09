@@ -44,6 +44,30 @@ function pickRandom<T>(items: T[]): T {
   return items[Math.floor(Math.random() * items.length)];
 }
 
+// Coincidencia de texto (best-effort, igual que la lista `prohibited` de
+// lowcarb.json) sobre el nombre de cada ingrediente de la receta.
+const MEAT_PATTERN = /pollo|pavo|res\b|cerdo|pescado|at[uú]n|camar[oó]n|marisco|jam[oó]n|tocino|carne/i;
+
+const RESTRICTION_PATTERNS: Record<string, RegExp> = {
+  vegetariano: MEAT_PATTERN,
+  vegano: new RegExp(MEAT_PATTERN.source + "|huevo|queso|crema|yogur|leche", "i"),
+  sin_lacteos: /queso|crema|yogur|leche/i,
+  sin_nueces: /almendra|nuez|cacahuate|ajonjol[ií]/i,
+  sin_mariscos: /pescado|at[uú]n|camar[oó]n|marisco/i,
+  sin_gluten: /bolillo|pan\b|harina de trigo|avena/i,
+};
+
+function filterByDietaryRestrictions(recipes: Recipe[], restrictions: string[]): Recipe[] {
+  if (restrictions.length === 0) return recipes;
+  const patterns = restrictions.map((r) => RESTRICTION_PATTERNS[r]).filter((p): p is RegExp => !!p);
+  if (patterns.length === 0) return recipes;
+
+  return recipes.filter((recipe) => {
+    const ingredients = recipe.ingredients as unknown as { name: string }[];
+    return !ingredients.some((ing) => patterns.some((pattern) => pattern.test(ing.name)));
+  });
+}
+
 /**
  * Generates a 7-day meal plan for the given diet, respecting daily equivalent
  * budgets, rotating recipes for variety, and limiting "weeklyLimited" recipes
@@ -93,13 +117,27 @@ export function generateMealPlanEntries(recipes: Recipe[], mealsPerDay: number):
   return entries;
 }
 
-export async function generateAndSaveMealPlan(userId: string, mealsPerDay: number, dietType: string, weekStart: Date) {
+export async function generateAndSaveMealPlan(
+  userId: string,
+  mealsPerDay: number,
+  dietType: string,
+  weekStart: Date,
+  dietaryRestrictions: string[] = [],
+) {
   const recipes = await prisma.recipe.findMany({ where: { dietType } });
   if (recipes.length === 0) {
     throw new Error("No hay recetas disponibles para esta dieta. Ejecuta el seed primero.");
   }
 
-  const entries = generateMealPlanEntries(recipes, mealsPerDay);
+  let eligibleRecipes = filterByDietaryRestrictions(recipes, dietaryRestrictions);
+  if (eligibleRecipes.length === 0) {
+    console.warn(
+      `Las restricciones (${dietaryRestrictions.join(", ")}) dejaron el catálogo de recetas vacío; se usa el catálogo completo como respaldo.`,
+    );
+    eligibleRecipes = recipes;
+  }
+
+  const entries = generateMealPlanEntries(eligibleRecipes, mealsPerDay);
 
   const mealPlan = await prisma.mealPlan.create({
     data: {

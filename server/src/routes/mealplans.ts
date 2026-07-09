@@ -4,17 +4,9 @@ import { prisma } from "../prisma";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
 import { buildShoppingList } from "../services/shoppingList";
+import { startOfWeek } from "../lib/week";
 
 const router = Router();
-
-function startOfWeek(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay(); // 0 = Sunday
-  const diff = day === 0 ? -6 : 1 - day; // Monday as start of week
-  d.setDate(d.getDate() + diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
 
 const generateSchema = z.object({
   weekStart: z.string().datetime().optional(),
@@ -32,7 +24,13 @@ router.post("/generate", authMiddleware, async (req: AuthRequest, res) => {
   const weekStart = parsed.data.weekStart ? startOfWeek(new Date(parsed.data.weekStart)) : startOfWeek(new Date());
 
   try {
-    const mealPlan = await generateAndSaveMealPlan(user.id, user.mealsPerDay, user.dietType, weekStart);
+    const mealPlan = await generateAndSaveMealPlan(
+      user.id,
+      user.mealsPerDay,
+      user.dietType,
+      weekStart,
+      user.dietaryRestrictions,
+    );
     res.status(201).json(mealPlan);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
@@ -101,6 +99,26 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
   const updated = await prisma.mealPlanEntry.update({
     where: { id: entry.id },
     data: { recipeId: newRecipeId },
+    include: { recipe: true },
+  });
+
+  res.json(updated);
+});
+
+// Toggle a meal-plan entry between done/not-done; used to track adherence
+// so we can later nudge users to complete their remaining meals.
+router.post("/entries/:entryId/complete", authMiddleware, async (req: AuthRequest, res) => {
+  const entry = await prisma.mealPlanEntry.findUnique({
+    where: { id: req.params.entryId },
+    include: { mealPlan: true },
+  });
+  if (!entry || entry.mealPlan.userId !== req.userId) {
+    return res.status(404).json({ error: "Comida no encontrada" });
+  }
+
+  const updated = await prisma.mealPlanEntry.update({
+    where: { id: entry.id },
+    data: { completedAt: entry.completedAt ? null : new Date() },
     include: { recipe: true },
   });
 

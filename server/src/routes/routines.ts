@@ -4,17 +4,9 @@ import { prisma } from "../prisma";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
 import { generateAndSaveRoutine } from "../services/routineGenerator";
 import { withExerciseMediaUrls } from "../lib/media";
+import { startOfWeek } from "../lib/week";
 
 const router = Router();
-
-function startOfWeek(date: Date): Date {
-  const d = new Date(date);
-  const day = d.getDay(); // 0 = Sunday
-  const diff = day === 0 ? -6 : 1 - day; // Monday as start of week
-  d.setDate(d.getDate() + diff);
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
 
 function serializeRoutine<T extends { entries: Array<{ exercise: any } & Record<string, unknown>> }>(routine: T) {
   return {
@@ -42,7 +34,14 @@ router.post("/generate", authMiddleware, async (req: AuthRequest, res) => {
   const weekStart = parsed.data.weekStart ? startOfWeek(new Date(parsed.data.weekStart)) : startOfWeek(new Date());
 
   try {
-    const routine = await generateAndSaveRoutine(user.id, user.exerciseDaysPerWeek ?? 3, weekStart);
+    const routine = await generateAndSaveRoutine(
+      user.id,
+      user.exerciseDaysPerWeek ?? 3,
+      weekStart,
+      user.trainingDays,
+      user.splitType,
+      user.equipmentPreference,
+    );
     res.status(201).json(serializeRoutine(routine));
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

@@ -2,15 +2,49 @@
   {
     "id": "huevos-mexicana-nopales",
     "name": "Huevos a la mexicana con nopales",
-    "mealSlots": ["desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Huevo", "qty": 2, "unit": "pieza", "category": "proteinas" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Chile serrano", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Nopales cocidos", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Huevo",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Chile serrano",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Nopales cocidos",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Picar el jitomate, la cebolla y el chile serrano en cubos pequeños.",
@@ -20,22 +54,59 @@
       "Incorporar los huevos batidos y revolver hasta que cuajen.",
       "Servir caliente, acompañar con salsa verde libre al gusto."
     ],
-    "equivalents": { "aceitesGrasas": 1 },
+    "prepTimeMinutes": 15,
+    "equivalents": {
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "chilaquiles-verdes-pollo",
     "name": "Chilaquiles verdes light con pollo",
-    "mealSlots": ["desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Tortilla horneada (en triángulos)", "qty": 2, "unit": "pieza", "category": "cereales" },
-      { "name": "Salsa verde", "qty": 1, "unit": "taza", "category": "despensa" },
-      { "name": "Pechuga de pollo cocida y deshebrada", "qty": 100, "unit": "g", "category": "proteinas" },
-      { "name": "Queso panela rallado", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Crema light", "qty": 1, "unit": "cda", "category": "grasas" },
-      { "name": "Cebolla rebanada", "qty": 0.25, "unit": "pieza", "category": "verduras" }
+      {
+        "name": "Tortilla horneada (en triángulos)",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Salsa verde",
+        "qty": 1,
+        "unit": "taza",
+        "category": "despensa"
+      },
+      {
+        "name": "Pechuga de pollo cocida y deshebrada",
+        "qty": 100,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Queso panela rallado",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Crema light",
+        "qty": 1,
+        "unit": "cda",
+        "category": "grasas"
+      },
+      {
+        "name": "Cebolla rebanada",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      }
     ],
     "steps": [
       "Hornear las tortillas cortadas en triángulos hasta que estén crujientes (tostadas).",
@@ -44,21 +115,55 @@
       "Servir con el pollo deshebrado encima.",
       "Coronar con queso panela, crema light y cebolla cruda."
     ],
-    "equivalents": { "cereales": 2, "quesos": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 20,
+    "equivalents": {
+      "cereales": 2,
+      "quesos": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "omelette-champinones-panela",
     "name": "Omelette de champiñones y queso panela",
-    "mealSlots": ["desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Huevo", "qty": 2, "unit": "pieza", "category": "proteinas" },
-      { "name": "Champiñones rebanados", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Queso panela", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Espinacas", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Huevo",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "proteinas"
+      },
+      {
+        "name": "Champiñones rebanados",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Queso panela",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Espinacas",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Saltear los champiñones en el aceite de oliva hasta que suelten su agua y se doren.",
@@ -67,60 +172,149 @@
       "Agregar el queso panela en cubos, doblar el omelette por la mitad.",
       "Cocinar 1-2 minutos más y servir."
     ],
-    "equivalents": { "verdurasCocidas": 1, "quesos": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 12,
+    "equivalents": {
+      "verdurasCocidas": 1,
+      "quesos": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "yogur-griego-almendras-fresas",
     "name": "Yogur griego con almendras y fresas",
-    "mealSlots": ["desayuno", "colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno",
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Yogur griego sin azúcar", "qty": 0.5, "unit": "taza", "category": "lacteos" },
-      { "name": "Almendras", "qty": 10, "unit": "pieza", "category": "oleaginosas" },
-      { "name": "Fresas", "qty": 1, "unit": "taza", "category": "frutas" }
+      {
+        "name": "Yogur griego sin azúcar",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "lacteos"
+      },
+      {
+        "name": "Almendras",
+        "qty": 10,
+        "unit": "pieza",
+        "category": "oleaginosas"
+      },
+      {
+        "name": "Fresas",
+        "qty": 1,
+        "unit": "taza",
+        "category": "frutas"
+      }
     ],
     "steps": [
       "Lavar y rebanar las fresas.",
       "Servir el yogur griego en un tazón.",
       "Agregar las fresas y las almendras encima."
     ],
-    "equivalents": { "lacteos": 1, "oleaginosas": 1, "frutas": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "lacteos": 1,
+      "oleaginosas": 1,
+      "frutas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "avena-manzana-canela",
     "name": "Avena con manzana y canela",
-    "mealSlots": ["desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Avena natural en hojuelas", "qty": 0.333, "unit": "taza", "category": "cereales" },
-      { "name": "Leche light o de almendra", "qty": 1, "unit": "taza", "category": "lacteos" },
-      { "name": "Manzana", "qty": 1, "unit": "pieza", "category": "frutas" },
-      { "name": "Canela en polvo", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Avena natural en hojuelas",
+        "qty": 0.333,
+        "unit": "taza",
+        "category": "cereales"
+      },
+      {
+        "name": "Leche light o de almendra",
+        "qty": 1,
+        "unit": "taza",
+        "category": "lacteos"
+      },
+      {
+        "name": "Manzana",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "frutas"
+      },
+      {
+        "name": "Canela en polvo",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cocinar la avena con la leche a fuego bajo durante 5 minutos, moviendo constantemente.",
       "Picar la manzana en cubos pequeños.",
       "Servir la avena y agregar la manzana y la canela encima."
     ],
-    "equivalents": { "cereales": 1, "lacteos": 1, "frutas": 1 },
+    "prepTimeMinutes": 10,
+    "equivalents": {
+      "cereales": 1,
+      "lacteos": 1,
+      "frutas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "tacos-huevo-frijoles-salsa-verde",
     "name": "Tacos de huevo con frijoles y salsa verde",
-    "mealSlots": ["desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Huevo", "qty": 2, "unit": "pieza", "category": "proteinas" },
-      { "name": "Frijoles refritos (sin manteca)", "qty": 0.5, "unit": "taza", "category": "leguminosas" },
-      { "name": "Tortilla horneada", "qty": 1, "unit": "pieza", "category": "cereales" },
-      { "name": "Salsa verde", "qty": 2, "unit": "cda", "category": "despensa" },
-      { "name": "Cilantro", "qty": 1, "unit": "cda", "category": "despensa" }
+      {
+        "name": "Huevo",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "proteinas"
+      },
+      {
+        "name": "Frijoles refritos (sin manteca)",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "leguminosas"
+      },
+      {
+        "name": "Tortilla horneada",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Salsa verde",
+        "qty": 2,
+        "unit": "cda",
+        "category": "despensa"
+      },
+      {
+        "name": "Cilantro",
+        "qty": 1,
+        "unit": "cda",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Calentar los frijoles refritos en un sartén pequeño.",
@@ -128,40 +322,97 @@
       "Calentar la tortilla horneada.",
       "Armar el taco con frijoles, huevo, salsa verde y cilantro."
     ],
-    "equivalents": { "leguminosas": 1, "cereales": 1 },
+    "prepTimeMinutes": 15,
+    "equivalents": {
+      "leguminosas": 1,
+      "cereales": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "smoothie-verde-espinaca-pina",
     "name": "Smoothie verde de espinaca y piña",
-    "mealSlots": ["desayuno", "colacion_am"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno",
+      "colacion_am"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Espinaca", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Piña", "qty": 1, "unit": "taza", "category": "frutas" },
-      { "name": "Yogur natural sin azúcar", "qty": 0.5, "unit": "taza", "category": "lacteos" },
-      { "name": "Agua o hielo", "qty": 0.5, "unit": "taza", "category": "despensa" }
+      {
+        "name": "Espinaca",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Piña",
+        "qty": 1,
+        "unit": "taza",
+        "category": "frutas"
+      },
+      {
+        "name": "Yogur natural sin azúcar",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "lacteos"
+      },
+      {
+        "name": "Agua o hielo",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Colocar todos los ingredientes en la licuadora.",
       "Licuar hasta obtener una mezcla homogénea.",
       "Servir frío."
     ],
-    "equivalents": { "frutas": 1, "lacteos": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "frutas": 1,
+      "lacteos": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "molletes-light-frijoles-oaxaca",
     "name": "Molletes light con frijoles y queso Oaxaca",
-    "mealSlots": ["desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Bolillo integral", "qty": 0.5, "unit": "pieza", "category": "cereales" },
-      { "name": "Frijoles refritos (sin manteca)", "qty": 0.5, "unit": "taza", "category": "leguminosas" },
-      { "name": "Queso Oaxaca", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Pico de gallo (jitomate, cebolla, chile)", "qty": 0.5, "unit": "taza", "category": "verduras" }
+      {
+        "name": "Bolillo integral",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Frijoles refritos (sin manteca)",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "leguminosas"
+      },
+      {
+        "name": "Queso Oaxaca",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Pico de gallo (jitomate, cebolla, chile)",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      }
     ],
     "steps": [
       "Cortar el bolillo a la mitad y retirar un poco de migajón.",
@@ -169,23 +420,68 @@
       "Cubrir con queso Oaxaca y gratinar en el horno hasta que el queso funda.",
       "Servir con pico de gallo encima."
     ],
-    "equivalents": { "cereales": 1, "leguminosas": 1, "quesos": 1 },
+    "prepTimeMinutes": 12,
+    "equivalents": {
+      "cereales": 1,
+      "leguminosas": 1,
+      "quesos": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "tinga-pollo-tortillas-lechuga",
     "name": "Tinga de pollo con tortillas horneadas y lechuga",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo deshebrada", "qty": 150, "unit": "g", "category": "proteinas" },
-      { "name": "Jitomate", "qty": 2, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.5, "unit": "pieza", "category": "verduras" },
-      { "name": "Chile chipotle adobado", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Tortilla horneada", "qty": 2, "unit": "pieza", "category": "cereales" },
-      { "name": "Lechuga", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Pechuga de pollo deshebrada",
+        "qty": 150,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Chile chipotle adobado",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Tortilla horneada",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Licuar el jitomate con el chile chipotle y un poco de agua.",
@@ -194,24 +490,73 @@
       "Incorporar el pollo deshebrado y dejar sazonar 10 minutos.",
       "Servir con tortillas horneadas y lechuga fresca."
     ],
-    "equivalents": { "cereales": 2, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 30,
+    "equivalents": {
+      "cereales": 2,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "pescado-veracruzana-verduras",
     "name": "Pescado a la veracruzana con verduras",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Filete de pescado blanco", "qty": 150, "unit": "g", "category": "proteinas" },
-      { "name": "Jitomate", "qty": 2, "unit": "pieza", "category": "verduras" },
-      { "name": "Aceitunas", "qty": 5, "unit": "pieza", "category": "despensa" },
-      { "name": "Alcaparras", "qty": 1, "unit": "cda", "category": "despensa" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Ajo", "qty": 1, "unit": "diente", "category": "despensa" },
-      { "name": "Calabaza y ejotes al vapor", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Filete de pescado blanco",
+        "qty": 150,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceitunas",
+        "qty": 5,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Alcaparras",
+        "qty": 1,
+        "unit": "cda",
+        "category": "despensa"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Ajo",
+        "qty": 1,
+        "unit": "diente",
+        "category": "despensa"
+      },
+      {
+        "name": "Calabaza y ejotes al vapor",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Sofreír el ajo y la cebolla en aceite de oliva.",
@@ -219,23 +564,67 @@
       "Colocar el filete de pescado sobre la salsa, tapar y cocinar 8-10 minutos a fuego medio.",
       "Servir con la calabaza y ejotes al vapor."
     ],
-    "equivalents": { "aceitesGrasas": 1, "verdurasCocidas": 1 },
+    "prepTimeMinutes": 25,
+    "equivalents": {
+      "aceitesGrasas": 1,
+      "verdurasCocidas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "milanesa-pollo-horno-ajonjoli",
     "name": "Milanesa de pollo al horno con ajonjolí y ensalada",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo (filete)", "qty": 150, "unit": "g", "category": "proteinas" },
-      { "name": "Huevo (para empanizar)", "qty": 1, "unit": "pieza", "category": "proteinas" },
-      { "name": "Ajonjolí", "qty": 2, "unit": "cda", "category": "oleaginosas" },
-      { "name": "Lechuga", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Pepino", "qty": 0.5, "unit": "pieza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Pechuga de pollo (filete)",
+        "qty": 150,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Huevo (para empanizar)",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "proteinas"
+      },
+      {
+        "name": "Ajonjolí",
+        "qty": 2,
+        "unit": "cda",
+        "category": "oleaginosas"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Pepino",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Aplanar la pechuga de pollo y salpimentar.",
@@ -244,24 +633,73 @@
       "Preparar una ensalada con lechuga, jitomate y pepino, aderezar con aceite de oliva.",
       "Servir la milanesa junto con la ensalada."
     ],
-    "equivalents": { "oleaginosas": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 30,
+    "equivalents": {
+      "oleaginosas": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "sopa-lima-pollo",
     "name": "Sopa de lima con pollo",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo", "qty": 100, "unit": "g", "category": "proteinas" },
-      { "name": "Caldo de pollo casero", "qty": 2, "unit": "taza", "category": "despensa" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Chile güero", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Tortilla horneada en tiras", "qty": 1, "unit": "pieza", "category": "cereales" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Pechuga de pollo",
+        "qty": 100,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Caldo de pollo casero",
+        "qty": 2,
+        "unit": "taza",
+        "category": "despensa"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Chile güero",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Tortilla horneada en tiras",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Sofreír la cebolla y el jitomate picados en aceite de oliva.",
@@ -269,23 +707,61 @@
       "Agregar el pollo cocido y desmenuzado, calentar bien.",
       "Servir con jugo de limón y tiras de tortilla horneada encima."
     ],
-    "equivalents": { "cereales": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 30,
+    "equivalents": {
+      "cereales": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "picadillo-res-verduras",
     "name": "Picadillo de res con verduras",
-    "mealSlots": ["comida"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "weeklyLimited": true,
     "ingredients": [
-      { "name": "Carne molida de res", "qty": 120, "unit": "g", "category": "proteinas" },
-      { "name": "Papa chica", "qty": 1, "unit": "pieza", "category": "tuberculos" },
-      { "name": "Zanahoria chica", "qty": 2, "unit": "pieza", "category": "verduras" },
-      { "name": "Chayote o ejotes", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" }
+      {
+        "name": "Carne molida de res",
+        "qty": 120,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Papa chica",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "tuberculos"
+      },
+      {
+        "name": "Zanahoria chica",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Chayote o ejotes",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      }
     ],
     "steps": [
       "Sofreír la cebolla y el jitomate picados.",
@@ -293,22 +769,62 @@
       "Incorporar la papa y zanahoria en cubos pequeños, cocinar 10 minutos.",
       "Agregar el chayote o ejotes y un poco de agua; tapar y cocinar hasta que las verduras estén suaves."
     ],
-    "equivalents": { "tuberculos": 1, "verdurasModeradas": 1, "verdurasCocidas": 1 },
+    "prepTimeMinutes": 25,
+    "equivalents": {
+      "tuberculos": 1,
+      "verdurasModeradas": 1,
+      "verdurasCocidas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "ensalada-pollo-jicama-aguacate",
     "name": "Ensalada de pollo con jícama y aguacate",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo cocida", "qty": 120, "unit": "g", "category": "proteinas" },
-      { "name": "Jícama", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Aguacate", "qty": 0.333, "unit": "pieza", "category": "grasas" },
-      { "name": "Lechuga", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Pepino", "qty": 0.5, "unit": "pieza", "category": "verduras" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" }
+      {
+        "name": "Pechuga de pollo cocida",
+        "qty": 120,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jícama",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aguacate",
+        "qty": 0.333,
+        "unit": "pieza",
+        "category": "grasas"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Pepino",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cortar la pechuga de pollo cocida en cubos.",
@@ -316,22 +832,55 @@
       "Mezclar todos los ingredientes en un tazón.",
       "Agregar el aguacate en cubos y rociar con jugo de limón."
     ],
-    "equivalents": { "aceitesGrasas": 1 },
+    "prepTimeMinutes": 15,
+    "equivalents": {
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "camarones-diabla-calabacitas",
     "name": "Camarones a la diabla con calabacitas",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "weeklyLimited": true,
     "ingredients": [
-      { "name": "Camarón", "qty": 120, "unit": "g", "category": "proteinas" },
-      { "name": "Chile de árbol", "qty": 3, "unit": "pieza", "category": "despensa" },
-      { "name": "Ajo", "qty": 2, "unit": "diente", "category": "despensa" },
-      { "name": "Calabacitas", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Camarón",
+        "qty": 120,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Chile de árbol",
+        "qty": 3,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Ajo",
+        "qty": 2,
+        "unit": "diente",
+        "category": "despensa"
+      },
+      {
+        "name": "Calabacitas",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Licuar los chiles de árbol con ajo y un poco de agua para hacer la salsa diabla.",
@@ -339,21 +888,55 @@
       "Agregar la salsa diabla y cocinar 3-5 minutos.",
       "Servir con las calabacitas cocidas al vapor."
     ],
-    "equivalents": { "verdurasCocidas": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 20,
+    "equivalents": {
+      "verdurasCocidas": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "pollo-plancha-rajas-poblanas",
     "name": "Pollo a la plancha con rajas poblanas",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo", "qty": 150, "unit": "g", "category": "proteinas" },
-      { "name": "Chile poblano en rajas", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Crema light", "qty": 1, "unit": "cda", "category": "grasas" },
-      { "name": "Queso panela", "qty": 30, "unit": "g", "category": "lacteos" }
+      {
+        "name": "Pechuga de pollo",
+        "qty": 150,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Chile poblano en rajas",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Crema light",
+        "qty": 1,
+        "unit": "cda",
+        "category": "grasas"
+      },
+      {
+        "name": "Queso panela",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      }
     ],
     "steps": [
       "Asar el chile poblano, pelar y cortar en rajas.",
@@ -362,23 +945,62 @@
       "Agregar la crema light y mezclar.",
       "Servir el pollo bañado con las rajas y acompañar con queso panela."
     ],
-    "equivalents": { "aceitesGrasas": 1, "quesos": 1 },
+    "prepTimeMinutes": 25,
+    "equivalents": {
+      "aceitesGrasas": 1,
+      "quesos": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "bistec-mexicana-ejotes",
     "name": "Bistec a la mexicana con ejotes",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "weeklyLimited": true,
     "ingredients": [
-      { "name": "Bistec de res", "qty": 120, "unit": "g", "category": "proteinas" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Chile serrano", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Ejotes", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Bistec de res",
+        "qty": 120,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Chile serrano",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Ejotes",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Cortar el bistec en tiras y sellar en el sartén con aceite de oliva.",
@@ -386,22 +1008,61 @@
       "Cocinar los ejotes al vapor por separado.",
       "Servir el bistec junto con los ejotes."
     ],
-    "equivalents": { "verdurasCocidas": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 25,
+    "equivalents": {
+      "verdurasCocidas": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "tacos-pescado-pastor",
     "name": "Tacos de pescado al pastor con tortilla horneada",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Filete de pescado", "qty": 120, "unit": "g", "category": "proteinas" },
-      { "name": "Adobo de achiote y especias", "qty": 1, "unit": "cda", "category": "despensa" },
-      { "name": "Piña", "qty": 0.5, "unit": "taza", "category": "frutas" },
-      { "name": "Tortilla horneada", "qty": 2, "unit": "pieza", "category": "cereales" },
-      { "name": "Col morada", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Cilantro y cebolla", "qty": 2, "unit": "cda", "category": "verduras" }
+      {
+        "name": "Filete de pescado",
+        "qty": 120,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Adobo de achiote y especias",
+        "qty": 1,
+        "unit": "cda",
+        "category": "despensa"
+      },
+      {
+        "name": "Piña",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "frutas"
+      },
+      {
+        "name": "Tortilla horneada",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Col morada",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cilantro y cebolla",
+        "qty": 2,
+        "unit": "cda",
+        "category": "verduras"
+      }
     ],
     "steps": [
       "Marinar el pescado con el adobo de achiote por 15 minutos.",
@@ -409,44 +1070,121 @@
       "Calentar las tortillas horneadas.",
       "Armar los tacos con el pescado, piña, col morada, cilantro y cebolla."
     ],
-    "equivalents": { "frutas": 1, "cereales": 2 },
+    "prepTimeMinutes": 25,
+    "equivalents": {
+      "frutas": 1,
+      "cereales": 2
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "ensalada-atun-verduras",
     "name": "Ensalada de atún con verduras",
-    "mealSlots": ["comida", "cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "comida",
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Atún en agua", "qty": 1, "unit": "lata", "category": "proteinas" },
-      { "name": "Lechuga", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Pepino", "qty": 0.5, "unit": "pieza", "category": "verduras" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Apio", "qty": 1, "unit": "rama", "category": "verduras" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Atún en agua",
+        "qty": 1,
+        "unit": "lata",
+        "category": "proteinas"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Pepino",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Apio",
+        "qty": 1,
+        "unit": "rama",
+        "category": "verduras"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Escurrir el atún y desmenuzar en un tazón.",
       "Picar la lechuga, pepino, jitomate y apio.",
       "Mezclar todos los ingredientes y aderezar con aceite de oliva, sal y pimienta."
     ],
-    "equivalents": { "aceitesGrasas": 1 },
+    "prepTimeMinutes": 10,
+    "equivalents": {
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "sopa-verduras-pollo-deshebrado",
     "name": "Sopa de verduras con pollo deshebrado",
-    "mealSlots": ["cena", "comida"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "comida"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo deshebrada", "qty": 100, "unit": "g", "category": "proteinas" },
-      { "name": "Calabaza", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Zanahoria", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Ejote", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Caldo de pollo casero", "qty": 2, "unit": "taza", "category": "despensa" },
-      { "name": "Cilantro", "qty": 1, "unit": "cda", "category": "despensa" }
+      {
+        "name": "Pechuga de pollo deshebrada",
+        "qty": 100,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Calabaza",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Zanahoria",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Ejote",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Caldo de pollo casero",
+        "qty": 2,
+        "unit": "taza",
+        "category": "despensa"
+      },
+      {
+        "name": "Cilantro",
+        "qty": 1,
+        "unit": "cda",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Calentar el caldo de pollo en una olla.",
@@ -454,22 +1192,60 @@
       "Incorporar el pollo deshebrado y calentar bien.",
       "Servir con cilantro picado encima."
     ],
-    "equivalents": { "verdurasCocidas": 1 },
+    "prepTimeMinutes": 30,
+    "equivalents": {
+      "verdurasCocidas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "tostadas-horneadas-pollo-frijoles",
     "name": "Tostadas horneadas de pollo con frijoles",
-    "mealSlots": ["cena", "comida"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "comida"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Tostada horneada", "qty": 2, "unit": "pieza", "category": "cereales" },
-      { "name": "Frijoles refritos (sin manteca)", "qty": 0.5, "unit": "taza", "category": "leguminosas" },
-      { "name": "Pechuga de pollo deshebrada", "qty": 100, "unit": "g", "category": "proteinas" },
-      { "name": "Lechuga", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Crema light", "qty": 1, "unit": "cda", "category": "grasas" }
+      {
+        "name": "Tostada horneada",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Frijoles refritos (sin manteca)",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "leguminosas"
+      },
+      {
+        "name": "Pechuga de pollo deshebrada",
+        "qty": 100,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Lechuga",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Crema light",
+        "qty": 1,
+        "unit": "cda",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Untar los frijoles refritos sobre las tostadas horneadas.",
@@ -477,41 +1253,104 @@
       "Cubrir con lechuga y jitomate picados.",
       "Terminar con un toque de crema light."
     ],
-    "equivalents": { "cereales": 2, "leguminosas": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 20,
+    "equivalents": {
+      "cereales": 2,
+      "leguminosas": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "quesadillas-flor-calabaza",
     "name": "Quesadillas de flor de calabaza",
-    "mealSlots": ["cena", "desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Tortilla horneada", "qty": 2, "unit": "pieza", "category": "cereales" },
-      { "name": "Flor de calabaza", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Queso Oaxaca", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Epazote", "qty": 1, "unit": "rama", "category": "despensa" }
+      {
+        "name": "Tortilla horneada",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "cereales"
+      },
+      {
+        "name": "Flor de calabaza",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Queso Oaxaca",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Epazote",
+        "qty": 1,
+        "unit": "rama",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Saltear la flor de calabaza con epazote hasta que se marchite.",
       "Rellenar las tortillas con queso Oaxaca y la flor de calabaza.",
       "Calentar en un sartén o comal hasta que el queso funda."
     ],
-    "equivalents": { "cereales": 2, "quesos": 1 },
+    "prepTimeMinutes": 15,
+    "equivalents": {
+      "cereales": 2,
+      "quesos": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "crema-champinones-sin-harina",
     "name": "Crema de champiñones sin harina",
-    "mealSlots": ["cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Champiñones", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Leche light", "qty": 1, "unit": "taza", "category": "lacteos" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Ajo", "qty": 1, "unit": "diente", "category": "despensa" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Champiñones",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Leche light",
+        "qty": 1,
+        "unit": "taza",
+        "category": "lacteos"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Ajo",
+        "qty": 1,
+        "unit": "diente",
+        "category": "despensa"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Sofreír la cebolla, el ajo y los champiñones en aceite de oliva hasta que estén suaves.",
@@ -519,91 +1358,256 @@
       "Regresar a la olla y calentar sin dejar hervir fuerte.",
       "Sazonar con sal y pimienta, servir caliente."
     ],
-    "equivalents": { "verdurasCocidas": 1, "lacteos": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 20,
+    "equivalents": {
+      "verdurasCocidas": 1,
+      "lacteos": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "pavo-ensalada-nopales",
     "name": "Pechuga de pavo con ensalada de nopales",
-    "mealSlots": ["cena"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pavo (fiambre)", "qty": 30, "unit": "g", "category": "embutidos" },
-      { "name": "Nopales cocidos", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Cilantro", "qty": 1, "unit": "cda", "category": "despensa" },
-      { "name": "Queso panela", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" }
+      {
+        "name": "Pechuga de pavo (fiambre)",
+        "qty": 30,
+        "unit": "g",
+        "category": "embutidos"
+      },
+      {
+        "name": "Nopales cocidos",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cilantro",
+        "qty": 1,
+        "unit": "cda",
+        "category": "despensa"
+      },
+      {
+        "name": "Queso panela",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Mezclar los nopales cocidos con jitomate, cebolla y cilantro picados.",
       "Aderezar la ensalada con jugo de limón y sal.",
       "Servir junto con las rebanadas de pechuga de pavo y el queso panela en cubos."
     ],
-    "equivalents": { "embutidosMagros": 1, "quesos": 1 },
+    "prepTimeMinutes": 15,
+    "equivalents": {
+      "embutidosMagros": 1,
+      "quesos": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "tortilla-huevo-espinacas-cottage",
     "name": "Tortilla de huevo con espinacas y queso cottage",
-    "mealSlots": ["cena", "desayuno"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "desayuno"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Huevo", "qty": 2, "unit": "pieza", "category": "proteinas" },
-      { "name": "Espinacas", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Queso cottage", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Huevo",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "proteinas"
+      },
+      {
+        "name": "Espinacas",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Queso cottage",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Saltear las espinacas en el aceite de oliva hasta que se marchiten.",
       "Verter los huevos batidos y cocinar a fuego bajo como tortilla.",
       "Agregar el queso cottage, doblar y servir."
     ],
-    "equivalents": { "quesos": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 12,
+    "equivalents": {
+      "quesos": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "ensalada-camaron-jicama",
     "name": "Ensalada de camarón con jícama",
-    "mealSlots": ["cena", "comida"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "comida"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "weeklyLimited": true,
     "ingredients": [
-      { "name": "Camarón cocido", "qty": 100, "unit": "g", "category": "proteinas" },
-      { "name": "Jícama", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Pepino", "qty": 0.5, "unit": "pieza", "category": "verduras" },
-      { "name": "Cilantro", "qty": 1, "unit": "cda", "category": "despensa" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Chile piquín", "qty": 1, "unit": "pizca", "category": "despensa" },
-      { "name": "Aceite de oliva", "qty": 1, "unit": "cdita", "category": "grasas" }
+      {
+        "name": "Camarón cocido",
+        "qty": 100,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jícama",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Pepino",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cilantro",
+        "qty": 1,
+        "unit": "cda",
+        "category": "despensa"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Chile piquín",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      },
+      {
+        "name": "Aceite de oliva",
+        "qty": 1,
+        "unit": "cdita",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Cortar la jícama y el pepino en cubos pequeños.",
       "Mezclar con el camarón cocido y el cilantro picado.",
       "Aderezar con jugo de limón, chile piquín y aceite de oliva."
     ],
-    "equivalents": { "aceitesGrasas": 1 },
+    "prepTimeMinutes": 15,
+    "equivalents": {
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "caldo-tlalpeno",
     "name": "Caldo tlalpeño",
-    "mealSlots": ["cena", "comida"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "comida"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Pechuga de pollo deshebrada", "qty": 100, "unit": "g", "category": "proteinas" },
-      { "name": "Garbanzo cocido", "qty": 0.5, "unit": "taza", "category": "leguminosas" },
-      { "name": "Chayote", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Zanahoria", "qty": 0.5, "unit": "taza", "category": "verduras" },
-      { "name": "Chile chipotle", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Epazote", "qty": 1, "unit": "rama", "category": "despensa" },
-      { "name": "Aguacate", "qty": 0.333, "unit": "pieza", "category": "grasas" },
-      { "name": "Caldo de pollo casero", "qty": 2, "unit": "taza", "category": "despensa" }
+      {
+        "name": "Pechuga de pollo deshebrada",
+        "qty": 100,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Garbanzo cocido",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "leguminosas"
+      },
+      {
+        "name": "Chayote",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Zanahoria",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Chile chipotle",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Epazote",
+        "qty": 1,
+        "unit": "rama",
+        "category": "despensa"
+      },
+      {
+        "name": "Aguacate",
+        "qty": 0.333,
+        "unit": "pieza",
+        "category": "grasas"
+      },
+      {
+        "name": "Caldo de pollo casero",
+        "qty": 2,
+        "unit": "taza",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Calentar el caldo de pollo con el chile chipotle y epazote.",
@@ -611,24 +1615,74 @@
       "Incorporar el garbanzo y el pollo deshebrado, calentar bien.",
       "Servir con cubos de aguacate encima."
     ],
-    "equivalents": { "leguminosas": 1, "verdurasCocidas": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 30,
+    "equivalents": {
+      "leguminosas": 1,
+      "verdurasCocidas": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "ceviche-pescado-pepino-jitomate",
     "name": "Ceviche de pescado con pepino y jitomate",
-    "mealSlots": ["cena", "comida"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "cena",
+      "comida"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Filete de pescado blanco fresco", "qty": 120, "unit": "g", "category": "proteinas" },
-      { "name": "Limón (jugo)", "qty": 4, "unit": "pieza", "category": "despensa" },
-      { "name": "Pepino", "qty": 0.5, "unit": "pieza", "category": "verduras" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Cebolla", "qty": 0.25, "unit": "pieza", "category": "verduras" },
-      { "name": "Cilantro y chile serrano", "qty": 2, "unit": "cda", "category": "despensa" },
-      { "name": "Aguacate", "qty": 0.333, "unit": "pieza", "category": "grasas" },
-      { "name": "Tostada horneada", "qty": 1, "unit": "pieza", "category": "cereales" }
+      {
+        "name": "Filete de pescado blanco fresco",
+        "qty": 120,
+        "unit": "g",
+        "category": "proteinas"
+      },
+      {
+        "name": "Limón (jugo)",
+        "qty": 4,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Pepino",
+        "qty": 0.5,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cebolla",
+        "qty": 0.25,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Cilantro y chile serrano",
+        "qty": 2,
+        "unit": "cda",
+        "category": "despensa"
+      },
+      {
+        "name": "Aguacate",
+        "qty": 0.333,
+        "unit": "pieza",
+        "category": "grasas"
+      },
+      {
+        "name": "Tostada horneada",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "cereales"
+      }
     ],
     "steps": [
       "Cortar el pescado en cubos y marinar en jugo de limón por 15-20 minutos hasta que se torne opaco.",
@@ -636,134 +1690,304 @@
       "Mezclar bien y sazonar con sal.",
       "Servir con cubos de aguacate y acompañar con tostada horneada."
     ],
-    "equivalents": { "aceitesGrasas": 1, "cereales": 1 },
+    "prepTimeMinutes": 20,
+    "equivalents": {
+      "aceitesGrasas": 1,
+      "cereales": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "jicama-zanahoria-chile-limon",
     "name": "Jícama y zanahoria con chile y limón",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Jícama", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Zanahoria chica", "qty": 2, "unit": "pieza", "category": "verduras" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Chile piquín", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Jícama",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Zanahoria chica",
+        "qty": 2,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Chile piquín",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cortar la jícama y la zanahoria en bastones.",
       "Rociar con jugo de limón y chile piquín al gusto."
     ],
-    "equivalents": { "verdurasModeradas": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "verdurasModeradas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "almendras-pepino",
     "name": "Almendras con pepino enchilado",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Almendras", "qty": 10, "unit": "pieza", "category": "oleaginosas" },
-      { "name": "Pepino", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Chile piquín", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Almendras",
+        "qty": 10,
+        "unit": "pieza",
+        "category": "oleaginosas"
+      },
+      {
+        "name": "Pepino",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Chile piquín",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cortar el pepino en rodajas y rociar con limón y chile piquín.",
       "Acompañar con las almendras."
     ],
-    "equivalents": { "oleaginosas": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "oleaginosas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "manzana-crema-cacahuate",
     "name": "Manzana con crema de cacahuate",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Manzana", "qty": 1, "unit": "pieza", "category": "frutas" },
-      { "name": "Crema de cacahuate natural", "qty": 1, "unit": "cda", "category": "grasas" }
+      {
+        "name": "Manzana",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "frutas"
+      },
+      {
+        "name": "Crema de cacahuate natural",
+        "qty": 1,
+        "unit": "cda",
+        "category": "grasas"
+      }
     ],
     "steps": [
       "Cortar la manzana en rebanadas.",
       "Acompañar con la crema de cacahuate para untar."
     ],
-    "equivalents": { "frutas": 1, "aceitesGrasas": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "frutas": 1,
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "queso-panela-jitomate-oregano",
     "name": "Queso panela con jitomate y orégano",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Queso panela", "qty": 30, "unit": "g", "category": "lacteos" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Orégano", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Queso panela",
+        "qty": 30,
+        "unit": "g",
+        "category": "lacteos"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Orégano",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cortar el queso panela y el jitomate en rebanadas.",
       "Alternar las rebanadas y espolvorear orégano y sal."
     ],
-    "equivalents": { "quesos": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "quesos": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "yogur-griego-nueces",
     "name": "Yogur griego con nueces",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Yogur griego sin azúcar", "qty": 0.5, "unit": "taza", "category": "lacteos" },
-      { "name": "Nueces", "qty": 7, "unit": "mitad", "category": "oleaginosas" }
+      {
+        "name": "Yogur griego sin azúcar",
+        "qty": 0.5,
+        "unit": "taza",
+        "category": "lacteos"
+      },
+      {
+        "name": "Nueces",
+        "qty": 7,
+        "unit": "mitad",
+        "category": "oleaginosas"
+      }
     ],
     "steps": [
       "Servir el yogur griego en un tazón.",
       "Agregar las nueces encima."
     ],
-    "equivalents": { "lacteos": 1, "oleaginosas": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "lacteos": 1,
+      "oleaginosas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "apio-guacamole",
     "name": "Apio con guacamole",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Apio", "qty": 2, "unit": "rama", "category": "verduras" },
-      { "name": "Aguacate", "qty": 0.333, "unit": "pieza", "category": "grasas" },
-      { "name": "Limón", "qty": 1, "unit": "pieza", "category": "despensa" },
-      { "name": "Sal y chile", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Apio",
+        "qty": 2,
+        "unit": "rama",
+        "category": "verduras"
+      },
+      {
+        "name": "Aguacate",
+        "qty": 0.333,
+        "unit": "pieza",
+        "category": "grasas"
+      },
+      {
+        "name": "Limón",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "despensa"
+      },
+      {
+        "name": "Sal y chile",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Machacar el aguacate con limón, sal y chile al gusto.",
       "Cortar el apio en bastones y servir con el guacamole para acompañar."
     ],
-    "equivalents": { "aceitesGrasas": 1 },
+    "prepTimeMinutes": 8,
+    "equivalents": {
+      "aceitesGrasas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },
   {
     "id": "huevo-cocido-jitomate",
     "name": "Huevo cocido con jitomate y limón",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Huevo", "qty": 1, "unit": "pieza", "category": "proteinas" },
-      { "name": "Jitomate", "qty": 1, "unit": "pieza", "category": "verduras" },
-      { "name": "Limón y chile", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Huevo",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "proteinas"
+      },
+      {
+        "name": "Jitomate",
+        "qty": 1,
+        "unit": "pieza",
+        "category": "verduras"
+      },
+      {
+        "name": "Limón y chile",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cocer el huevo durante 9-10 minutos, enfriar y pelar.",
       "Cortar en rebanadas junto con el jitomate.",
       "Rociar con limón y chile al gusto."
     ],
+    "prepTimeMinutes": 12,
     "equivalents": {},
     "dietType": "lowcarb",
     "source": "seed"
@@ -771,18 +1995,41 @@
   {
     "id": "cacahuates-pepino-limon",
     "name": "Cacahuates naturales con pepino y limón",
-    "mealSlots": ["colacion_am", "colacion_pm"],
-    "cuisineTags": ["mexicano"],
+    "mealSlots": [
+      "colacion_am",
+      "colacion_pm"
+    ],
+    "cuisineTags": [
+      "mexicano"
+    ],
     "ingredients": [
-      { "name": "Cacahuates naturales", "qty": 10, "unit": "pieza", "category": "oleaginosas" },
-      { "name": "Pepino", "qty": 1, "unit": "taza", "category": "verduras" },
-      { "name": "Limón y chile", "qty": 1, "unit": "pizca", "category": "despensa" }
+      {
+        "name": "Cacahuates naturales",
+        "qty": 10,
+        "unit": "pieza",
+        "category": "oleaginosas"
+      },
+      {
+        "name": "Pepino",
+        "qty": 1,
+        "unit": "taza",
+        "category": "verduras"
+      },
+      {
+        "name": "Limón y chile",
+        "qty": 1,
+        "unit": "pizca",
+        "category": "despensa"
+      }
     ],
     "steps": [
       "Cortar el pepino en rodajas y rociar con limón y chile.",
       "Acompañar con los cacahuates naturales."
     ],
-    "equivalents": { "oleaginosas": 1 },
+    "prepTimeMinutes": 5,
+    "equivalents": {
+      "oleaginosas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   }
