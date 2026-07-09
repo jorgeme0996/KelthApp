@@ -19,6 +19,8 @@ export interface User {
 }
 
 export type Gender = "hombre" | "mujer" | "prefiero_no_decir";
+export type Goal = "bajar_peso" | "mantener_peso" | "subir_masa";
+export type DietId = "lowcarb" | "maintenance" | "muscle-gain";
 export type SplitType = "fullbody" | "split";
 export type EquipmentPreference = "gym" | "home";
 export type DietaryRestriction =
@@ -34,6 +36,25 @@ export const GENDER_OPTIONS: { value: Gender; label: string }[] = [
   { value: "mujer", label: "Mujer" },
   { value: "prefiero_no_decir", label: "Prefiero no decir" },
 ];
+
+export const GOAL_OPTIONS: { value: Goal; label: string; description: string }[] = [
+  { value: "bajar_peso", label: "Bajar de peso", description: "Quiero reducir mi peso con un plan controlado." },
+  { value: "mantener_peso", label: "Mantenerme. Comer mejor.", description: "Quiero mantener mi peso y mejorar mis hábitos." },
+  { value: "subir_masa", label: "Subir masa muscular", description: "Quiero ganar músculo con una alimentación adecuada." },
+];
+
+const DIET_ID_BY_GOAL: Record<Goal, DietId> = {
+  bajar_peso: "lowcarb",
+  mantener_peso: "maintenance",
+  subir_masa: "muscle-gain",
+};
+
+// El objetivo del usuario determina el "base" del menú (presupuestos de
+// porciones); debe reflejar el mapeo de server/src/lib/dietGoal.ts.
+export function dietIdForGoal(goal: string | null | undefined): DietId {
+  if (goal && goal in DIET_ID_BY_GOAL) return DIET_ID_BY_GOAL[goal as Goal];
+  return DIET_ID_BY_GOAL.bajar_peso;
+}
 
 export const SPLIT_TYPE_OPTIONS: { value: SplitType; label: string; helper: string }[] = [
   { value: "fullbody", label: "Fullbody", helper: "Todo el cuerpo cada sesión" },
@@ -175,10 +196,22 @@ export interface Routine {
   entries: RoutineEntry[];
 }
 
+export interface WorkoutCompletion {
+  id: string;
+  userId: string;
+  routineId: string;
+  dayIndex: number;
+  bodyParts: string[];
+  exerciseNames: string[];
+  completedAt: string;
+}
+
 export const BODY_PART_ORDER = [
   "chest",
   "back",
   "shoulders",
+  "biceps",
+  "triceps",
   "upper arms",
   "lower arms",
   "upper legs",
@@ -190,12 +223,14 @@ export const BODY_PART_ORDER = [
 
 export const BODY_PART_LABELS: Record<string, string> = {
   back: "Espalda",
+  biceps: "Bíceps",
   cardio: "Cardio",
   chest: "Pecho",
   "lower arms": "Antebrazos",
   "lower legs": "Piernas (pantorrilla)",
   neck: "Cuello",
   shoulders: "Hombros",
+  triceps: "Tríceps",
   "upper arms": "Brazos",
   "upper legs": "Piernas",
   waist: "Abdomen",

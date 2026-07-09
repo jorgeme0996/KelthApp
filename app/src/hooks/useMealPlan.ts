@@ -28,6 +28,18 @@ export function useGenerateMealPlan() {
   });
 }
 
+export function useRegenerateMealPlanDay() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ mealPlanId, dayIndex }: { mealPlanId: string; dayIndex: number }) =>
+      mealplansApi.regenerateMealPlanDay(mealPlanId, dayIndex),
+    onSuccess: (data) => {
+      queryClient.setQueryData(["mealplan", "current"], data);
+      queryClient.invalidateQueries({ queryKey: ["shoppingList"] });
+    },
+  });
+}
+
 export function useSwapMealEntry() {
   const queryClient = useQueryClient();
   return useMutation({

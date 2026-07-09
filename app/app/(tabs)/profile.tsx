@@ -6,6 +6,7 @@ import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
 import { MealsPerDaySelector } from "@/components/MealsPerDaySelector";
 import { GenderSelector } from "@/components/GenderSelector";
+import { GoalSelector } from "@/components/GoalSelector";
 import { SplitTypeSelector } from "@/components/SplitTypeSelector";
 import { EquipmentSelector } from "@/components/EquipmentSelector";
 import { DietaryRestrictionsSelector } from "@/components/DietaryRestrictionsSelector";
@@ -14,7 +15,7 @@ import { useAuth } from "@/context/AuthContext";
 import * as dietsApi from "@/api/diets";
 import { ApiError } from "@/api/client";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
-import { DietaryRestriction, Gender, SplitType, EquipmentPreference } from "@/types";
+import { DietaryRestriction, Gender, Goal, SplitType, EquipmentPreference, dietIdForGoal } from "@/types";
 
 function flattenItems(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -44,6 +45,11 @@ export default function ProfileScreen() {
   const [genderError, setGenderError] = useState<string | null>(null);
   const [genderSaved, setGenderSaved] = useState(false);
 
+  const [goal, setGoal] = useState<Goal | null>((user?.goal as Goal) ?? null);
+  const [savingGoal, setSavingGoal] = useState(false);
+  const [goalError, setGoalError] = useState<string | null>(null);
+  const [goalSaved, setGoalSaved] = useState(false);
+
   const [splitType, setSplitType] = useState<SplitType>((user?.splitType as SplitType) ?? "fullbody");
   const [savingSplitType, setSavingSplitType] = useState(false);
   const [splitTypeError, setSplitTypeError] = useState<string | null>(null);
@@ -68,10 +74,10 @@ export default function ProfileScreen() {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [phoneSaved, setPhoneSaved] = useState(false);
 
+  const dietId = dietIdForGoal(goal);
   const { data: diet, isLoading: loadingDiet } = useQuery({
-    queryKey: ["diet", user?.dietType],
-    queryFn: () => dietsApi.getDiet(user?.dietType ?? "lowcarb"),
-    enabled: !!user?.dietType,
+    queryKey: ["diet", dietId],
+    queryFn: () => dietsApi.getDiet(dietId),
   });
 
   const prohibitedItems = useMemo(() => (diet ? flattenItems(diet.prohibited) : []), [diet]);
@@ -128,6 +134,23 @@ export default function ProfileScreen() {
       setGenderError(err instanceof ApiError ? err.message : "No se pudo actualizar tu preferencia.");
     } finally {
       setSavingGender(false);
+    }
+  };
+
+  const handleSaveGoal = async (value: Goal) => {
+    setGoal(value);
+    setSavingGoal(true);
+    setGoalError(null);
+    setGoalSaved(false);
+    try {
+      await updateUser({ goal: value });
+      queryClient.invalidateQueries({ queryKey: ["mealplan"] });
+      queryClient.invalidateQueries({ queryKey: ["shoppingList"] });
+      setGoalSaved(true);
+    } catch (err) {
+      setGoalError(err instanceof ApiError ? err.message : "No se pudo actualizar tu preferencia.");
+    } finally {
+      setSavingGoal(false);
     }
   };
 
@@ -202,6 +225,12 @@ export default function ProfileScreen() {
         <Text style={styles.name}>{user?.name}</Text>
         <Text style={styles.email}>{user?.email}</Text>
       </View>
+
+      <Text style={styles.sectionTitle}>¿Cuál es tu objetivo?</Text>
+      <GoalSelector value={goal} onChange={handleSaveGoal} />
+      {savingGoal ? <Text style={styles.helperText}>Guardando…</Text> : null}
+      {goalSaved && !savingGoal ? <Text style={styles.successText}>Preferencia actualizada.</Text> : null}
+      {goalError ? <Text style={styles.errorText}>{goalError}</Text> : null}
 
       <Text style={styles.sectionTitle}>¿Cuántas veces al día comes?</Text>
       <MealsPerDaySelector value={mealsPerDay} onChange={handleSaveMealsPerDay} />
@@ -338,6 +367,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     fontSize: fontSizes.md,
     color: colors.text,
+    marginTop: spacing.xl,
     marginBottom: spacing.sm,
   },
   helperText: {

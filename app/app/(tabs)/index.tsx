@@ -1,15 +1,31 @@
 import { useMemo, useState } from "react";
 import { router } from "expo-router";
-import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { RecipeCard } from "@/components/RecipeCard";
 import { ExerciseCard } from "@/components/ExerciseCard";
 import { useAuth } from "@/context/AuthContext";
-import { useCurrentMealPlan, useGenerateMealPlan, useSwapMealEntry, useToggleMealEntryComplete } from "@/hooks/useMealPlan";
-import { useCurrentRoutine, useGenerateRoutine, useSwapRoutineEntry } from "@/hooks/useRoutine";
+import {
+  useCurrentMealPlan,
+  useGenerateMealPlan,
+  useRegenerateMealPlanDay,
+  useSwapMealEntry,
+  useToggleMealEntryComplete,
+} from "@/hooks/useMealPlan";
+import {
+  useCompleteWorkoutDay,
+  useCurrentRoutine,
+  useGenerateRoutine,
+  useRegenerateRoutineDay,
+  useSwapRoutineEntry,
+  useUncompleteWorkoutDay,
+  useWorkoutCompletions,
+} from "@/hooks/useRoutine";
+import { ApiError } from "@/api/client";
 import { BODY_PART_ORDER, DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
+import { computeWorkoutStreak, dateKey, getWorkoutDoneTodayMessage } from "@/utils/workoutCongrats";
 
 function getTodayDayIndex() {
   const jsDay = new Date().getDay(); // 0 = domingo
@@ -23,12 +39,18 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const { data: mealPlan, isLoading } = useCurrentMealPlan();
   const generateMutation = useGenerateMealPlan();
+  const regenerateDayMutation = useRegenerateMealPlanDay();
   const swapMutation = useSwapMealEntry();
   const completeMutation = useToggleMealEntryComplete();
 
   const { data: routine } = useCurrentRoutine();
   const generateRoutineMutation = useGenerateRoutine();
+  const regenerateRoutineDayMutation = useRegenerateRoutineDay();
   const swapRoutineMutation = useSwapRoutineEntry();
+  const completeWorkoutMutation = useCompleteWorkoutDay();
+  const uncompleteWorkoutMutation = useUncompleteWorkoutDay();
+  const { data: completions } = useWorkoutCompletions();
+  const [justCompletedNames, setJustCompletedNames] = useState<string[] | null>(null);
 
   const todayIndex = getTodayDayIndex();
 
@@ -45,6 +67,46 @@ export default function HomeScreen() {
       .filter((entry) => entry.dayIndex === todayIndex)
       .sort((a, b) => BODY_PART_ORDER.indexOf(a.bodyPart) - BODY_PART_ORDER.indexOf(b.bodyPart));
   }, [routine, todayIndex]);
+
+  const todayKey = dateKey(new Date());
+
+  const completedDateKeys = useMemo(() => {
+    const keys = new Set((completions ?? []).map((c) => dateKey(new Date(c.completedAt))));
+    if (justCompletedNames) keys.add(todayKey);
+    return keys;
+  }, [completions, justCompletedNames, todayKey]);
+
+  const isWorkoutDoneToday = completedDateKeys.has(todayKey);
+  const workoutStreak = useMemo(() => computeWorkoutStreak(completedDateKeys, new Date()), [completedDateKeys]);
+
+  const todaysExerciseNames = useMemo(() => {
+    if (justCompletedNames) return justCompletedNames;
+    const todaysCompletion = completions?.find((c) => dateKey(new Date(c.completedAt)) === todayKey);
+    if (todaysCompletion) return todaysCompletion.exerciseNames;
+    return todayWorkoutEntries.map((entry) => entry.exercise.name);
+  }, [justCompletedNames, completions, todayKey, todayWorkoutEntries]);
+
+  const handleCompleteWorkout = () => {
+    if (!routine || todayWorkoutEntries.length === 0) return;
+    const exerciseNames = todayWorkoutEntries.map((entry) => entry.exercise.name);
+    completeWorkoutMutation.mutate(
+      { routineId: routine.id, dayIndex: todayIndex },
+      {
+        onSuccess: () => setJustCompletedNames(exerciseNames),
+        onError: () => Alert.alert("Error", "No se pudo registrar tu entrenamiento. Intenta de nuevo."),
+      }
+    );
+  };
+
+  const handleUncompleteWorkout = () => {
+    uncompleteWorkoutMutation.mutate(
+      { dayIndex: todayIndex },
+      {
+        onSuccess: () => setJustCompletedNames(null),
+        onError: () => Alert.alert("Error", "No se pudo actualizar tu entrenamiento. Intenta de nuevo."),
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -104,8 +166,17 @@ export default function HomeScreen() {
               <Button
                 label="Regenerar"
                 variant="ghost"
-                onPress={() => generateMutation.mutate()}
-                loading={generateMutation.isPending}
+                onPress={() =>
+                  mealPlan &&
+                  regenerateDayMutation.mutate(
+                    { mealPlanId: mealPlan.id, dayIndex: todayIndex },
+                    {
+                      onError: (err) =>
+                        Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el menú."),
+                    }
+                  )
+                }
+                loading={regenerateDayMutation.isPending}
                 style={styles.regenerateButton}
               />
             </View>
@@ -126,7 +197,7 @@ export default function HomeScreen() {
             )}
 
             <View style={styles.linksRow}>
-              <Button label="Ver menú completo" variant="secondary" onPress={() => router.push("/(tabs)/menu")} />
+              <Button label="Ver menú semanal" variant="secondary" onPress={() => router.push("/(tabs)/menu")} />
             </View>
           </>
         )
@@ -134,12 +205,20 @@ export default function HomeScreen() {
         <>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Tu rutina de hoy</Text>
-            {routine ? (
+            {routine && todayWorkoutEntries.length > 0 && !isWorkoutDoneToday ? (
               <Button
                 label="Regenerar"
                 variant="ghost"
-                onPress={() => generateRoutineMutation.mutate()}
-                loading={generateRoutineMutation.isPending}
+                onPress={() =>
+                  regenerateRoutineDayMutation.mutate(
+                    { routineId: routine.id, dayIndex: todayIndex },
+                    {
+                      onError: (err) =>
+                        Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el entrenamiento."),
+                    }
+                  )
+                }
+                loading={regenerateRoutineDayMutation.isPending}
                 style={styles.regenerateButton}
               />
             ) : null}
@@ -161,6 +240,26 @@ export default function HomeScreen() {
             </View>
           ) : todayWorkoutEntries.length === 0 ? (
             <Text style={styles.emptyText}>Hoy es día de descanso.</Text>
+          ) : isWorkoutDoneToday ? (
+            <View style={styles.congratsCard}>
+              <Text style={styles.congratsTitle}>¡Entrenamiento de hoy completado! 🎉</Text>
+              <Text style={styles.congratsText}>
+                {getWorkoutDoneTodayMessage(user?.name ?? "", todaysExerciseNames, workoutStreak)}
+              </Text>
+              <Button
+                label="Ver rutina semanal"
+                variant="secondary"
+                onPress={() => router.push("/(tabs)/exercise")}
+                style={{ marginTop: spacing.md }}
+              />
+              <Button
+                label="Retomar entrenamiento"
+                variant="ghost"
+                onPress={handleUncompleteWorkout}
+                loading={uncompleteWorkoutMutation.isPending}
+                style={{ marginTop: spacing.sm }}
+              />
+            </View>
           ) : (
             <>
               {todayWorkoutEntries.map((entry) => (
@@ -171,9 +270,16 @@ export default function HomeScreen() {
                   swapping={swapRoutineMutation.isPending && swapRoutineMutation.variables === entry.id}
                 />
               ))}
+              <Button
+                label="Completar entrenamiento"
+                onPress={handleCompleteWorkout}
+                loading={completeWorkoutMutation.isPending}
+                style={styles.completeButton}
+              />
+
               <View style={styles.linksRow}>
                 <Button
-                  label="Ver rutina completa"
+                  label="Ver rutina semanal"
                   variant="secondary"
                   onPress={() => router.push("/(tabs)/exercise")}
                 />
@@ -282,6 +388,27 @@ const styles = StyleSheet.create({
   linksRow: {
     marginTop: spacing.sm,
     marginBottom: spacing.lg,
+  },
+  completeButton: {
+    marginTop: spacing.sm,
+  },
+  congratsCard: {
+    backgroundColor: colors.primarySoft,
+    borderRadius: radii.lg,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
+  },
+  congratsTitle: {
+    fontFamily: fonts.bold,
+    fontSize: fontSizes.lg,
+    color: colors.primaryDark,
+    marginBottom: spacing.xs,
+  },
+  congratsText: {
+    fontFamily: fonts.regular,
+    fontSize: fontSizes.sm,
+    color: colors.primaryDark,
+    lineHeight: 20,
   },
   assistantCard: {
     backgroundColor: colors.primarySoft,

@@ -1,17 +1,36 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { ExerciseCard } from "@/components/ExerciseCard";
-import { useCurrentRoutine, useGenerateRoutine, useSwapRoutineEntry } from "@/hooks/useRoutine";
-import { BODY_PART_ORDER, DAY_LABELS } from "@/types";
+import { useAuth } from "@/context/AuthContext";
+import {
+  useCompleteWorkoutDay,
+  useCurrentRoutine,
+  useGenerateRoutine,
+  useRegenerateRoutineDay,
+  useSwapRoutineEntry,
+  useWorkoutCompletions,
+} from "@/hooks/useRoutine";
+import { ApiError } from "@/api/client";
+import { BODY_PART_LABELS, BODY_PART_ORDER, DAY_LABELS } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
+import { getWorkoutCongratsMessage } from "@/utils/workoutCongrats";
+
+function getTodayIndex() {
+  return (new Date().getDay() + 6) % 7;
+}
 
 export default function ExerciseScreen() {
+  const { user } = useAuth();
   const { data: routine, isLoading } = useCurrentRoutine();
   const generateMutation = useGenerateRoutine();
+  const regenerateDayMutation = useRegenerateRoutineDay();
   const swapMutation = useSwapRoutineEntry();
-  const [selectedDay, setSelectedDay] = useState(0);
+  const completeMutation = useCompleteWorkoutDay();
+  const { data: completions } = useWorkoutCompletions();
+  const todayIndex = getTodayIndex();
+  const [selectedDay, setSelectedDay] = useState(todayIndex);
 
   const dayEntries = useMemo(() => {
     if (!routine) return [];
@@ -19,6 +38,30 @@ export default function ExerciseScreen() {
       .filter((entry) => entry.dayIndex === selectedDay)
       .sort((a, b) => BODY_PART_ORDER.indexOf(a.bodyPart) - BODY_PART_ORDER.indexOf(b.bodyPart));
   }, [routine, selectedDay]);
+
+  const isSelectedDayCompleted = useMemo(() => {
+    if (!routine || !completions) return false;
+    return completions.some((c) => c.routineId === routine.id && c.dayIndex === selectedDay);
+  }, [routine, completions, selectedDay]);
+
+  const handleCompleteDay = () => {
+    if (!routine || dayEntries.length === 0) return;
+    const bodyParts = [...new Set(dayEntries.map((entry) => BODY_PART_LABELS[entry.bodyPart] ?? entry.bodyPart))].join(
+      ", "
+    );
+    completeMutation.mutate(
+      { routineId: routine.id, dayIndex: selectedDay },
+      {
+        onSuccess: () => {
+          Alert.alert(
+            "¡Entrenamiento completado!",
+            getWorkoutCongratsMessage(user?.name ?? "", DAY_LABELS[selectedDay], bodyParts)
+          );
+        },
+        onError: () => Alert.alert("Error", "No se pudo registrar tu entrenamiento. Intenta de nuevo."),
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -51,25 +94,43 @@ export default function ExerciseScreen() {
     <ScreenContainer>
       <View style={styles.header}>
         <Text style={styles.title}>Rutina semanal</Text>
-        <Button
-          label="Regenerar"
-          variant="ghost"
-          onPress={() => generateMutation.mutate()}
-          loading={generateMutation.isPending}
-          style={styles.regenerateButton}
-        />
+        {dayEntries.length > 0 ? (
+          isSelectedDayCompleted ? (
+            <Text style={styles.completedLabel}>Completado</Text>
+          ) : (
+            <Button
+              label="Regenerar"
+              variant="ghost"
+              onPress={() =>
+                regenerateDayMutation.mutate(
+                  { routineId: routine.id, dayIndex: selectedDay },
+                  {
+                    onError: (err) =>
+                      Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el entrenamiento."),
+                  }
+                )
+              }
+              loading={regenerateDayMutation.isPending}
+              style={styles.regenerateButton}
+            />
+          )
+        ) : null}
       </View>
 
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dayTabs} contentContainerStyle={styles.dayTabsContent}>
         {DAY_LABELS.map((label, index) => {
           const selected = index === selectedDay;
+          const isToday = index === todayIndex;
           return (
             <Pressable
               key={label}
               style={[styles.dayTab, selected && styles.dayTabSelected]}
               onPress={() => setSelectedDay(index)}
             >
-              <Text style={[styles.dayTabText, selected && styles.dayTabTextSelected]}>{label.slice(0, 3)}</Text>
+              <Text style={[styles.dayTabText, selected && styles.dayTabTextSelected]}>
+                {label.slice(0, 3)}
+                {isToday ? " •" : ""}
+              </Text>
             </Pressable>
           );
         })}
@@ -82,9 +143,19 @@ export default function ExerciseScreen() {
             entry={entry}
             onSwap={(id) => swapMutation.mutate(id)}
             swapping={swapMutation.isPending && swapMutation.variables === entry.id}
+            showHelp={selectedDay === todayIndex}
           />
         ))}
         {dayEntries.length === 0 ? <Text style={styles.emptyText}>Día de descanso.</Text> : null}
+
+        {dayEntries.length > 0 && selectedDay === todayIndex && !isSelectedDayCompleted ? (
+          <Button
+            label="Completar entrenamiento"
+            onPress={handleCompleteDay}
+            loading={completeMutation.isPending}
+            style={styles.completeButton}
+          />
+        ) : null}
       </ScrollView>
     </ScreenContainer>
   );
@@ -110,6 +181,11 @@ const styles = StyleSheet.create({
   regenerateButton: {
     height: "auto",
     paddingHorizontal: spacing.sm,
+  },
+  completedLabel: {
+    fontFamily: fonts.bold,
+    fontSize: fontSizes.sm,
+    color: colors.primaryDark,
   },
   dayTabs: {
     marginBottom: spacing.md,
@@ -141,6 +217,9 @@ const styles = StyleSheet.create({
   },
   list: {
     paddingBottom: spacing.xl,
+  },
+  completeButton: {
+    marginTop: spacing.sm,
   },
   emptyTitle: {
     fontFamily: fonts.bold,

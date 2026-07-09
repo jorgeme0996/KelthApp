@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "expo-router";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { TextField } from "@/components/TextField";
 import { Button } from "@/components/Button";
@@ -10,19 +10,13 @@ import { SplitTypeSelector } from "@/components/SplitTypeSelector";
 import { EquipmentSelector } from "@/components/EquipmentSelector";
 import { DietaryRestrictionsSelector } from "@/components/DietaryRestrictionsSelector";
 import { TrainingDaysSelector } from "@/components/TrainingDaysSelector";
+import { GoalSelector } from "@/components/GoalSelector";
+import { GoalProjection } from "@/components/GoalProjection";
 import { useAuth } from "@/context/AuthContext";
 import { ApiError } from "@/api/client";
 import { getPasswordError } from "@/utils/password";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
-import { DietaryRestriction, Gender, SplitType, EquipmentPreference } from "@/types";
-
-type Goal = "bajar_peso" | "mantener_peso" | "subir_masa";
-
-const GOALS: { value: Goal; label: string; description: string }[] = [
-  { value: "bajar_peso", label: "Bajar de peso", description: "Quiero reducir mi peso con un plan controlado." },
-  { value: "mantener_peso", label: "Mantenerme. Comer mejor.", description: "Quiero mantener mi peso y mejorar mis hábitos." },
-  { value: "subir_masa", label: "Subir masa muscular", description: "Quiero ganar músculo con una alimentación adecuada." },
-];
+import { DietaryRestriction, Gender, Goal, SplitType, EquipmentPreference } from "@/types";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -44,35 +38,38 @@ type StepId =
 
 const STEPS: StepId[] = [
   "name",
-  "email",
-  "phone",
   "gender",
   "age",
   "height",
   "weight",
   "goal",
+  "diet_restrictions",
   "meals",
+  "phone",
   "split",
   "equipment",
-  "diet_restrictions",
   "training_days",
+  "email",
   "password",
 ];
 
 const STEP_META: Record<StepId, { question: string; helper?: string }> = {
   name: { question: "¿Cómo te llamas?" },
-  email: { question: "¿Cuál es tu correo electrónico?" },
-  phone: { question: "¿Cuál es tu número de teléfono?", helper: "Opcional. Lo usaremos más adelante para nuevas funciones." },
   gender: { question: "¿Cuál es tu género?" },
   age: { question: "¿Cuál es tu edad?" },
   height: { question: "¿Cuál es tu altura?" },
   weight: { question: "¿Cuál es tu peso?" },
   goal: { question: "¿Cuál es tu objetivo?" },
+  diet_restrictions: { question: "¿Tienes alguna restricción alimentaria?", helper: "Puedes elegir varias, o ninguna." },
   meals: { question: "¿Cuántas veces al día quieres comer?", helper: "Incluye comidas principales y colaciones. Puedes cambiarlo después." },
+  phone: {
+    question: "Esto es lo que podrías lograr",
+    helper: "Compártenos tu teléfono para activar a tu asistente personal, que te ayudará a cumplir tu objetivo. Nunca lo compartiremos.",
+  },
   split: { question: "¿Cómo prefieres entrenar?" },
   equipment: { question: "¿Dónde vas a entrenar?" },
-  diet_restrictions: { question: "¿Tienes alguna restricción alimentaria?", helper: "Puedes elegir varias, o ninguna." },
   training_days: { question: "¿Qué días quieres entrenar?", helper: "Elige entre 3 y 5 días a la semana." },
+  email: { question: "¿Cuál es tu correo electrónico?", helper: "Es solo para recuperar tu cuenta e iniciar sesión. No lo compartiremos con nadie." },
   password: { question: "Crea tu contraseña", helper: "Debe incluir al menos una mayúscula y un carácter especial." },
 };
 
@@ -196,7 +193,10 @@ export default function RegisterScreen() {
         )}
 
         {stepId === "phone" && (
-          <TextField value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="10 dígitos" autoFocus />
+          <>
+            <GoalProjection goal={goal} weightKg={weightKg} mealsPerDay={mealsPerDay} />
+            <TextField value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="10 dígitos" autoFocus />
+          </>
         )}
 
         {stepId === "gender" && <GenderSelector value={gender} onChange={setGender} />}
@@ -213,29 +213,7 @@ export default function RegisterScreen() {
           <TextField value={weightKg} onChangeText={setWeightKg} keyboardType="decimal-pad" placeholder="kg" autoFocus />
         )}
 
-        {stepId === "goal" && (
-          <View style={styles.goalList}>
-            {GOALS.map((g) => {
-              const selected = goal === g.value;
-              return (
-                <TouchableOpacity
-                  key={g.value}
-                  style={[styles.goalCard, selected && styles.goalCardSelected]}
-                  onPress={() => setGoal(g.value)}
-                  activeOpacity={0.75}
-                >
-                  <View style={[styles.goalRadio, selected && styles.goalRadioSelected]}>
-                    {selected && <View style={styles.goalRadioDot} />}
-                  </View>
-                  <View style={styles.goalText}>
-                    <Text style={[styles.goalLabel, selected && styles.goalLabelSelected]}>{g.label}</Text>
-                    <Text style={styles.goalDescription}>{g.description}</Text>
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-        )}
+        {stepId === "goal" && <GoalSelector value={goal} onChange={setGoal} />}
 
         {stepId === "meals" && <MealsPerDaySelector value={mealsPerDay} onChange={setMealsPerDay} />}
 
@@ -336,60 +314,6 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xs,
     color: colors.textMuted,
     marginBottom: spacing.sm,
-  },
-  goalList: {
-    gap: spacing.sm,
-  },
-  goalCard: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: spacing.sm,
-    borderWidth: 1.5,
-    borderColor: colors.border,
-    borderRadius: radii.md,
-    padding: spacing.md,
-    backgroundColor: colors.surface,
-  },
-  goalCardSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primarySoft,
-  },
-  goalRadio: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: colors.border,
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: 2,
-    flexShrink: 0,
-  },
-  goalRadioSelected: {
-    borderColor: colors.primary,
-  },
-  goalRadioDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    backgroundColor: colors.primary,
-  },
-  goalText: {
-    flex: 1,
-  },
-  goalLabel: {
-    fontFamily: fonts.semiBold,
-    fontSize: fontSizes.sm,
-    color: colors.text,
-  },
-  goalLabelSelected: {
-    color: colors.primaryDark,
-  },
-  goalDescription: {
-    fontFamily: fonts.regular,
-    fontSize: fontSizes.xs,
-    color: colors.textMuted,
-    marginTop: 2,
   },
   errorText: {
     fontFamily: fonts.regular,

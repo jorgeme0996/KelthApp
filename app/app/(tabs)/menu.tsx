@@ -1,17 +1,24 @@
 import { useMemo, useState } from "react";
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { RecipeCard } from "@/components/RecipeCard";
-import { useCurrentMealPlan, useGenerateMealPlan, useSwapMealEntry } from "@/hooks/useMealPlan";
+import { useCurrentMealPlan, useGenerateMealPlan, useRegenerateMealPlanDay, useSwapMealEntry } from "@/hooks/useMealPlan";
+import { ApiError } from "@/api/client";
 import { DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
+
+function getTodayIndex() {
+  return (new Date().getDay() + 6) % 7;
+}
 
 export default function MenuScreen() {
   const { data: mealPlan, isLoading } = useCurrentMealPlan();
   const generateMutation = useGenerateMealPlan();
+  const regenerateDayMutation = useRegenerateMealPlanDay();
   const swapMutation = useSwapMealEntry();
-  const [selectedDay, setSelectedDay] = useState(0);
+  const todayIndex = getTodayIndex();
+  const [selectedDay, setSelectedDay] = useState(todayIndex);
 
   const dayEntries = useMemo(() => {
     if (!mealPlan) return [];
@@ -54,8 +61,16 @@ export default function MenuScreen() {
         <Button
           label="Regenerar"
           variant="ghost"
-          onPress={() => generateMutation.mutate()}
-          loading={generateMutation.isPending}
+          onPress={() =>
+            regenerateDayMutation.mutate(
+              { mealPlanId: mealPlan.id, dayIndex: selectedDay },
+              {
+                onError: (err) =>
+                  Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el menú."),
+              }
+            )
+          }
+          loading={regenerateDayMutation.isPending}
           style={styles.regenerateButton}
         />
       </View>
@@ -63,13 +78,17 @@ export default function MenuScreen() {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.dayTabs} contentContainerStyle={styles.dayTabsContent}>
         {DAY_LABELS.map((label, index) => {
           const selected = index === selectedDay;
+          const isToday = index === todayIndex;
           return (
             <Pressable
               key={label}
               style={[styles.dayTab, selected && styles.dayTabSelected]}
               onPress={() => setSelectedDay(index)}
             >
-              <Text style={[styles.dayTabText, selected && styles.dayTabTextSelected]}>{label.slice(0, 3)}</Text>
+              <Text style={[styles.dayTabText, selected && styles.dayTabTextSelected]}>
+                {label.slice(0, 3)}
+                {isToday ? " •" : ""}
+              </Text>
             </Pressable>
           );
         })}

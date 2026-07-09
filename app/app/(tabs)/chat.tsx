@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useLocalSearchParams } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as chatApi from "@/api/chat";
 import { ApiError } from "@/api/client";
@@ -20,6 +21,9 @@ import { useAuth } from "@/context/AuthContext";
 import { NUTRIOLOGOS } from "@/data/nutriologos";
 import { ChatLimitError, ChatMessage } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
+
+const INPUT_MIN_HEIGHT = 52;
+const INPUT_MAX_HEIGHT = 140;
 
 function isToday(isoDate: string) {
   const date = new Date(isoDate);
@@ -40,9 +44,12 @@ export default function ChatScreen() {
   const dailyLimit = user?.dailyChatLimit ?? null;
   const queryClient = useQueryClient();
   const listRef = useRef<FlatList<ChatMessage>>(null);
+  const inputRef = useRef<TextInput>(null);
+  const params = useLocalSearchParams<{ type?: string; name?: string; id?: string }>();
   const [draft, setDraft] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [limitReached, setLimitReached] = useState(false);
+  const [inputHeight, setInputHeight] = useState(INPUT_MIN_HEIGHT);
 
   const { data: history, isLoading } = useQuery({
     queryKey: ["chat", "history"],
@@ -103,11 +110,18 @@ export default function ChatScreen() {
     }
   }, [history?.length, sendMutation.isPending]);
 
+  useEffect(() => {
+    if (!params.name) return;
+    setDraft(`Tengo una pregunta sobre ${params.name}: `);
+    inputRef.current?.focus();
+  }, [params.type, params.name, params.id]);
+
   const handleSend = () => {
     const message = draft.trim();
     if (!message || sendMutation.isPending || limitReached) return;
     setError(null);
     setDraft("");
+    setInputHeight(INPUT_MIN_HEIGHT);
     sendMutation.mutate(message);
   };
 
@@ -169,11 +183,20 @@ export default function ChatScreen() {
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={12}>
           <View style={styles.inputRow}>
             <TextInput
+              ref={inputRef}
               value={draft}
               onChangeText={setDraft}
               placeholder="Escribe tu pregunta…"
               placeholderTextColor={colors.textMuted}
-              style={styles.input}
+              style={[styles.input, { height: inputHeight }]}
+              multiline
+              textAlignVertical="top"
+              onContentSizeChange={(e) =>
+                setInputHeight(
+                  Math.min(INPUT_MAX_HEIGHT, Math.max(INPUT_MIN_HEIGHT, e.nativeEvent.contentSize.height + 20))
+                )
+              }
+              submitBehavior="submit"
               onSubmitEditing={handleSend}
               returnKeyType="send"
             />
@@ -293,19 +316,21 @@ const styles = StyleSheet.create({
   },
   inputRow: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "flex-end",
     gap: spacing.sm,
     paddingHorizontal: spacing.lg,
     paddingBottom: spacing.md,
   },
   input: {
     flex: 1,
-    height: 52,
+    minHeight: 52,
+    maxHeight: 140,
     borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surface,
     paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
     fontFamily: fonts.regular,
     fontSize: fontSizes.md,
     color: colors.text,

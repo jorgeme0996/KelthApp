@@ -35,6 +35,8 @@ export const bodyPartColors: Record<string, string> = {
   chest: "#5FA777",
   back: "#447A57",
   shoulders: "#7A93C9",
+  biceps: "#8FBF9F",
+  triceps: "#6FA885",
   "upper arms": "#8FBF9F",
   "lower arms": "#8FBF9F",
   "upper legs": "#F2A341",

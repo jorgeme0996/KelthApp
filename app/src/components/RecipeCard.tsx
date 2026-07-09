@@ -40,6 +40,17 @@ export function RecipeCard({ entry, onSwap, swapping, onToggleComplete, completi
             </Pressable>
           ) : null}
           <Text style={[styles.recipeName, isCompleted && styles.recipeNameCompleted]}>{entry.recipe.name}</Text>
+          <Pressable
+            hitSlop={8}
+            onPress={() =>
+              router.push({
+                pathname: "/(tabs)/chat",
+                params: { type: "meal", name: entry.recipe.name, id: entry.recipe.id },
+              })
+            }
+          >
+            <Ionicons name="help-circle-outline" size={20} color={colors.textMuted} />
+          </Pressable>
         </View>
         <View style={styles.equivalentsRow}>
           {entry.recipe.prepTimeMinutes ? (

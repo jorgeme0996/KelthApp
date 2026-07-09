@@ -9,9 +9,10 @@ interface ExerciseCardProps {
   entry: RoutineEntry;
   onSwap?: (entryId: string) => void;
   swapping?: boolean;
+  showHelp?: boolean;
 }
 
-export function ExerciseCard({ entry, onSwap, swapping }: ExerciseCardProps) {
+export function ExerciseCard({ entry, onSwap, swapping, showHelp = true }: ExerciseCardProps) {
   const bodyPartColor = bodyPartColors[entry.bodyPart] ?? colors.primary;
   const detail = entry.durationSeconds
     ? `${Math.round(entry.durationSeconds / 60)} min`
@@ -31,7 +32,22 @@ export function ExerciseCard({ entry, onSwap, swapping }: ExerciseCardProps) {
       <Pressable style={styles.body} onPress={() => router.push(`/exercise/${entry.exercise.id}`)}>
         <Image source={{ uri: entry.exercise.imageUrl }} style={styles.thumbnail} contentFit="cover" />
         <View style={styles.info}>
-          <Text style={styles.exerciseName}>{entry.exercise.name}</Text>
+          <View style={styles.nameRow}>
+            <Text style={[styles.exerciseName, styles.exerciseNameFlex]}>{entry.exercise.name}</Text>
+            {showHelp ? (
+              <Pressable
+                hitSlop={8}
+                onPress={() =>
+                  router.push({
+                    pathname: "/(tabs)/chat",
+                    params: { type: "exercise", name: entry.exercise.name, id: entry.exercise.id },
+                  })
+                }
+              >
+                <Ionicons name="help-circle-outline" size={20} color={colors.textMuted} />
+              </Pressable>
+            ) : null}
+          </View>
           <Text style={styles.detailText}>{detail}</Text>
           <View style={styles.footer}>
             <Text style={styles.detailLink}>Ver ejercicio</Text>
@@ -81,12 +97,20 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
   },
+  nameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
+    marginBottom: spacing.xs,
+  },
   exerciseName: {
     fontFamily: fonts.bold,
     fontSize: fontSizes.md,
     color: colors.text,
-    marginBottom: spacing.xs,
     textTransform: "capitalize",
+  },
+  exerciseNameFlex: {
+    flex: 1,
   },
   detailText: {
     fontFamily: fonts.medium,

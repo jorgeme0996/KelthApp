@@ -5,6 +5,10 @@ export function generateMealPlan() {
   return api.post<MealPlan>("/api/mealplans/generate", {});
 }
 
+export function regenerateMealPlanDay(mealPlanId: string, dayIndex: number) {
+  return api.post<MealPlan>("/api/mealplans/regenerate-day", { mealPlanId, dayIndex });
+}
+
 export function getCurrentMealPlan() {
   return api.get<MealPlan>("/api/mealplans/current");
 }
