@@ -2,7 +2,18 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TOKEN_KEY } from "@/api/client";
 import * as authApi from "@/api/auth";
+import * as pushApi from "@/api/push";
+import { registerForPushNotificationsAsync } from "@/utils/pushNotifications";
 import { User } from "@/types";
+
+// Best-effort: obtiene el push token del dispositivo y lo registra en el
+// servidor para que pueda mandar recordatorios. No bloquea el login/registro
+// si el usuario niega el permiso o falla la llamada.
+function syncPushToken() {
+  registerForPushNotificationsAsync()
+    .then((token) => (token ? pushApi.registerPushToken(token) : undefined))
+    .catch(() => {});
+}
 
 interface AuthContextValue {
   user: User | null;
@@ -46,6 +57,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
           const me = await authApi.getMe();
           setUser(me);
+          syncPushToken();
         } catch {
           await AsyncStorage.removeItem(TOKEN_KEY);
         }
@@ -58,15 +70,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const res = await authApi.login(email, password);
     await AsyncStorage.setItem(TOKEN_KEY, res.token);
     setUser(res.user);
+    syncPushToken();
   }, []);
 
   const register = useCallback(async (payload: authApi.RegisterPayload) => {
     const res = await authApi.register(payload);
     await AsyncStorage.setItem(TOKEN_KEY, res.token);
     setUser(res.user);
+    syncPushToken();
   }, []);
 
   const logout = useCallback(async () => {
+    await pushApi.unregisterPushToken().catch(() => {});
     await AsyncStorage.removeItem(TOKEN_KEY);
     setUser(null);
   }, []);

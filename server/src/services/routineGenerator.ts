@@ -9,7 +9,7 @@ const WORKOUT_DAY_PATTERNS: Record<number, number[]> = {
   5: [0, 1, 2, 3, 4], // Lunes a Viernes
 };
 
-const ROUTINE_BODY_PARTS = [
+export const ROUTINE_BODY_PARTS = [
   "chest",
   "back",
   "shoulders",
@@ -24,12 +24,12 @@ const ROUTINE_BODY_PARTS = [
 
 // "biceps"/"triceps" aren't real Exercise.bodyPart values - they're sub-targets
 // of the "upper arms" bucket, filtered via Exercise.target instead (see byBodyPart below).
-const TARGET_FILTERED_BODY_PARTS: Record<string, string> = {
+export const TARGET_FILTERED_BODY_PARTS: Record<string, string> = {
   biceps: "upper arms",
   triceps: "upper arms",
 };
 
-const HOME_EQUIPMENT = ["body weight", "dumbbell", "band", "resistance band", "kettlebell"];
+export const HOME_EQUIPMENT = ["body weight", "dumbbell", "band", "resistance band", "kettlebell"];
 
 // Each template's day count matches the key exactly, so indexing by dayPosition
 // never wraps around - every group appears once per week, nothing repeats.

@@ -6,6 +6,7 @@ import { prisma } from "../prisma";
 import { signToken, authMiddleware, AuthRequest } from "../middleware/auth";
 import { passwordSchema } from "../lib/password";
 import { sendPasswordResetEmail } from "../services/mailer";
+import { TRIAL_DAYS } from "../services/billing";
 import { startOfWeek } from "../lib/week";
 import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
 import { generateAndSaveRoutine } from "../services/routineGenerator";
@@ -98,6 +99,7 @@ router.post("/register", async (req, res) => {
       dietaryRestrictions: dietaryRestrictions ?? [],
       trainingDays: trainingDays ?? [],
       phone,
+      trialEndsAt: new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -310,6 +312,10 @@ const serializeUser = (user: {
   dietaryRestrictions: string[];
   trainingDays: number[];
   phone: string | null;
+  subscriptionStatus: string | null;
+  subscriptionPlan: string | null;
+  currentPeriodEnd: Date | null;
+  trialEndsAt: Date | null;
 }) => ({
   id: user.id,
   email: user.email,
@@ -328,6 +334,10 @@ const serializeUser = (user: {
   dietaryRestrictions: user.dietaryRestrictions,
   trainingDays: user.trainingDays,
   phone: user.phone,
+  subscriptionStatus: user.subscriptionStatus,
+  subscriptionPlan: user.subscriptionPlan,
+  currentPeriodEnd: user.currentPeriodEnd,
+  trialEndsAt: user.trialEndsAt,
 });
 
 router.get("/me", authMiddleware, async (req: AuthRequest, res) => {

@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Exercise" ADD COLUMN     "source" TEXT NOT NULL DEFAULT 'seed',
+ALTER COLUMN "image" DROP NOT NULL,
+ALTER COLUMN "gifUrl" DROP NOT NULL;

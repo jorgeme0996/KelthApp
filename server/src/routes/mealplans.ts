@@ -6,6 +6,14 @@ import { generateAndSaveMealPlan, regenerateMealPlanDay } from "../services/meal
 import { buildShoppingList } from "../services/shoppingList";
 import { startOfWeek } from "../lib/week";
 import { dietIdForGoal } from "../lib/dietGoal";
+import { isPremium } from "../services/billing";
+import { checkAndConsumeWeeklyAction } from "../services/usageLimits";
+import { recipeDraftSchema, runMealSwapChatTurn } from "../services/mealSwapAssistant";
+
+const WEEKLY_LIMIT_ERROR = {
+  error: "Alcanzaste tu límite semanal de cambios. Actualiza a Premium para cambios ilimitados.",
+  code: "WEEKLY_ACTION_LIMIT_REACHED",
+};
 
 const router = Router();
 
@@ -56,6 +64,9 @@ router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => 
 
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
+  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
 
   try {
     const updated = await regenerateMealPlanDay(
@@ -118,6 +129,12 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
     return res.status(404).json({ error: "Comida no encontrada" });
   }
 
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
+  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+
   let newRecipeId = parsed.data.recipeId;
   if (!newRecipeId) {
     const candidates = await prisma.recipe.findMany({
@@ -134,6 +151,100 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
   const updated = await prisma.mealPlanEntry.update({
     where: { id: entry.id },
     data: { recipeId: newRecipeId },
+    include: { recipe: true },
+  });
+
+  res.json(updated);
+});
+
+const MAX_CHAT_TURNS = 12;
+const MAX_IMAGE_BASE64_CHARS = 7_000_000; // ~5MB raw
+
+const aiSwapChatSchema = z.object({
+  mode: z.enum(["fridge", "restaurant_options", "menu_photo"]),
+  messages: z
+    .array(z.object({ role: z.enum(["user", "assistant"]), text: z.string().max(4000) }))
+    .min(1)
+    .max(MAX_CHAT_TURNS),
+  image: z
+    .object({
+      mediaType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+      dataBase64: z.string().max(MAX_IMAGE_BASE64_CHARS),
+    })
+    .optional(),
+});
+
+// Conversational turn of the AI meal-swap flow (fridge / restaurant options / menu photo).
+// Stateless: the client resends the running message array each turn; nothing is persisted here.
+router.post("/entries/:entryId/ai-swap/chat", authMiddleware, async (req: AuthRequest, res) => {
+  const parsed = aiSwapChatSchema.safeParse(req.body ?? {});
+  if (!parsed.success) return res.status(400).json({ error: "Datos inválidos" });
+  if (parsed.data.image && parsed.data.mode !== "menu_photo") {
+    return res.status(400).json({ error: "La imagen solo aplica al modo de foto de menú" });
+  }
+
+  const entry = await prisma.mealPlanEntry.findUnique({
+    where: { id: req.params.entryId },
+    include: { mealPlan: true, recipe: true },
+  });
+  if (!entry || entry.mealPlan.userId !== req.userId) {
+    return res.status(404).json({ error: "Comida no encontrada" });
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  const result = await runMealSwapChatTurn(
+    parsed.data.mode,
+    entry.mealSlot,
+    entry.recipe.name,
+    parsed.data.messages,
+    parsed.data.image,
+    dietIdForGoal(user.goal),
+  );
+
+  if (result.status === "unavailable") return res.status(503).json({ error: "El asistente no está disponible" });
+  if (result.status === "error") return res.status(502).json({ error: "El asistente no pudo responder, intenta de nuevo" });
+
+  res.json(result);
+});
+
+const aiSwapConfirmSchema = z.object({
+  recipe: recipeDraftSchema,
+});
+
+// Create a Recipe from an AI-drafted option and attach it to the entry, consuming
+// the same weekly action credit as the random shuffle-swap above.
+router.post("/entries/:entryId/ai-swap/confirm", authMiddleware, async (req: AuthRequest, res) => {
+  const parsed = aiSwapConfirmSchema.safeParse(req.body ?? {});
+  if (!parsed.success) return res.status(400).json({ error: "Datos inválidos" });
+
+  const entry = await prisma.mealPlanEntry.findUnique({
+    where: { id: req.params.entryId },
+    include: { mealPlan: true, recipe: true },
+  });
+  if (!entry || entry.mealPlan.userId !== req.userId) {
+    return res.status(404).json({ error: "Comida no encontrada" });
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
+  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+
+  // Structural fields (dietType, mealSlots) come from the entry being replaced, not
+  // the model's output — the model is free to name/compose the recipe, but the diet
+  // classification and slot must stay consistent with the app's own filtering (e.g.
+  // the random shuffle-swap matches candidates by exact dietType string).
+  const mealSlots = Array.from(new Set([entry.mealSlot, ...parsed.data.recipe.mealSlots]));
+  const newRecipe = await prisma.recipe.create({
+    data: { ...parsed.data.recipe, mealSlots, dietType: entry.recipe.dietType, source: "ai_generated" },
+  });
+
+  const updated = await prisma.mealPlanEntry.update({
+    where: { id: entry.id },
+    data: { recipeId: newRecipe.id },
     include: { recipe: true },
   });
 

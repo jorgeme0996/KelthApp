@@ -5,6 +5,8 @@ import { Button } from "@/components/Button";
 import { RecipeCard } from "@/components/RecipeCard";
 import { useCurrentMealPlan, useGenerateMealPlan, useRegenerateMealPlanDay, useSwapMealEntry } from "@/hooks/useMealPlan";
 import { ApiError } from "@/api/client";
+import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
+import { isWeeklyLimitError } from "@/utils/apiErrors";
 import { DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
@@ -19,6 +21,15 @@ export default function MenuScreen() {
   const swapMutation = useSwapMealEntry();
   const todayIndex = getTodayIndex();
   const [selectedDay, setSelectedDay] = useState(todayIndex);
+  const [weeklyLimitModal, setWeeklyLimitModal] = useState(false);
+
+  const handleWeeklyLimitedError = (err: unknown, fallbackMessage: string) => {
+    if (isWeeklyLimitError(err)) {
+      setWeeklyLimitModal(true);
+      return;
+    }
+    Alert.alert("Error", err instanceof ApiError ? err.message : fallbackMessage);
+  };
 
   const dayEntries = useMemo(() => {
     if (!mealPlan) return [];
@@ -65,8 +76,7 @@ export default function MenuScreen() {
             regenerateDayMutation.mutate(
               { mealPlanId: mealPlan.id, dayIndex: selectedDay },
               {
-                onError: (err) =>
-                  Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el menú."),
+                onError: (err) => handleWeeklyLimitedError(err, "No se pudo regenerar el menú."),
               }
             )
           }
@@ -99,12 +109,18 @@ export default function MenuScreen() {
           <RecipeCard
             key={entry.id}
             entry={entry}
-            onSwap={(id) => swapMutation.mutate(id)}
+            onSwap={(id) =>
+              swapMutation.mutate(id, {
+                onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar esta comida."),
+              })
+            }
             swapping={swapMutation.isPending && swapMutation.variables === entry.id}
           />
         ))}
         {dayEntries.length === 0 ? <Text style={styles.emptyText}>No hay comidas para este día.</Text> : null}
       </ScrollView>
+
+      <WeeklyLimitModal visible={weeklyLimitModal} onClose={() => setWeeklyLimitModal(false)} />
     </ScreenContainer>
   );
 }

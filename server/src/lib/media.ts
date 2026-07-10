@@ -5,14 +5,15 @@ export function exerciseMediaUrl(relativePath: string): string {
   return `${base.replace(/\/$/, "")}/${relativePath.replace(/^\//, "")}`;
 }
 
-/** Replaces the stored relative `image`/`gifUrl` paths with absolute media URLs for API responses. */
+/** Replaces the stored relative `image`/`gifUrl` paths with absolute media URLs for API responses.
+ * AI-generated exercises have no real media yet, so `image`/`gifUrl` may be null. */
 export function withExerciseMediaUrls<T extends Pick<Exercise, "image" | "gifUrl">>(
   exercise: T
-): Omit<T, "image" | "gifUrl"> & { imageUrl: string; gifUrl: string } {
+): Omit<T, "image" | "gifUrl"> & { imageUrl: string | null; gifUrl: string | null } {
   const { image, gifUrl, ...rest } = exercise;
   return {
     ...rest,
-    imageUrl: exerciseMediaUrl(image),
-    gifUrl: exerciseMediaUrl(gifUrl),
+    imageUrl: image ? exerciseMediaUrl(image) : null,
+    gifUrl: gifUrl ? exerciseMediaUrl(gifUrl) : null,
   };
 }

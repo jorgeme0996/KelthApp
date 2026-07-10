@@ -44,9 +44,13 @@ export function useSwapMealEntry() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (entryId: string) => mealplansApi.swapMealEntry(entryId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["mealplan", "current"] });
-      queryClient.invalidateQueries({ queryKey: ["shoppingList"] });
+    onSuccess: async () => {
+      // isPending stays true while onSuccess is awaited, keeping the swap button
+      // disabled until the meal plan actually reflects the swap
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["mealplan", "current"] }),
+        queryClient.invalidateQueries({ queryKey: ["shoppingList"] }),
+      ]);
     },
   });
 }

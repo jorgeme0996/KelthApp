@@ -41,8 +41,10 @@ export function useSwapRoutineEntry() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (entryId: string) => routinesApi.swapRoutineEntry(entryId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["routine", "current"] });
+    onSuccess: async () => {
+      // isPending stays true while onSuccess is awaited, keeping the swap button
+      // disabled until the routine actually reflects the swap
+      await queryClient.invalidateQueries({ queryKey: ["routine", "current"] });
     },
   });
 }

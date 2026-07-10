@@ -1,4 +1,5 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
@@ -18,19 +19,61 @@ export function ExerciseCard({ entry, onSwap, swapping, showHelp = true }: Exerc
     ? `${Math.round(entry.durationSeconds / 60)} min`
     : `${entry.sets} x ${entry.reps}`;
 
+  // once the exercise for this slot changes (after a swap), keep the card disabled
+  // until its new thumbnail actually finishes loading — skipped when there's no
+  // image to load (e.g. an AI-generated exercise pending media backfill)
+  const [awaitingImage, setAwaitingImage] = useState(false);
+  const imageUrlRef = useRef(entry.exercise.imageUrl);
+  useEffect(() => {
+    if (imageUrlRef.current !== entry.exercise.imageUrl) {
+      imageUrlRef.current = entry.exercise.imageUrl;
+      setAwaitingImage(true);
+    }
+  }, [entry.exercise.imageUrl]);
+
+  const busy = swapping || (awaitingImage && !!entry.exercise.imageUrl);
+
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, busy && styles.cardSwapping]} pointerEvents={busy ? "none" : "auto"}>
       <View style={[styles.bodyPartBadge, { backgroundColor: bodyPartColor }]}>
         <Text style={styles.bodyPartBadgeText}>{BODY_PART_LABELS[entry.bodyPart] ?? entry.bodyPart}</Text>
-        {onSwap ? (
-          <Pressable onPress={() => onSwap(entry.id)} disabled={swapping} hitSlop={8}>
-            <Ionicons name="shuffle" size={18} color={colors.textOnPrimary} style={{ opacity: swapping ? 0.5 : 1 }} />
+        <View style={styles.bodyPartBadgeActions}>
+          <Pressable
+            hitSlop={8}
+            onPress={() =>
+              router.push({
+                pathname: "/exercise-swap",
+                params: { entryId: entry.id, bodyPart: entry.bodyPart, exerciseName: entry.exercise.name },
+              })
+            }
+          >
+            <Ionicons name="sparkles" size={18} color={colors.textOnPrimary} />
           </Pressable>
-        ) : null}
+          {onSwap ? (
+            <Pressable onPress={() => onSwap(entry.id)} disabled={busy} hitSlop={8}>
+              {busy ? (
+                <ActivityIndicator size="small" color={colors.textOnPrimary} />
+              ) : (
+                <Ionicons name="shuffle" size={18} color={colors.textOnPrimary} />
+              )}
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
       <Pressable style={styles.body} onPress={() => router.push(`/exercise/${entry.exercise.id}`)}>
-        <Image source={{ uri: entry.exercise.imageUrl }} style={styles.thumbnail} contentFit="cover" />
+        {entry.exercise.imageUrl ? (
+          <Image
+            source={{ uri: entry.exercise.imageUrl }}
+            style={styles.thumbnail}
+            contentFit="cover"
+            onLoadEnd={() => setAwaitingImage(false)}
+          />
+        ) : (
+          <View style={[styles.thumbnail, styles.thumbnailPlaceholder]}>
+            <Ionicons name="image-outline" size={20} color={colors.textMuted} />
+          </View>
+        )}
         <View style={styles.info}>
           <View style={styles.nameRow}>
             <Text style={[styles.exerciseName, styles.exerciseNameFlex]}>{entry.exercise.name}</Text>
@@ -68,6 +111,9 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
     overflow: "hidden",
   },
+  cardSwapping: {
+    opacity: 0.5,
+  },
   bodyPartBadge: {
     flexDirection: "row",
     alignItems: "center",
@@ -82,6 +128,11 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
     letterSpacing: 0.5,
   },
+  bodyPartBadgeActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
+  },
   body: {
     flexDirection: "row",
     padding: spacing.md,
@@ -92,6 +143,10 @@ const styles = StyleSheet.create({
     height: 64,
     borderRadius: radii.md,
     backgroundColor: colors.surfaceMuted,
+  },
+  thumbnailPlaceholder: {
+    alignItems: "center",
+    justifyContent: "center",
   },
   info: {
     flex: 1,

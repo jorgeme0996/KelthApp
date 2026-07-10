@@ -26,6 +26,14 @@ model User {
   dietaryRestrictions String[] @default([])          // vegetariano | vegano | sin_lacteos | sin_nueces | sin_mariscos | sin_gluten
   trainingDays        Int[]    @default([])          // 0-6 (Lun-Dom), días específicos elegidos por el usuario
   phone               String?
+  pushToken           String?  // Expo push token del último dispositivo donde inició sesión
+  stripeCustomerId     String?   @unique
+  stripeSubscriptionId String?   @unique
+  subscriptionStatus   String?   // active | trialing | past_due | canceled | incomplete | unpaid
+  subscriptionPlan     String?   // monthly | annual
+  currentPeriodEnd     DateTime?
+  trialEndsAt          DateTime?
+  trialReminderSentAt  DateTime?
   createdAt      DateTime @default(now())
 
   mealPlans           MealPlan[]
@@ -33,6 +41,25 @@ model User {
   chatMessages        ChatMessage[]
   passwordResetTokens PasswordResetToken[]
   workoutCompletions  WorkoutCompletion[]
+  weeklyActionUsages  WeeklyActionUsage[]
+}
+
+model WeeklyActionUsage {
+  id        String   @id @default(uuid())
+  userId    String
+  weekStart DateTime // Monday 00:00, same boundary as MealPlan/Routine weekStart
+  count     Int      @default(0)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, weekStart])
+  @@index([userId])
+}
+
+model WhatsappWebhookEvent {
+  id         String   @id // Zernio's event UUID, used as the PK for idempotency dedupe
+  eventType  String
+  receivedAt DateTime @default(now())
 }
 
 model PasswordResetToken {
@@ -102,9 +129,10 @@ model Exercise {
   muscleGroup      String
   secondaryMuscles String[]
   target           String
-  image            String // relative path, e.g. "images/0001-2gPfomN.jpg"
-  gifUrl           String // relative path, e.g. "videos/0001-2gPfomN.gif"
+  image            String? // relative path, e.g. "images/0001-2gPfomN.jpg"; null for AI-generated exercises pending media backfill
+  gifUrl           String? // relative path, e.g. "videos/0001-2gPfomN.gif"; null for AI-generated exercises pending media backfill
   attribution      String
+  source           String   @default("seed") // seed | ai_generated
   createdAt        DateTime @default(now())
 
   entries RoutineEntry[]
@@ -161,6 +189,7 @@ model ChatMessage {
   userId    String
   role      String // user | assistant
   content   String
+  channel   String   @default("app") // app | whatsapp
   createdAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)

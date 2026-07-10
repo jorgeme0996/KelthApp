@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import * as WebBrowser from "expo-web-browser";
+import { router } from "expo-router";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { TextField } from "@/components/TextField";
@@ -13,9 +15,10 @@ import { DietaryRestrictionsSelector } from "@/components/DietaryRestrictionsSel
 import { TrainingDaysSelector } from "@/components/TrainingDaysSelector";
 import { useAuth } from "@/context/AuthContext";
 import * as dietsApi from "@/api/diets";
+import * as billingApi from "@/api/billing";
 import { ApiError } from "@/api/client";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
-import { DietaryRestriction, Gender, Goal, SplitType, EquipmentPreference, dietIdForGoal } from "@/types";
+import { DietaryRestriction, Gender, Goal, SplitType, EquipmentPreference, dietIdForGoal, isPremiumUser, isTrialOnly } from "@/types";
 
 function flattenItems(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -73,6 +76,9 @@ export default function ProfileScreen() {
   const [savingPhone, setSavingPhone] = useState(false);
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [phoneSaved, setPhoneSaved] = useState(false);
+
+  const [billingLoading, setBillingLoading] = useState(false);
+  const [billingError, setBillingError] = useState<string | null>(null);
 
   const dietId = dietIdForGoal(goal);
   const { data: diet, isLoading: loadingDiet } = useQuery({
@@ -217,6 +223,19 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleManageSubscription = async () => {
+    setBillingLoading(true);
+    setBillingError(null);
+    try {
+      const { url } = await billingApi.createPortalSession();
+      await WebBrowser.openBrowserAsync(url);
+    } catch (err) {
+      setBillingError(err instanceof ApiError ? err.message : "No se pudo abrir tu suscripción.");
+    } finally {
+      setBillingLoading(false);
+    }
+  };
+
   return (
     <ScreenContainer scroll>
       <Text style={styles.title}>Perfil</Text>
@@ -284,42 +303,54 @@ export default function ProfileScreen() {
       ) : diet ? (
         <View style={styles.card}>
           <Text style={styles.dietDescription}>{diet.description}</Text>
-
-          <Text style={styles.subTitle}>Libre, come sin límite</Text>
-          <View style={styles.chipsRow}>
-            {freeVeggies?.slice(0, 8).map((item) => (
-              <View key={item} style={[styles.chip, styles.chipFree]}>
-                <Text style={styles.chipText}>{item}</Text>
-              </View>
-            ))}
-            {freeProteins.slice(0, 6).map((item) => (
-              <View key={item} style={[styles.chip, styles.chipFree]}>
-                <Text style={styles.chipText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.subTitle}>Máximo 1 vez por semana</Text>
-          <View style={styles.chipsRow}>
-            {limitedProteins.map((item) => (
-              <View key={item} style={[styles.chip, styles.chipModerate]}>
-                <Text style={styles.chipText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.subTitle}>Evita</Text>
-          <View style={styles.chipsRow}>
-            {prohibitedItems.slice(0, 12).map((item) => (
-              <View key={item} style={[styles.chip, styles.chipAvoid]}>
-                <Text style={styles.chipText}>{item}</Text>
-              </View>
-            ))}
-          </View>
-
-          <Text style={styles.sourceText}>Fuente: {diet.source}</Text>
         </View>
       ) : null}
+
+      <Text style={styles.sectionTitle}>Suscripción</Text>
+      <View style={styles.card}>
+        {isTrialOnly(user) ? (
+          <>
+            <Text style={styles.dietDescription}>
+              Tienes tu prueba Premium activa · termina el {new Date(user!.trialEndsAt!).toLocaleDateString("es-MX")}.
+            </Text>
+            <Button
+              label="Suscríbete ahora"
+              onPress={() => router.push("/premium")}
+              style={{ marginTop: spacing.sm }}
+            />
+          </>
+        ) : isPremiumUser(user) ? (
+          <>
+            <Text style={styles.dietDescription}>
+              Tienes Premium ({user?.subscriptionPlan === "annual" ? "anual" : "mensual"})
+              {user?.currentPeriodEnd
+                ? ` · se renueva el ${new Date(user.currentPeriodEnd).toLocaleDateString("es-MX")}`
+                : ""}
+              .
+            </Text>
+            <Button
+              label="Administrar suscripción"
+              variant="secondary"
+              onPress={handleManageSubscription}
+              loading={billingLoading}
+              style={{ marginTop: spacing.sm }}
+            />
+          </>
+        ) : (
+          <>
+            <Text style={styles.dietDescription}>
+              Desbloquea preguntas ilimitadas al asistente, tu asistente personal por WhatsApp, recordatorios diarios y
+              cambios ilimitados a tu menú y rutina.
+            </Text>
+            <Button
+              label="Ver planes Premium"
+              onPress={() => router.push("/premium")}
+              style={{ marginTop: spacing.sm }}
+            />
+          </>
+        )}
+        {billingError ? <Text style={styles.errorText}>{billingError}</Text> : null}
+      </View>
 
       <Button label="Cerrar sesión" variant="secondary" onPress={() => logout()} style={{ marginTop: spacing.sm, marginBottom: spacing.xl }} />
     </ScreenContainer>

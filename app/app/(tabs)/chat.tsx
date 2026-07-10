@@ -13,13 +13,13 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as chatApi from "@/api/chat";
 import { ApiError } from "@/api/client";
 import { useAuth } from "@/context/AuthContext";
 import { NUTRIOLOGOS } from "@/data/nutriologos";
-import { ChatLimitError, ChatMessage } from "@/types";
+import { ChatLimitError, ChatMessage, isPremiumUser } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
 const INPUT_MIN_HEIGHT = 52;
@@ -172,12 +172,16 @@ export default function ChatScreen() {
           <Text style={styles.limitTitle}>
             Alcanzaste tus {dailyLimit ?? ""} preguntas de hoy
           </Text>
-          <Text style={styles.limitText}>Si tienes más preguntas consulta con uno de nuestros nutriólogos:</Text>
-          {NUTRIOLOGOS.map((n) => (
-            <Text key={n.name} style={styles.limitText}>
-              • {n.name}: {n.phone}
-            </Text>
-          ))}
+          {!isPremiumUser(user) ? (
+            <>
+              <Text style={[styles.limitText, { marginTop: spacing.sm }]}>
+                Con Premium tienes preguntas ilimitadas al asistente y tu asistente personal por WhatsApp.
+              </Text>
+              <Pressable onPress={() => router.push("/premium")}>
+                <Text style={styles.upgradeLink}>Hazte Premium →</Text>
+              </Pressable>
+            </>
+          ) : null}
         </View>
       ) : (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={12}>
@@ -313,6 +317,12 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: colors.textMuted,
     lineHeight: 20,
+  },
+  upgradeLink: {
+    fontFamily: fonts.bold,
+    fontSize: fontSizes.sm,
+    color: colors.primary,
+    marginTop: spacing.xs,
   },
   inputRow: {
     flexDirection: "row",

@@ -1,5 +1,22 @@
 import { Exercise, MealPlan, MealPlanEntry, Recipe, Routine, RoutineEntry } from "@prisma/client";
 import lowcarb from "../data/diets/lowcarb.json";
+import maintenance from "../data/diets/maintenance.json";
+import muscleGain from "../data/diets/muscle-gain.json";
+
+// Solo se tipan los campos que este módulo realmente usa; cada dieta trae
+// además sus propios `prohibited`/`free`/`goal` con formas distintas.
+interface DietContent {
+  name: string;
+  description: string;
+  prohibited: Record<string, unknown>;
+  moderateEquivalents: Record<string, unknown>;
+}
+
+const DIET_BY_ID: Record<string, DietContent> = {
+  lowcarb,
+  maintenance,
+  "muscle-gain": muscleGain,
+};
 
 const DAY_NAMES = ["lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo"];
 const SLOT_LABELS: Record<string, string> = {
@@ -14,9 +31,13 @@ const SLOT_ORDER = ["desayuno", "colacion_am", "comida", "colacion_pm", "cena"];
 type MealPlanWithEntries = MealPlan & { entries: (MealPlanEntry & { recipe: Recipe })[] };
 type RoutineWithEntries = Routine & { entries: (RoutineEntry & { exercise: Exercise })[] };
 
-function buildDietSummary(): string {
-  const prohibited = Object.values(lowcarb.prohibited).flat().join(", ");
-  const moderate = Object.entries(lowcarb.moderateEquivalents)
+export function buildDietSummary(dietId: string = "lowcarb"): string {
+  const diet = DIET_BY_ID[dietId] ?? lowcarb;
+  const prohibited = Object.entries(diet.prohibited)
+    .filter(([key]) => key !== "_notes")
+    .flatMap(([, items]) => items as string[])
+    .join(", ");
+  const moderate = Object.entries(diet.moderateEquivalents)
     .filter(([key]) => key !== "_notes")
     .map(([, def]) => {
       const d = def as { label: string; dailyBudget?: number; portion?: string };
@@ -24,11 +45,16 @@ function buildDietSummary(): string {
     })
     .join(", ");
 
+  const proteinNote =
+    dietId === "muscle-gain"
+      ? "Res, cerdo y mariscos ya no están limitados: se pueden usar casi a diario en cortes magros para sostener el aporte de proteína."
+      : "Res, cerdo y mariscos se recomiendan máximo 1 vez por semana.";
+
   return [
-    `Dieta: ${lowcarb.name}. ${lowcarb.description}`,
+    `Dieta: ${diet.name}. ${diet.description}`,
     `Alimentos PROHIBIDOS: ${prohibited}.`,
     `Alimentos de consumo MODERADO (equivalentes permitidos al día): ${moderate}.`,
-    `Las verduras (crudas y cocidas), proteínas magras (pollo, pescado, pavo, huevo), hierbas, especias y bebidas sin azúcar son de consumo LIBRE. Res, cerdo y mariscos se recomiendan máximo 1 vez por semana.`,
+    `Las verduras (crudas y cocidas), proteínas magras (pollo, pescado, pavo, huevo), hierbas, especias y bebidas sin azúcar son de consumo LIBRE. ${proteinNote}`,
   ].join("\n");
 }
 
@@ -59,7 +85,7 @@ function formatSetScheme(entry: RoutineEntry): string {
   return `${entry.sets} series x ${entry.reps ?? "?"} reps`;
 }
 
-function buildRoutineSummary(routine: RoutineWithEntries | null): string {
+export function buildRoutineSummary(routine: RoutineWithEntries | null): string {
   if (!routine || routine.entries.length === 0) {
     return "El usuario aún no tiene una rutina de ejercicio generada.";
   }
@@ -100,7 +126,7 @@ const RESTRICTION_LABELS: Record<string, string> = {
   sin_gluten: "sin gluten",
 };
 
-function buildPersonalizationSummary(
+export function buildPersonalizationSummary(
   gender: string | null,
   splitType: string,
   equipmentPreference: string,
@@ -125,10 +151,11 @@ export function buildSystemPrompt(
   splitType: string = "fullbody",
   equipmentPreference: string = "gym",
   dietaryRestrictions: string[] = [],
+  dietId: string = "lowcarb",
 ): string {
   return [
     "Eres el copiloto de la app 'El Mejor Menú': un asistente cálido, claro y motivador que habla siempre en español de México.",
-    "Ayudas a la persona tanto con su alimentación (plan Low Carb descrito abajo) como con su rutina de ejercicio, de forma integrada — puedes hablar de ambas en la misma conversación.",
+    "Ayudas a la persona tanto con su alimentación (dieta descrita abajo, según su objetivo actual) como con su rutina de ejercicio, de forma integrada — puedes hablar de ambas en la misma conversación.",
     "En nutrición: responde dudas sobre su menú semanal, sugiere sustituciones dentro de las reglas de la dieta, y da consejos prácticos y realistas (cocina mexicana de tiempos modernos: mercados, ingredientes accesibles).",
     "Si el usuario pregunta por algo de la lista de PROHIBIDOS, explica amablemente por qué conviene evitarlo y ofrece una alternativa permitida.",
     "En ejercicio: responde dudas sobre su rutina semanal, explica cómo ejecutar los ejercicios con buena técnica, sugiere ajustes de series/repeticiones razonables según su nivel, y motívalo a mantener consistencia.",
@@ -137,7 +164,7 @@ export function buildSystemPrompt(
     `El usuario come ${mealsPerDay} veces al día.`,
     buildPersonalizationSummary(gender, splitType, equipmentPreference, dietaryRestrictions),
     "",
-    buildDietSummary(),
+    buildDietSummary(dietId),
     "",
     buildMealPlanSummary(mealPlan),
     "",

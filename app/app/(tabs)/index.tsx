@@ -9,7 +9,6 @@ import { useAuth } from "@/context/AuthContext";
 import {
   useCurrentMealPlan,
   useGenerateMealPlan,
-  useRegenerateMealPlanDay,
   useSwapMealEntry,
   useToggleMealEntryComplete,
 } from "@/hooks/useMealPlan";
@@ -17,13 +16,15 @@ import {
   useCompleteWorkoutDay,
   useCurrentRoutine,
   useGenerateRoutine,
-  useRegenerateRoutineDay,
   useSwapRoutineEntry,
   useUncompleteWorkoutDay,
   useWorkoutCompletions,
 } from "@/hooks/useRoutine";
 import { ApiError } from "@/api/client";
-import { BODY_PART_ORDER, DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
+import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
+import { TrialBanner } from "@/components/TrialBanner";
+import { isWeeklyLimitError } from "@/utils/apiErrors";
+import { BODY_PART_ORDER, DAY_LABELS, MEAL_SLOT_ORDER, isTrialOnly, trialDaysLeft } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 import { computeWorkoutStreak, dateKey, getWorkoutDoneTodayMessage } from "@/utils/workoutCongrats";
 
@@ -39,18 +40,25 @@ export default function HomeScreen() {
   const { user } = useAuth();
   const { data: mealPlan, isLoading } = useCurrentMealPlan();
   const generateMutation = useGenerateMealPlan();
-  const regenerateDayMutation = useRegenerateMealPlanDay();
   const swapMutation = useSwapMealEntry();
   const completeMutation = useToggleMealEntryComplete();
 
   const { data: routine } = useCurrentRoutine();
   const generateRoutineMutation = useGenerateRoutine();
-  const regenerateRoutineDayMutation = useRegenerateRoutineDay();
   const swapRoutineMutation = useSwapRoutineEntry();
   const completeWorkoutMutation = useCompleteWorkoutDay();
   const uncompleteWorkoutMutation = useUncompleteWorkoutDay();
   const { data: completions } = useWorkoutCompletions();
   const [justCompletedNames, setJustCompletedNames] = useState<string[] | null>(null);
+  const [weeklyLimitModal, setWeeklyLimitModal] = useState(false);
+
+  const handleWeeklyLimitedError = (err: unknown, fallbackMessage: string) => {
+    if (isWeeklyLimitError(err)) {
+      setWeeklyLimitModal(true);
+      return;
+    }
+    Alert.alert("Error", err instanceof ApiError ? err.message : fallbackMessage);
+  };
 
   const todayIndex = getTodayDayIndex();
 
@@ -125,6 +133,8 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>{DAY_LABELS[todayIndex]} · Plan Low Carb</Text>
       </View>
 
+      {isTrialOnly(user) ? <TrialBanner daysLeft={trialDaysLeft(user)} /> : null}
+
       <View style={styles.tabBar}>
         <Pressable
           style={[styles.tabButton, activeTab === "food" && styles.tabButtonActive]}
@@ -163,22 +173,6 @@ export default function HomeScreen() {
           <>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Hoy comes</Text>
-              <Button
-                label="Regenerar"
-                variant="ghost"
-                onPress={() =>
-                  mealPlan &&
-                  regenerateDayMutation.mutate(
-                    { mealPlanId: mealPlan.id, dayIndex: todayIndex },
-                    {
-                      onError: (err) =>
-                        Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el menú."),
-                    }
-                  )
-                }
-                loading={regenerateDayMutation.isPending}
-                style={styles.regenerateButton}
-              />
             </View>
 
             {todayEntries.length === 0 ? (
@@ -188,7 +182,11 @@ export default function HomeScreen() {
                 <RecipeCard
                   key={entry.id}
                   entry={entry}
-                  onSwap={(id) => swapMutation.mutate(id)}
+                  onSwap={(id) =>
+                    swapMutation.mutate(id, {
+                      onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar esta comida."),
+                    })
+                  }
                   swapping={swapMutation.isPending && swapMutation.variables === entry.id}
                   onToggleComplete={(id) => completeMutation.mutate(id)}
                   completing={completeMutation.isPending && completeMutation.variables === entry.id}
@@ -205,23 +203,6 @@ export default function HomeScreen() {
         <>
           <View style={styles.sectionHeader}>
             <Text style={styles.sectionTitle}>Tu rutina de hoy</Text>
-            {routine && todayWorkoutEntries.length > 0 && !isWorkoutDoneToday ? (
-              <Button
-                label="Regenerar"
-                variant="ghost"
-                onPress={() =>
-                  regenerateRoutineDayMutation.mutate(
-                    { routineId: routine.id, dayIndex: todayIndex },
-                    {
-                      onError: (err) =>
-                        Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo regenerar el entrenamiento."),
-                    }
-                  )
-                }
-                loading={regenerateRoutineDayMutation.isPending}
-                style={styles.regenerateButton}
-              />
-            ) : null}
           </View>
 
           {!routine ? (
@@ -266,7 +247,11 @@ export default function HomeScreen() {
                 <ExerciseCard
                   key={entry.id}
                   entry={entry}
-                  onSwap={(id) => swapRoutineMutation.mutate(id)}
+                  onSwap={(id) =>
+                    swapRoutineMutation.mutate(id, {
+                      onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar este ejercicio."),
+                    })
+                  }
                   swapping={swapRoutineMutation.isPending && swapRoutineMutation.variables === entry.id}
                 />
               ))}
@@ -294,6 +279,8 @@ export default function HomeScreen() {
         <Text style={styles.assistantText}>Pregúntale a tu copiloto sobre sustituciones, porciones, ejercicios o tu plan de hoy.</Text>
         <Button label="Abrir asistente" variant="secondary" onPress={() => router.push("/(tabs)/chat")} />
       </View>
+
+      <WeeklyLimitModal visible={weeklyLimitModal} onClose={() => setWeeklyLimitModal(false)} />
     </ScreenContainer>
   );
 }
@@ -354,10 +341,6 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bold,
     fontSize: fontSizes.lg,
     color: colors.text,
-  },
-  regenerateButton: {
-    height: "auto",
-    paddingHorizontal: spacing.sm,
   },
   emptyCard: {
     backgroundColor: colors.surface,

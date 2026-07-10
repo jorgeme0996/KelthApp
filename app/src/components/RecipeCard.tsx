@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { MealPlanEntry, MEAL_SLOT_LABELS } from "@/types";
@@ -17,14 +17,34 @@ export function RecipeCard({ entry, onSwap, swapping, onToggleComplete, completi
   const isCompleted = !!entry.completedAt;
 
   return (
-    <View style={[styles.card, isCompleted && styles.cardCompleted]}>
+    <View
+      style={[styles.card, isCompleted && styles.cardCompleted, swapping && styles.cardSwapping]}
+      pointerEvents={swapping ? "none" : "auto"}
+    >
       <View style={[styles.slotBadge, { backgroundColor: slotColor }]}>
         <Text style={styles.slotBadgeText}>{MEAL_SLOT_LABELS[entry.mealSlot] ?? entry.mealSlot}</Text>
-        {onSwap ? (
-          <Pressable onPress={() => onSwap(entry.id)} disabled={swapping} hitSlop={8}>
-            <Ionicons name="shuffle" size={18} color={colors.textOnPrimary} style={{ opacity: swapping ? 0.5 : 1 }} />
+        <View style={styles.slotBadgeActions}>
+          <Pressable
+            hitSlop={8}
+            onPress={() =>
+              router.push({
+                pathname: "/meal-swap",
+                params: { entryId: entry.id, mealSlot: entry.mealSlot, recipeName: entry.recipe.name },
+              })
+            }
+          >
+            <Ionicons name="sparkles" size={18} color={colors.textOnPrimary} />
           </Pressable>
-        ) : null}
+          {onSwap ? (
+            <Pressable onPress={() => onSwap(entry.id)} disabled={swapping} hitSlop={8}>
+              {swapping ? (
+                <ActivityIndicator size="small" color={colors.textOnPrimary} />
+              ) : (
+                <Ionicons name="shuffle" size={18} color={colors.textOnPrimary} />
+              )}
+            </Pressable>
+          ) : null}
+        </View>
       </View>
 
       <Pressable style={styles.body} onPress={() => router.push(`/recipe/${entry.recipe.id}`)}>
@@ -88,6 +108,9 @@ const styles = StyleSheet.create({
   cardCompleted: {
     opacity: 0.7,
   },
+  cardSwapping: {
+    opacity: 0.5,
+  },
   titleRow: {
     flexDirection: "row",
     alignItems: "center",
@@ -124,6 +147,11 @@ const styles = StyleSheet.create({
     color: colors.textOnPrimary,
     textTransform: "uppercase",
     letterSpacing: 0.5,
+  },
+  slotBadgeActions: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.sm,
   },
   body: {
     padding: spacing.md,

@@ -16,6 +16,35 @@ export interface User {
   dietaryRestrictions: string[];
   trainingDays: number[];
   phone: string | null;
+  subscriptionStatus: string | null;
+  subscriptionPlan: string | null;
+  currentPeriodEnd: string | null;
+  trialEndsAt: string | null;
+}
+
+// Mirrors the backend's isPremium() in server/src/services/billing.ts — keep in lockstep.
+export function isPremiumUser(user: User | null | undefined): boolean {
+  if (user?.trialEndsAt && new Date(user.trialEndsAt) > new Date()) return true;
+  if (!user?.subscriptionStatus || !["active", "trialing"].includes(user.subscriptionStatus)) return false;
+  if (user.currentPeriodEnd && new Date(user.currentPeriodEnd) < new Date()) return false;
+  return true;
+}
+
+export function isTrialActive(user: User | null | undefined): boolean {
+  return Boolean(user?.trialEndsAt && new Date(user.trialEndsAt) > new Date());
+}
+
+export function trialDaysLeft(user: User | null | undefined): number {
+  if (!isTrialActive(user)) return 0;
+  return Math.max(1, Math.ceil((new Date(user!.trialEndsAt!).getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
+}
+
+// True only while the user is on the reverse trial and hasn't converted to a
+// paid Stripe subscription yet (subscriptionPlan is only ever set by the
+// Stripe webhook) — used to decide whether to show trial UI vs the paid
+// "manage subscription" UI.
+export function isTrialOnly(user: User | null | undefined): boolean {
+  return isTrialActive(user) && !user?.subscriptionPlan;
 }
 
 export type Gender = "hombre" | "mujer" | "prefiero_no_decir";
@@ -148,6 +177,39 @@ export interface ChatLimitError {
   nutriologos: Nutriologo[];
 }
 
+export interface WeeklyLimitError {
+  error: string;
+  code: "WEEKLY_ACTION_LIMIT_REACHED";
+}
+
+export type MealSwapMode = "fridge" | "restaurant_options" | "menu_photo";
+
+export interface MealSwapChatMessage {
+  role: "user" | "assistant";
+  text: string;
+}
+
+export interface MealSwapImage {
+  mediaType: "image/jpeg" | "image/png" | "image/webp";
+  dataBase64: string;
+}
+
+export interface RecipeDraft {
+  name: string;
+  mealSlots: string[];
+  cuisineTags: string[];
+  ingredients: Ingredient[];
+  steps: string[];
+  equivalents: Record<string, number>;
+  weeklyLimited: boolean;
+  prepTimeMinutes: number | null;
+  dietType: string;
+}
+
+export type MealSwapChatResponse =
+  | { status: "message"; reply: string }
+  | { status: "options"; options: RecipeDraft[] };
+
 export const MEAL_SLOT_LABELS: Record<string, string> = {
   desayuno: "Desayuno",
   colacion_am: "Colación matutina",
@@ -170,9 +232,10 @@ export interface Exercise {
   muscleGroup: string;
   secondaryMuscles: string[];
   target: string;
-  imageUrl: string;
-  gifUrl: string;
+  imageUrl: string | null;
+  gifUrl: string | null;
   attribution: string;
+  source: string;
 }
 
 export interface RoutineEntry {
@@ -220,6 +283,59 @@ export const BODY_PART_ORDER = [
   "cardio",
   "neck",
 ];
+
+export type ExerciseSwapMode = "equipment_unavailable" | "technique_help";
+
+export interface ExerciseSwapChatMessage {
+  role: "user" | "assistant";
+  text: string;
+}
+
+export interface ExerciseDraft {
+  name: string;
+  equipment: string;
+  instructions: string;
+  instructionSteps: string[];
+  muscleGroup: string;
+  secondaryMuscles: string[];
+  target: string;
+}
+
+export type ExerciseOption =
+  | { kind: "catalog"; exerciseId: string; exercise: Exercise }
+  | { kind: "ai_generated"; draft: ExerciseDraft };
+
+export type ExerciseSwapChatResponse =
+  | { status: "message"; reply: string }
+  | { status: "options"; options: ExerciseOption[] };
+
+export interface RoutineAdaptChatMessage {
+  role: "user" | "assistant";
+  text: string;
+}
+
+export interface RoutineDayChangeEntry {
+  entryId: string;
+  option: ExerciseOption;
+  sets?: number;
+  reps?: number | null;
+  durationSeconds?: number | null;
+}
+
+export interface RoutineDayChange {
+  dayIndex: number;
+  reason: string;
+  entries: RoutineDayChangeEntry[];
+  removeEntryIds: string[];
+}
+
+export type RoutineAdaptChatResponse =
+  | { status: "message"; reply: string }
+  | { status: "adaptation"; summary: string; dayChanges: RoutineDayChange[] };
+
+export interface RoutineAdaptConfirmResponse extends Routine {
+  skippedDays: number[];
+}
 
 export const BODY_PART_LABELS: Record<string, string> = {
   back: "Espalda",

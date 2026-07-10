@@ -50,9 +50,20 @@ export default function ExerciseDetailScreen() {
         <View style={styles.chip}>
           <Text style={styles.chipText}>{exercise.equipment}</Text>
         </View>
+        {exercise.source === "ai_generated" ? (
+          <View style={[styles.chip, styles.aiChip]}>
+            <Text style={styles.aiChipText}>✨ Generado con IA</Text>
+          </View>
+        ) : null}
       </View>
 
-      <Image source={{ uri: exercise.gifUrl }} style={styles.media} contentFit="contain" />
+      {exercise.gifUrl ? (
+        <Image source={{ uri: exercise.gifUrl }} style={styles.media} contentFit="contain" />
+      ) : (
+        <View style={[styles.media, styles.mediaPlaceholder]}>
+          <Text style={styles.mediaPlaceholderText}>Trabajando en la imagen/video</Text>
+        </View>
+      )}
 
       <Text style={styles.sectionTitle}>Cómo hacerlo</Text>
       <View style={styles.card}>
@@ -102,12 +113,29 @@ const styles = StyleSheet.create({
     color: colors.primaryDark,
     textTransform: "capitalize",
   },
+  aiChip: {
+    backgroundColor: colors.surfaceMuted,
+  },
+  aiChipText: {
+    fontFamily: fonts.semiBold,
+    fontSize: fontSizes.xs,
+    color: colors.textMuted,
+  },
   media: {
     width: "100%",
     height: 240,
     borderRadius: radii.lg,
     backgroundColor: colors.surfaceMuted,
     marginBottom: spacing.lg,
+  },
+  mediaPlaceholder: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  mediaPlaceholderText: {
+    fontFamily: fonts.medium,
+    fontSize: fontSizes.sm,
+    color: colors.textMuted,
   },
   sectionTitle: {
     fontFamily: fonts.bold,
