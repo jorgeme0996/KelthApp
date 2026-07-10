@@ -16,12 +16,14 @@ import * as ImagePicker from "expo-image-picker";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as mealSwapApi from "@/api/mealSwap";
+import * as usageApi from "@/api/usage";
 import { ApiError } from "@/api/client";
 import { isWeeklyLimitError } from "@/utils/apiErrors";
 import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
-import { MealSwapChatMessage, MealSwapImage, MealSwapMode, RecipeDraft } from "@/types";
+import { useAuth } from "@/context/AuthContext";
+import { isPremiumUser, MealSwapChatMessage, MealSwapImage, MealSwapMode, RecipeDraft } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
 const MAX_TURNS = 12;
@@ -58,10 +60,21 @@ const EMPTY_STATE_TEXT: Record<MealSwapMode, string> = {
 };
 
 export default function MealSwapScreen() {
+  const { user } = useAuth();
+  const premium = isPremiumUser(user);
   const queryClient = useQueryClient();
   const listRef = useRef<FlatList<MealSwapChatMessage>>(null);
   const inputRef = useRef<TextInput>(null);
   const params = useLocalSearchParams<{ entryId: string; mealSlot: string; recipeName: string }>();
+
+  // Peeked ahead of time so picking a mode doesn't need to wait on a network
+  // round trip to know whether this user still has a swap available.
+  const weeklyUsageQuery = useQuery({
+    queryKey: ["usage", "weekly-status"],
+    queryFn: usageApi.getWeeklyUsageStatus,
+    enabled: !premium,
+    staleTime: 0,
+  });
 
   const [step, setStep] = useState<Step>("mode-select");
   const [mode, setMode] = useState<MealSwapMode | null>(null);
@@ -111,6 +124,10 @@ export default function MealSwapScreen() {
   });
 
   const handleSelectMode = (selected: MealSwapMode) => {
+    if (!premium && weeklyUsageQuery.data?.allowed === false) {
+      setWeeklyLimitVisible(true);
+      return;
+    }
     setMode(selected);
     setStep("chat");
   };

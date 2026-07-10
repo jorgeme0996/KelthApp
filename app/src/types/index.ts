@@ -47,6 +47,13 @@ export function isTrialOnly(user: User | null | undefined): boolean {
   return isTrialActive(user) && !user?.subscriptionPlan;
 }
 
+// Nunca ha tenido ningún trial (ni el automático de registro ni la oferta de
+// segunda oportunidad) — trialEndsAt nunca se limpia, así que su sola
+// presencia ya significa "ya tuvo su prueba, alguna vez".
+export function isTrialOfferEligible(user: User | null | undefined): boolean {
+  return !isPremiumUser(user) && !user?.trialEndsAt;
+}
+
 export type Gender = "hombre" | "mujer" | "prefiero_no_decir";
 export type Goal = "bajar_peso" | "mantener_peso" | "subir_masa";
 export type DietId = "lowcarb" | "maintenance" | "muscle-gain";

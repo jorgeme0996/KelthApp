@@ -4,12 +4,14 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as exerciseSwapApi from "@/api/exerciseSwap";
+import * as usageApi from "@/api/usage";
 import { ApiError } from "@/api/client";
 import { isWeeklyLimitError } from "@/utils/apiErrors";
 import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
-import { ExerciseOption, ExerciseSwapChatMessage, ExerciseSwapMode } from "@/types";
+import { useAuth } from "@/context/AuthContext";
+import { ExerciseOption, ExerciseSwapChatMessage, ExerciseSwapMode, isPremiumUser } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
 const MAX_TURNS = 12;
@@ -51,10 +53,21 @@ function optionEquipment(option: ExerciseOption): string {
 }
 
 export default function ExerciseSwapScreen() {
+  const { user } = useAuth();
+  const premium = isPremiumUser(user);
   const queryClient = useQueryClient();
   const listRef = useRef<FlatList<ExerciseSwapChatMessage>>(null);
   const inputRef = useRef<TextInput>(null);
   const params = useLocalSearchParams<{ entryId: string; bodyPart: string; exerciseName: string }>();
+
+  // Peeked ahead of time so picking a mode doesn't need to wait on a network
+  // round trip to know whether this user still has a swap available.
+  const weeklyUsageQuery = useQuery({
+    queryKey: ["usage", "weekly-status"],
+    queryFn: usageApi.getWeeklyUsageStatus,
+    enabled: !premium,
+    staleTime: 0,
+  });
 
   const [step, setStep] = useState<Step>("mode-select");
   const [mode, setMode] = useState<ExerciseSwapMode | null>(null);
@@ -98,6 +111,10 @@ export default function ExerciseSwapScreen() {
   });
 
   const handleSelectMode = (selected: ExerciseSwapMode) => {
+    if (!premium && weeklyUsageQuery.data?.allowed === false) {
+      setWeeklyLimitVisible(true);
+      return;
+    }
     setMode(selected);
     setStep("chat");
   };

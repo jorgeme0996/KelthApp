@@ -11,6 +11,7 @@ import exerciseRoutes from "./routes/exercises";
 import billingRoutes, { stripeWebhookHandler } from "./routes/billing";
 import whatsappWebhookRoutes from "./routes/whatsappWebhook";
 import pushRoutes from "./routes/push";
+import usageRoutes from "./routes/usage";
 import { registerPushCronJobs } from "./cron/pushReminders";
 import { registerTrialReminderCronJob } from "./cron/trialReminders";
 import { registerPlanExpirationCronJob } from "./cron/planExpiration";
@@ -37,6 +38,7 @@ app.use("/api/routines", routineRoutes);
 app.use("/api/exercises", exerciseRoutes);
 app.use("/api/billing", billingRoutes);
 app.use("/api/push", pushRoutes);
+app.use("/api/usage", usageRoutes);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, () => {

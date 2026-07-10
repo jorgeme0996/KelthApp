@@ -1,14 +1,18 @@
-import { useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, View } from "react-native";
 import * as WebBrowser from "expo-web-browser";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
+import { TrialOfferModal } from "@/components/TrialOfferModal";
 import { useAuth } from "@/context/AuthContext";
 import * as billingApi from "@/api/billing";
 import { ApiError } from "@/api/client";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
-import { isPremiumUser, isTrialOnly, trialDaysLeft } from "@/types";
+import { isPremiumUser, isTrialOfferEligible, isTrialOnly, trialDaysLeft } from "@/types";
+
+const DWELL_MS = 25000;
+const SCROLL_BOTTOM_THRESHOLD = 24;
 
 const FREE_FEATURES = [
   "Plan de comidas semanal según tu objetivo",
@@ -45,16 +49,46 @@ export default function PremiumScreen() {
   const { user } = useAuth();
   const [billingLoading, setBillingLoading] = useState<"monthly" | "annual" | "portal" | null>(null);
   const [billingError, setBillingError] = useState<string | null>(null);
+  const [trialOfferVisible, setTrialOfferVisible] = useState(false);
+  const [reachedBottom, setReachedBottom] = useState(false);
+  const [dwellElapsed, setDwellElapsed] = useState(false);
   const premium = isPremiumUser(user);
   const trialOnly = isTrialOnly(user);
   const daysLeft = trialDaysLeft(user);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDwellElapsed(true), DWELL_MS);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Señal de interés: se queda leyendo la página 25s+ y llega hasta el
+  // final. Cuando ambas se cumplen, se le ofrece la prueba de 7 días
+  // (solo si nunca tuvo trial antes, ver isTrialOfferEligible).
+  useEffect(() => {
+    if (reachedBottom && dwellElapsed && !trialOfferVisible && isTrialOfferEligible(user)) {
+      setTrialOfferVisible(true);
+    }
+  }, [reachedBottom, dwellElapsed, trialOfferVisible, user]);
+
+  const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
+    if (layoutMeasurement.height + contentOffset.y >= contentSize.height - SCROLL_BOTTOM_THRESHOLD) {
+      setReachedBottom(true);
+    }
+  };
 
   const handleUpgrade = async (plan: "monthly" | "annual") => {
     setBillingLoading(plan);
     setBillingError(null);
     try {
       const { url } = await billingApi.createCheckoutSession(plan);
-      await WebBrowser.openBrowserAsync(url);
+      const result = await WebBrowser.openBrowserAsync(url);
+      // En iOS esto resuelve cuando el usuario cierra/cancela el navegador
+      // (no aplica en Android, que resuelve al abrirlo — ahí el regreso se
+      // maneja en app/billing/cancel.tsx vía el cancel_url de Stripe).
+      if (result.type !== "opened" && !isPremiumUser(user) && isTrialOfferEligible(user)) {
+        setTrialOfferVisible(true);
+      }
     } catch (err) {
       setBillingError(err instanceof ApiError ? err.message : "No se pudo iniciar el pago.");
     } finally {
@@ -113,7 +147,8 @@ export default function PremiumScreen() {
   );
 
   return (
-    <ScreenContainer scroll>
+    <>
+      <ScreenContainer scroll onScroll={handleScroll} scrollEventThrottle={200}>
       <View style={styles.hero}>
         <View style={styles.heroBadge}>
           <Ionicons name="star" size={28} color={colors.accent} />
@@ -182,6 +217,8 @@ export default function PremiumScreen() {
         </>
       )}
     </ScreenContainer>
+    <TrialOfferModal visible={trialOfferVisible} onClose={() => setTrialOfferVisible(false)} />
+    </>
   );
 }
 
