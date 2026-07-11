@@ -24,361 +24,420 @@
     "notas": "Se admite proteína en polvo como colación o refuerzo. La carne roja y el cerdo dejan de estar limitados y pueden usarse casi a diario en cortes magros."
   },
   "prohibited": {
-    "_notes": "Lista de prohibidos reducida al mínimo para no frenar el aporte calórico/proteico. Solo se restringe lo claramente contraproducente.",
+    "_notes": "Semáforo KelthSense - alimentos prohibidos para ganancia de masa muscular.",
     "azucaresYPostres": [
-      "Azúcar añadida en exceso",
-      "Postres y repostería industrial",
-      "Dulces, chocolates y golosinas industriales"
+      "Azúcar o azúcares añadidos",
+      "Repostería o panadería industrializada",
+      "Cereales de caja",
+      "Galletas industrializadas, botanas, frituras y dulces"
+    ],
+    "jugosYBebidas": [
+      "Jugos naturales o industrializados",
+      "Refrescos o bebidas energéticas",
+      "Alcohol (coctelería, fermentados y destilados)"
     ],
     "modosPreparacion": [
-      "Frito en abundante aceite",
-      "Capeado"
-    ],
-    "frituras": [
-      "Papas fritas",
-      "Churritos y botanas industrializadas"
-    ],
-    "embutidos": [
-      "Chorizo",
-      "Longaniza",
-      "Chistorra",
-      "Salami"
-    ],
-    "bebidas": [
-      "Refrescos",
-      "Jugos industrializados con azúcar",
-      "Bebidas alcohólicas"
+      "Empanizados, rebozados, capeados y fritos"
     ],
     "grasas": [
-      "Margarina"
+      "Margarina",
+      "Queso Philadelphia"
+    ],
+    "harinas": [
+      "Tortilla de harina",
+      "Chicharrón de cerdo y harina"
     ]
   },
   "moderateEquivalents": {
-    "_notes": "Versión flexible para GANANCIA MUSCULAR: la proteína se maneja como libre/alta (ver proteinGuidance) y los carbohidratos son abundantes para generar superávit. Panes, tortillas y lácteos enteros están permitidos como equivalentes. Un nutriólogo puede afinar por calorías individuales.",
+    "_notes": "Semáforo KelthSense para ganancia de masa muscular, organizado por color: naranja y amarillo son 'alimentos moderados' (limitados por comodines semanales), azul son 'proteínas de alto valor biológico' (permitidas en consumo moderado/libre, también limitadas por comodines semanales). Los comodines por color se definen en `comodines` según el nivel del paciente.",
     "leguminosas": {
       "label": "Leguminosas",
+      "color": "naranja",
       "items": [
         "Frijoles",
-        "Lentejas",
+        "Habas",
+        "Edamames",
+        "Hummus",
         "Garbanzos",
-        "Habas"
+        "Lentejas",
+        "Chícharos"
       ],
-      "portion": "½ taza cocida",
+      "portion": "½ taza",
       "dailyBudget": 3
     },
     "cereales": {
       "label": "Cereales",
+      "color": "naranja",
       "items": [
         {
-          "name": "Pasta o arroz",
+          "name": "Avena",
           "portion": "½ taza"
         },
         {
-          "name": "Avena natural en hojuelas",
-          "portion": "1/3 taza"
+          "name": "Quinoa",
+          "portion": "20 g o 2 cucharadas"
         },
         {
-          "name": "Quínoa cocida o amaranto",
-          "portion": "3 cdas"
+          "name": "Arroz",
+          "portion": "¼ taza o 50 g"
         },
         {
-          "name": "Pan de caja o integral",
+          "name": "Pasta",
+          "portion": "½ taza"
+        },
+        {
+          "name": "Amaranto tostado",
+          "portion": "¼ de taza o 1 cda"
+        },
+        {
+          "name": "Tapioca",
+          "portion": "20 g o 2 cucharadas"
+        },
+        {
+          "name": "Palomitas naturales",
+          "portion": "2 tazas"
+        },
+        {
+          "name": "Elote",
+          "portion": "½ pieza o ½ taza desgranado"
+        },
+        {
+          "name": "Tortilla",
+          "portion": "1 pieza"
+        },
+        {
+          "name": "Tostada de maíz",
           "portion": "2 piezas"
         },
         {
-          "name": "Bolillo",
-          "portion": "½ pieza"
+          "name": "Bolillo sin migajón",
+          "portion": "1/3 pieza"
         },
         {
-          "name": "Tortilla de maíz o de harina",
-          "portion": "1 pieza"
+          "name": "Baguette",
+          "portion": "1/7 de pieza"
         },
         {
-          "name": "Tostada horneada",
-          "portion": "1 pieza"
+          "name": "Pan de caja integral",
+          "portion": "1 rebanada"
+        },
+        {
+          "name": "Gelatina",
+          "portion": "½ taza"
         }
       ],
       "dailyBudget": 6
     },
     "oleaginosas": {
       "label": "Oleaginosas",
+      "color": "amarillo",
       "items": [
         {
-          "name": "Ajonjolí",
-          "portion": "2 cdas"
+          "name": "Crema de cacahuate, almendra o avellana",
+          "portion": "1 cucharada o 15 g"
         },
         {
-          "name": "Almendras",
-          "portion": "10 piezas"
-        },
-        {
-          "name": "Nueces",
+          "name": "Nuez",
           "portion": "7 mitades"
         },
         {
-          "name": "Pistaches",
-          "portion": "5 piezas"
-        },
-        {
-          "name": "Cacahuates naturales",
+          "name": "Almendra",
           "portion": "10 piezas"
         },
         {
+          "name": "Pistache",
+          "portion": "18 piezas"
+        },
+        {
+          "name": "Cacahuate",
+          "portion": "14 piezas"
+        },
+        {
           "name": "Nuez de la India",
-          "portion": "7 piezas"
+          "portion": "8 piezas"
+        },
+        {
+          "name": "Ajonjolí",
+          "portion": "4 cditas"
         }
       ],
       "dailyBudget": 2
     },
     "lacteos": {
       "label": "Lácteos",
+      "color": "amarillo",
       "items": [
         {
-          "name": "Leche light o entera",
-          "portion": "1 taza"
+          "name": "Leche de vaca entera",
+          "portion": "1 taza o 240 ml"
         },
         {
-          "name": "Leche de almendra",
-          "portion": "1 taza"
+          "name": "Leche semi-descremada o parcialmente descremada",
+          "portion": "1 taza o 240 ml"
         },
         {
-          "name": "Leche de coco",
-          "portion": "1 taza"
-        },
-        {
-          "name": "Leche de soya sin azúcar",
-          "portion": "1 taza"
-        },
-        {
-          "name": "Yoghurt natural sin azúcar",
-          "portion": "1 taza"
-        },
-        {
-          "name": "Yoghurt griego sin azúcar (Fage, Chobani zero)",
-          "portion": "½ taza"
+          "name": "Yogurt griego o alto en proteína",
+          "portion": "1 taza o 240 ml"
         }
       ],
       "dailyBudget": 3
     },
     "quesos": {
       "label": "Quesos",
+      "color": "amarillo",
       "items": [
+        "Manchego",
+        "Gouda",
+        "Edam",
+        "Mozzarella",
         "Panela",
         "Oaxaca",
-        "Cottage",
-        "Manchego",
-        "Gouda"
+        "Queso de cabra",
+        "Ranchero",
+        "Asadero"
       ],
-      "portion": "30 g (1 rebanada)",
+      "portion": "30 g o 1 rebanada",
       "dailyBudget": 2
     },
     "verdurasModeradas": {
-      "label": "Verduras (de preferencia crudas)",
+      "label": "Verduras",
+      "color": "naranja",
       "items": [
         {
-          "name": "Betabel o berenjena",
-          "portion": "½ pieza"
+          "name": "Zanahoria",
+          "portion": "½ taza"
         },
         {
-          "name": "Zanahoria chica",
-          "portion": "2 piezas"
+          "name": "Betabel",
+          "portion": "¼ de pieza"
+        },
+        {
+          "name": "Berenjena",
+          "portion": "1 taza"
         }
       ],
       "dailyBudget": 1
     },
     "tuberculos": {
       "label": "Tubérculos",
+      "color": "naranja",
       "items": [
         {
-          "name": "Papa chica",
-          "portion": "1 pieza"
+          "name": "Papa",
+          "portion": "½ pza"
         },
         {
-          "name": "Camote o yuca",
-          "portion": "½ taza"
+          "name": "Camote",
+          "portion": "1/3 de taza o 70 g"
+        },
+        {
+          "name": "Yuca",
+          "portion": "¼ de pieza"
         }
       ],
       "dailyBudget": 3
     },
     "frutas": {
       "label": "Frutas",
-      "items": [
-        "Cualquier fruta de temporada"
-      ],
-      "portion": "1 pieza o 1 taza",
-      "dailyBudget": 4
-    },
-    "aceitesGrasas": {
-      "label": "Aceites y grasas",
+      "color": "naranja",
       "items": [
         {
-          "name": "Aguacate (como aceite)",
-          "portion": "1 cdita"
+          "name": "De mano (manzana, pera, naranja, plátano, durazno, mango, ciruela, mandarina)",
+          "portion": "1 pieza"
         },
         {
-          "name": "Aceite de canola",
-          "portion": "1 cdita"
-        },
-        {
-          "name": "Aceite de cártamo",
-          "portion": "1 cdita"
-        },
-        {
-          "name": "Aceite de soya",
-          "portion": "1 cdita"
-        },
-        {
-          "name": "Aceite de oliva (como aderezo)",
-          "portion": "1 cdita"
-        },
-        {
-          "name": "Crema",
-          "portion": "1 cda"
-        },
-        {
-          "name": "Mayonesa",
-          "portion": "1 cda"
-        },
-        {
-          "name": "Aguacate (entero)",
-          "portion": "1/3 pieza"
-        },
-        {
-          "name": "Crema de cacahuate o avellanas",
-          "portion": "1 cda"
-        },
-        {
-          "name": "Chicharrón 100% de cerdo",
-          "portion": "15 g"
-        },
-        {
-          "name": "Mantequilla 100% de vaca",
-          "portion": "1 cdita"
+          "name": "Para picar (sandía, melón, papaya, piña, uvas)",
+          "portion": "1 taza"
         }
       ],
       "dailyBudget": 4
     },
-    "verdurasCocidas": {
-      "label": "Verduras cocidas",
-      "items": [
-        "Champiñones",
-        "Chayote",
-        "Coliflor",
-        "Ejote",
-        "Pimientos",
-        "Tomate",
-        "Jitomate",
-        "Cebolla",
-        "Huitlacoche"
-      ],
-      "portion": "1 taza",
-      "dailyBudget": 2
-    },
-    "embutidosMagros": {
-      "label": "Embutidos magros",
+    "aceitesGrasas": {
+      "label": "Aceites y grasas",
+      "color": "amarillo",
       "items": [
         {
-          "name": "Pechuga de pavo",
-          "portion": "30 g"
+          "name": "Aceite de aguacate, coco, soya, canola, ajonjolí, maíz u oliva (aderezar)",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Aguacate",
+          "portion": "1/3 pieza"
+        },
+        {
+          "name": "Mantequilla 100% de vaca",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Mayonesa",
+          "portion": "1 cdita"
+        },
+        {
+          "name": "Aceitunas",
+          "portion": "6 piezas"
+        }
+      ],
+      "dailyBudget": 4
+    },
+    "embutidosMagros": {
+      "label": "Proteínas con grasa",
+      "color": "amarillo",
+      "items": [
+        {
+          "name": "Jamón de cerdo o pavo",
+          "portion": "2 rebanadas o 40 g"
         },
         {
           "name": "Salchicha de pavo",
           "portion": "1 pieza"
         },
         {
-          "name": "Chilorio",
+          "name": "Pollo (ala, pierna, muslo)",
           "portion": "30 g"
         },
         {
-          "name": "Paté",
-          "portion": "30 g"
+          "name": "Mariscos (camarón, jaiba, langosta, pulpo, ostiones, calamar, langostino)",
+          "portion": "40 g"
         }
       ],
       "dailyBudget": 2
+    },
+    "proteinas": {
+      "label": "Proteínas de alto valor biológico",
+      "color": "azul",
+      "items": [
+        {
+          "name": "Atún",
+          "portion": "30 g"
+        },
+        {
+          "name": "Salmón, huachinango, róbalo, tilapia, blanco del Nilo o sardina",
+          "portion": "30 g"
+        },
+        {
+          "name": "Huevo completo",
+          "portion": "1 pieza"
+        },
+        {
+          "name": "Claras de huevo",
+          "portion": "66 g"
+        },
+        {
+          "name": "Pollo (pechuga)",
+          "portion": "30 g"
+        },
+        {
+          "name": "Pavo (pechuga)",
+          "portion": "45 g"
+        },
+        {
+          "name": "Cerdo (corte magro)",
+          "portion": "45 g"
+        },
+        {
+          "name": "Res (cortes magros)",
+          "portion": "40 g"
+        }
+      ],
+      "portionNotes": "El equivalente de receta se cuenta como 1 por platillo con esta proteína como principal (no proporcional a los gramos), ya que en este plan la proteína es prioritaria y abundante.",
+      "dailyBudget": 5
     }
   },
   "free": {
-    "verdurasCrudas": {
-      "label": "Verduras (libres, de preferencia crudas)",
+    "verduras": {
+      "label": "Verduras (libres)",
       "items": [
-        "Acelgas",
-        "Espinacas",
-        "Lechuga",
-        "Berros",
+        "Champiñones",
+        "Setas",
+        "Coliflor",
+        "Jitomate",
+        "Cebolla",
+        "Huitlacoche",
+        "Pimientos",
+        "Chayote",
+        "Ejote",
+        "Tomate",
+        "Acelga",
+        "Arúgula",
+        "Apio",
         "Alcachofa",
-        "Espárragos",
-        "Germen de alfalfa",
-        "Pepino",
-        "Nopal",
-        "Rábano",
+        "Berros",
         "Brócoli",
+        "Espinaca",
+        "Flor de calabaza",
+        "Germen de trigo o alfalfa",
+        "Nopal",
+        "Kale",
         "Calabaza",
-        "Flor de calabaza"
-      ]
-    },
-    "proteinas": {
-      "label": "Proteínas (grupo prioritario)",
-      "libres": [
-        "Proteína en polvo (whey o cero carb)",
-        "Huevo completo o claras de huevo",
-        "Pollo",
-        "Pescado",
-        "Atún",
-        "Pavo",
-        "Pato",
-        "Codorniz",
-        "Res magra",
-        "Cerdo magro"
-      ],
-      "limitadas2a3xSemana": [
-        "Mariscos",
-        "Calamar",
-        "Pulpo",
-        "Camarón"
+        "Rábano",
+        "Lechuga",
+        "Epazote",
+        "Hierbas de olor",
+        "Quelites",
+        "Cilantro",
+        "Espárragos",
+        "Verdolagas",
+        "Perejil"
       ]
     },
     "bebidas": {
-      "label": "Bebidas libres",
+      "label": "Bebidas",
       "items": [
+        "Café de grano",
+        "Té",
         "Agua de limón",
+        "Agua de Jamaica",
         "Agua de pepino",
         "Agua de apio",
-        "Agua de jamaica",
-        "Agua mineral",
-        "Café de grano",
-        "Té verde o negro",
-        "Licuados verdes (sólo verduras permitidas)",
-        "Licuado de proteína (agua o leche permitida)"
+        "Infusiones herbales (manzanilla, limón, canela, hierbabuena, etc.)"
       ]
     },
-    "otros": {
-      "label": "Otros",
+    "salsasGuisados": {
+      "label": "Salsas o guisados",
       "items": [
-        "Chiles",
-        "Tajín",
-        "Valentina",
+        "Chile de árbol",
+        "Chile morita",
+        "Jitomatillo",
+        "Salsa verde",
+        "Chile pasilla",
+        "Chile guajillo"
+      ]
+    },
+    "sazonadoresEspecias": {
+      "label": "Sazonadores y especias",
+      "items": [
         "Salsa Maggi",
         "Salsa inglesa",
-        "Gelatina light"
+        "Valentina",
+        "Tajín",
+        "Tabasco",
+        "Pimienta",
+        "Sal de grano",
+        "Comino",
+        "Canela",
+        "Ajo"
       ]
     },
-    "salsasEspecias": {
-      "label": "Salsas y especias",
+    "edulcorantes": {
+      "label": "Edulcorantes",
       "items": [
-        "Salsa pasilla",
-        "Salsa guajillo",
-        "Salsa morita",
-        "Salsa verde",
-        "Salsa roja",
-        "Salsa mexicana",
-        "Hierbas finas",
-        "Sal del Himalaya",
-        "Pimienta",
-        "Hierbas de olor",
-        "Comino",
-        "Clavo"
+        "Stevia",
+        "Monkfruit",
+        "Splenda",
+        "Gelatina light"
       ]
     }
+  },
+  "semaforo": {
+    "naranja": ["cereales", "leguminosas", "verdurasModeradas", "tuberculos", "frutas"],
+    "amarillo": ["oleaginosas", "lacteos", "quesos", "aceitesGrasas", "embutidosMagros"],
+    "azul": ["proteinas"]
+  },
+  "comodines": {
+    "_notes": "Topes semanales de equivalentes por color, según qué tan lejos esté el paciente de su peso saludable. Se elige automáticamente comparando su peso actual contra el piso de IMC saludable (18.5) para su estatura.",
+    "desnutricion_15kg": { "naranja": 7, "amarillo": 7, "azul": 8 },
+    "bajo_peso_10kg": { "naranja": 6, "amarillo": 6, "azul": 7 },
+    "aumento_masa_5kg": { "naranja": 5, "amarillo": 5, "azul": 6 }
   },
   "mealSlotsByMealsPerDay": {
     "3": [

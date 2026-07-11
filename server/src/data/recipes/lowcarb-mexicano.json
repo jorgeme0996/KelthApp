@@ -56,7 +56,8 @@
     ],
     "prepTimeMinutes": 15,
     "equivalents": {
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -119,7 +120,8 @@
     "equivalents": {
       "cereales": 2,
       "quesos": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -176,7 +178,8 @@
     "equivalents": {
       "verdurasCocidas": 1,
       "quesos": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -325,7 +328,8 @@
     "prepTimeMinutes": 15,
     "equivalents": {
       "leguminosas": 1,
-      "cereales": 1
+      "cereales": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -493,7 +497,8 @@
     "prepTimeMinutes": 30,
     "equivalents": {
       "cereales": 2,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -567,7 +572,8 @@
     "prepTimeMinutes": 25,
     "equivalents": {
       "aceitesGrasas": 1,
-      "verdurasCocidas": 1
+      "verdurasCocidas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -636,7 +642,8 @@
     "prepTimeMinutes": 30,
     "equivalents": {
       "oleaginosas": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -710,7 +717,8 @@
     "prepTimeMinutes": 30,
     "equivalents": {
       "cereales": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -773,7 +781,8 @@
     "equivalents": {
       "tuberculos": 1,
       "verdurasModeradas": 1,
-      "verdurasCocidas": 1
+      "verdurasCocidas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -834,7 +843,8 @@
     ],
     "prepTimeMinutes": 15,
     "equivalents": {
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -948,7 +958,8 @@
     "prepTimeMinutes": 25,
     "equivalents": {
       "aceitesGrasas": 1,
-      "quesos": 1
+      "quesos": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1011,7 +1022,8 @@
     "prepTimeMinutes": 25,
     "equivalents": {
       "verdurasCocidas": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1073,7 +1085,8 @@
     "prepTimeMinutes": 25,
     "equivalents": {
       "frutas": 1,
-      "cereales": 2
+      "cereales": 2,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1133,7 +1146,8 @@
     ],
     "prepTimeMinutes": 10,
     "equivalents": {
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1194,7 +1208,8 @@
     ],
     "prepTimeMinutes": 30,
     "equivalents": {
-      "verdurasCocidas": 1
+      "verdurasCocidas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1257,7 +1272,8 @@
     "equivalents": {
       "cereales": 2,
       "leguminosas": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1477,7 +1493,8 @@
     "prepTimeMinutes": 12,
     "equivalents": {
       "quesos": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1619,7 +1636,8 @@
     "equivalents": {
       "leguminosas": 1,
       "verdurasCocidas": 1,
-      "aceitesGrasas": 1
+      "aceitesGrasas": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1693,7 +1711,8 @@
     "prepTimeMinutes": 20,
     "equivalents": {
       "aceitesGrasas": 1,
-      "cereales": 1
+      "cereales": 1,
+      "proteinas": 1
     },
     "dietType": "lowcarb",
     "source": "seed"
@@ -1988,7 +2007,9 @@
       "Rociar con limón y chile al gusto."
     ],
     "prepTimeMinutes": 12,
-    "equivalents": {},
+    "equivalents": {
+      "proteinas": 1
+    },
     "dietType": "lowcarb",
     "source": "seed"
   },

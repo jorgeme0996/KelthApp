@@ -6,6 +6,7 @@ import { generateAndSaveMealPlan, regenerateMealPlanDay } from "../services/meal
 import { buildShoppingList } from "../services/shoppingList";
 import { startOfWeek } from "../lib/week";
 import { dietIdForGoal } from "../lib/dietGoal";
+import { computeMuscleGainTier } from "../lib/comodinTier";
 import { isPremium } from "../services/billing";
 import { checkAndConsumeWeeklyAction } from "../services/usageLimits";
 import { recipeDraftSchema, runMealSwapChatTurn } from "../services/mealSwapAssistant";
@@ -40,6 +41,7 @@ router.post("/generate", authMiddleware, async (req: AuthRequest, res) => {
       weekStart,
       user.dietaryRestrictions,
       dietIdForGoal(user.goal),
+      computeMuscleGainTier(user.heightCm, user.weightKg),
     );
     res.status(201).json(mealPlan);
   } catch (err) {
@@ -76,6 +78,7 @@ router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => 
       user.dietType,
       user.dietaryRestrictions,
       dietIdForGoal(user.goal),
+      computeMuscleGainTier(user.heightCm, user.weightKg),
     );
     res.json(updated);
   } catch (err) {
