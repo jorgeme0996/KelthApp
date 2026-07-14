@@ -9,7 +9,7 @@
     "userInterfaceStyle": "light",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.irishtech.elmejormenu",
+      "bundleIdentifier": "com.kelthapp.app",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -37,7 +37,7 @@
       "apiUrl": "http://localhost:4000",
       "router": {},
       "eas": {
-        "projectId": "cee7926f-aeba-4962-aaec-ab1df7470e83"
+        "projectId": "9040d71d-8ff7-4ca7-9c16-afaa53701222"
       }
     },
     "owner": "jorgeme0996"
