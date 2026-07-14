@@ -15,7 +15,7 @@ model User {
   mealsPerDay    Int      @default(4)
   exerciseDaysPerWeek Int?
   dietType       String   @default("lowcarb")
-  dailyChatLimit Int?
+  dailyChatLimit Int?     // DEPRECATED: unused since el rediseño KelthApp quitó la capa freemium — kept for historical data, safe to drop in a future cleanup migration
   age            Int?
   heightCm       Int?
   weightKg       Float?
@@ -32,8 +32,8 @@ model User {
   subscriptionStatus   String?   // active | trialing | past_due | canceled | incomplete | unpaid
   subscriptionPlan     String?   // monthly | annual
   currentPeriodEnd     DateTime?
-  trialEndsAt          DateTime?
-  trialReminderSentAt  DateTime?
+  trialEndsAt          DateTime? // DEPRECATED: unused since el rediseño KelthApp quitó el trial gratuito — kept for historical data, safe to drop in a future cleanup migration
+  trialReminderSentAt  DateTime? // DEPRECATED: ver trialEndsAt
   createdAt      DateTime @default(now())
 
   mealPlans           MealPlan[]
@@ -41,9 +41,10 @@ model User {
   chatMessages        ChatMessage[]
   passwordResetTokens PasswordResetToken[]
   workoutCompletions  WorkoutCompletion[]
-  weeklyActionUsages  WeeklyActionUsage[]
+  weeklyActionUsages  WeeklyActionUsage[] // DEPRECATED: unused since el rediseño KelthApp quitó los límites freemium — kept for historical data, safe to drop in a future cleanup migration
 }
 
+// DEPRECATED: unused since el rediseño KelthApp quitó los límites freemium — kept for historical data, safe to drop in a future cleanup migration
 model WeeklyActionUsage {
   id        String   @id @default(uuid())
   userId    String

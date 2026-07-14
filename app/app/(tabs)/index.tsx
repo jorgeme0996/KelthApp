@@ -21,10 +21,8 @@ import {
   useWorkoutCompletions,
 } from "@/hooks/useRoutine";
 import { ApiError } from "@/api/client";
-import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
-import { TrialBanner } from "@/components/TrialBanner";
-import { isWeeklyLimitError } from "@/utils/apiErrors";
-import { BODY_PART_ORDER, DAY_LABELS, MEAL_SLOT_ORDER, isTrialOnly, trialDaysLeft } from "@/types";
+import { isPremiumRequiredError } from "@/utils/apiErrors";
+import { BODY_PART_ORDER, DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 import { computeWorkoutStreak, dateKey, getWorkoutDoneTodayMessage } from "@/utils/workoutCongrats";
 
@@ -50,11 +48,13 @@ export default function HomeScreen() {
   const uncompleteWorkoutMutation = useUncompleteWorkoutDay();
   const { data: completions } = useWorkoutCompletions();
   const [justCompletedNames, setJustCompletedNames] = useState<string[] | null>(null);
-  const [weeklyLimitModal, setWeeklyLimitModal] = useState(false);
 
-  const handleWeeklyLimitedError = (err: unknown, fallbackMessage: string) => {
-    if (isWeeklyLimitError(err)) {
-      setWeeklyLimitModal(true);
+  const handlePremiumRequiredError = (err: unknown, fallbackMessage: string) => {
+    if (isPremiumRequiredError(err)) {
+      Alert.alert("Función Premium", "Esta función requiere una suscripción Premium.", [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Ver planes", onPress: () => router.push("/premium") },
+      ]);
       return;
     }
     Alert.alert("Error", err instanceof ApiError ? err.message : fallbackMessage);
@@ -133,8 +133,6 @@ export default function HomeScreen() {
         <Text style={styles.subtitle}>{DAY_LABELS[todayIndex]} · Plan Low Carb</Text>
       </View>
 
-      {isTrialOnly(user) ? <TrialBanner daysLeft={trialDaysLeft(user)} /> : null}
-
       <View style={styles.tabBar}>
         <Pressable
           style={[styles.tabButton, activeTab === "food" && styles.tabButtonActive]}
@@ -184,7 +182,7 @@ export default function HomeScreen() {
                   entry={entry}
                   onSwap={(id) =>
                     swapMutation.mutate(id, {
-                      onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar esta comida."),
+                      onError: (err) => handlePremiumRequiredError(err, "No se pudo cambiar esta comida."),
                     })
                   }
                   swapping={swapMutation.isPending && swapMutation.variables === entry.id}
@@ -249,7 +247,7 @@ export default function HomeScreen() {
                   entry={entry}
                   onSwap={(id) =>
                     swapRoutineMutation.mutate(id, {
-                      onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar este ejercicio."),
+                      onError: (err) => handlePremiumRequiredError(err, "No se pudo cambiar este ejercicio."),
                     })
                   }
                   swapping={swapRoutineMutation.isPending && swapRoutineMutation.variables === entry.id}
@@ -279,8 +277,6 @@ export default function HomeScreen() {
         <Text style={styles.assistantText}>Pregúntale a tu copiloto sobre sustituciones, porciones, ejercicios o tu plan de hoy.</Text>
         <Button label="Abrir asistente" variant="secondary" onPress={() => router.push("/(tabs)/chat")} />
       </View>
-
-      <WeeklyLimitModal visible={weeklyLimitModal} onClose={() => setWeeklyLimitModal(false)} />
     </ScreenContainer>
   );
 }

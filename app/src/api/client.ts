@@ -4,7 +4,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const API_URL =
   (Constants.expoConfig?.extra?.apiUrl as string | undefined) || "http://localhost:4000";
 
-export const TOKEN_KEY = "elmejormenu_token";
+export const TOKEN_KEY = "kelthapp_token";
 
 export class ApiError extends Error {
   status: number;

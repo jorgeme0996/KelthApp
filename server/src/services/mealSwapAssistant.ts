@@ -98,7 +98,7 @@ function buildMealSwapSystemPrompt(
   dietId: string,
 ): string {
   return [
-    "Eres el copiloto de la app 'El Mejor Menú'. Tu tarea en esta conversación es ayudar a la persona a reemplazar UNA comida específica de su menú semanal con una alternativa mejor, hablando siempre en español de México.",
+    "Eres el copiloto de la app 'KelthApp'. Tu tarea en esta conversación es ayudar a la persona a reemplazar UNA comida específica de su menú semanal con una alternativa mejor, hablando siempre en español de México.",
     `La comida a reemplazar es: ${SLOT_LABELS[mealSlot] ?? mealSlot} (actualmente: "${currentRecipeName}").`,
     "",
     buildDietSummary(dietId),

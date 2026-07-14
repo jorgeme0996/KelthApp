@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import { MealPlanEntry, MEAL_SLOT_LABELS } from "@/types";
 import { colors, fonts, fontSizes, radii, slotColors, spacing } from "@/theme";
+import { semaforoColorHex } from "@/utils/semaforo";
 
 interface RecipeCardProps {
   entry: MealPlanEntry;
@@ -79,13 +80,19 @@ export function RecipeCard({ entry, onSwap, swapping, onToggleComplete, completi
               <Text style={styles.equivalentChipText}> {entry.recipe.prepTimeMinutes} min</Text>
             </View>
           ) : null}
-          {Object.entries(entry.recipe.equivalents).map(([key, value]) => (
-            <View key={key} style={styles.equivalentChip}>
-              <Text style={styles.equivalentChipText}>
-                {value} {key}
-              </Text>
-            </View>
-          ))}
+          {entry.recipe.semaforo.map(({ category, color, label }) => {
+            const hex = semaforoColorHex(color);
+            return (
+              <View
+                key={category}
+                style={[styles.equivalentChip, hex ? { backgroundColor: `${hex}1A` } : null]}
+              >
+                <Text style={[styles.equivalentChipText, hex ? { color: hex } : null]}>
+                  {entry.recipe.equivalents[category]} {label}
+                </Text>
+              </View>
+            );
+          })}
         </View>
         <View style={styles.footer}>
           <Text style={styles.detailLink}>Ver receta</Text>

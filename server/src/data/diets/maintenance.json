@@ -48,7 +48,7 @@
     ]
   },
   "moderateEquivalents": {
-    "_notes": "Versión flexible para MANTENIMIENTO: se amplían de forma clara los carbohidratos (cereales, tubérculos, frutas, leguminosas) y se incorporan panes/tortillas y lácteos que antes estaban prohibidos. Un nutriólogo puede afinar por calorías individuales.",
+    "_notes": "Versión flexible para MANTENIMIENTO: se amplían de forma clara los carbohidratos (cereales, tubérculos, frutas, leguminosas) y se incorporan panes/tortillas y lácteos que antes estaban prohibidos. Un nutriólogo puede afinar por calorías individuales. PENDIENTE: asignar 'semaforo' (color por categoría) y 'comodines' (cupos semanales) para esta dieta, con la misma forma que server/src/data/diets/muscle-gain.json — requiere validación del equipo de nutrición de Kelth. Mientras tanto GET /api/recipes/:id devuelve color: null para las categorías de esta dieta (degradación segura, ver server/src/lib/semaforo.ts).",
     "leguminosas": {
       "label": "Leguminosas",
       "items": [

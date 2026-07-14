@@ -4,12 +4,10 @@ import { Image } from "expo-image";
 import { Ionicons } from "@expo/vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useLocalSearchParams, router } from "expo-router";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as exerciseSwapApi from "@/api/exerciseSwap";
-import * as usageApi from "@/api/usage";
 import { ApiError } from "@/api/client";
-import { isWeeklyLimitError } from "@/utils/apiErrors";
-import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
+import { isPremiumRequiredError } from "@/utils/apiErrors";
 import { useAuth } from "@/context/AuthContext";
 import { ExerciseOption, ExerciseSwapChatMessage, ExerciseSwapMode, isPremiumUser } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
@@ -60,22 +58,12 @@ export default function ExerciseSwapScreen() {
   const inputRef = useRef<TextInput>(null);
   const params = useLocalSearchParams<{ entryId: string; bodyPart: string; exerciseName: string }>();
 
-  // Peeked ahead of time so picking a mode doesn't need to wait on a network
-  // round trip to know whether this user still has a swap available.
-  const weeklyUsageQuery = useQuery({
-    queryKey: ["usage", "weekly-status"],
-    queryFn: usageApi.getWeeklyUsageStatus,
-    enabled: !premium,
-    staleTime: 0,
-  });
-
   const [step, setStep] = useState<Step>("mode-select");
   const [mode, setMode] = useState<ExerciseSwapMode | null>(null);
   const [messages, setMessages] = useState<ExerciseSwapChatMessage[]>([]);
   const [draft, setDraft] = useState("");
   const [options, setOptions] = useState<ExerciseOption[] | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [weeklyLimitVisible, setWeeklyLimitVisible] = useState(false);
   const [inputHeight, setInputHeight] = useState(INPUT_MIN_HEIGHT);
 
   const chatMutation = useMutation({
@@ -102,8 +90,11 @@ export default function ExerciseSwapScreen() {
       router.back();
     },
     onError: (err) => {
-      if (isWeeklyLimitError(err)) {
-        setWeeklyLimitVisible(true);
+      if (isPremiumRequiredError(err)) {
+        Alert.alert("Función Premium", "Esta función requiere una suscripción Premium.", [
+          { text: "Cancelar", style: "cancel" },
+          { text: "Ver planes", onPress: () => router.push("/premium") },
+        ]);
         return;
       }
       Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo aplicar el cambio.");
@@ -111,10 +102,6 @@ export default function ExerciseSwapScreen() {
   });
 
   const handleSelectMode = (selected: ExerciseSwapMode) => {
-    if (!premium && weeklyUsageQuery.data?.allowed === false) {
-      setWeeklyLimitVisible(true);
-      return;
-    }
     setMode(selected);
     setStep("chat");
   };
@@ -144,6 +131,20 @@ export default function ExerciseSwapScreen() {
   };
 
   const turnCapReached = messages.length >= MAX_TURNS;
+
+  if (!premium) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+        <View style={styles.modeContainer}>
+          <Text style={styles.title}>Cambiar con IA</Text>
+          <Text style={styles.subtitle}>Esta función requiere una suscripción Premium.</Text>
+          <Pressable onPress={() => router.replace("/premium")}>
+            <Text style={styles.upgradeLink}>Ver planes Premium →</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
@@ -295,8 +296,6 @@ export default function ExerciseSwapScreen() {
           />
         </View>
       ) : null}
-
-      <WeeklyLimitModal visible={weeklyLimitVisible} onClose={() => setWeeklyLimitVisible(false)} />
     </SafeAreaView>
   );
 }

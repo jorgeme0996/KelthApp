@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "El Mejor Menú",
-    "slug": "el-mejor-menu",
-    "scheme": "elmejormenu",
+    "name": "KelthApp",
+    "slug": "kelth-app",
+    "scheme": "kelth",
     "version": "1.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -31,8 +31,7 @@
       "expo-router",
       "expo-status-bar",
       "expo-splash-screen",
-      "expo-image",
-      "expo-notifications"
+      "expo-image"
     ],
     "extra": {
       "apiUrl": "http://localhost:4000",

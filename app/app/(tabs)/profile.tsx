@@ -18,7 +18,7 @@ import * as dietsApi from "@/api/diets";
 import * as billingApi from "@/api/billing";
 import { ApiError } from "@/api/client";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
-import { DietaryRestriction, Gender, Goal, SplitType, EquipmentPreference, dietIdForGoal, isPremiumUser, isTrialOnly } from "@/types";
+import { DietaryRestriction, Gender, Goal, SplitType, EquipmentPreference, dietIdForGoal, isPremiumUser } from "@/types";
 
 function flattenItems(value: unknown): string[] {
   if (Array.isArray(value)) {
@@ -308,18 +308,7 @@ export default function ProfileScreen() {
 
       <Text style={styles.sectionTitle}>Suscripción</Text>
       <View style={styles.card}>
-        {isTrialOnly(user) ? (
-          <>
-            <Text style={styles.dietDescription}>
-              Tienes tu prueba Premium activa · termina el {new Date(user!.trialEndsAt!).toLocaleDateString("es-MX")}.
-            </Text>
-            <Button
-              label="Suscríbete ahora"
-              onPress={() => router.push("/premium")}
-              style={{ marginTop: spacing.sm }}
-            />
-          </>
-        ) : isPremiumUser(user) ? (
+        {isPremiumUser(user) ? (
           <>
             <Text style={styles.dietDescription}>
               Tienes Premium ({user?.subscriptionPlan === "annual" ? "anual" : "mensual"})

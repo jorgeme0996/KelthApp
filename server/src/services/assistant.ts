@@ -9,7 +9,6 @@ import { NUTRIOLOGOS } from "../data/nutriologos";
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 const MODEL = "claude-sonnet-4-6";
 const HISTORY_LIMIT = 20;
-const FREEMIUM_DAILY_CHAT_LIMIT = 5;
 
 export type AssistantTurnResult =
   | { status: "ok"; reply: string }
@@ -27,17 +26,7 @@ export async function runAssistantTurn(
   }
 
   if (!isPremium(user)) {
-    const startOfDay = new Date();
-    startOfDay.setHours(0, 0, 0, 0);
-
-    const todayQuestionCount = await prisma.chatMessage.count({
-      where: { userId: user.id, role: "user", createdAt: { gte: startOfDay } },
-    });
-
-    const effectiveLimit = user.dailyChatLimit ?? FREEMIUM_DAILY_CHAT_LIMIT;
-    if (todayQuestionCount >= effectiveLimit) {
-      return { status: "limited", nutriologos: NUTRIOLOGOS };
-    }
+    return { status: "limited", nutriologos: NUTRIOLOGOS };
   }
 
   const [mealPlan, routine] = await Promise.all([

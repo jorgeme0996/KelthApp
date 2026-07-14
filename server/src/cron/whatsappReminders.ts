@@ -4,9 +4,13 @@ import { User } from "@prisma/client";
 import { isPremium } from "../services/billing";
 import { sendTemplateMessage } from "../services/zernio";
 import { getMexicoCityToday } from "../lib/timezone";
+import { toE164 } from "../lib/phone";
 
 const TIMEZONE = "America/Mexico_City";
-const APP_SCHEME = process.env.APP_SCHEME || "elmejormenu";
+// WhatsApp only renders http(s) URLs as tappable links, not custom schemes,
+// so reminders point at the /go/* https redirector (see routes/deepLink.ts)
+// instead of a raw `${APP_SCHEME}://...` link.
+const APP_URL = process.env.APP_URL || `http://localhost:${process.env.PORT || 4000}`;
 
 const TEMPLATE_BREAKFAST = process.env.ZERNIO_TEMPLATE_BREAKFAST || "desayuno_recordatorio";
 const TEMPLATE_LUNCH = process.env.ZERNIO_TEMPLATE_LUNCH || "comida_rutina_recordatorio";
@@ -28,7 +32,12 @@ async function getPremiumUsersWithPhone(options: ReminderOptions = {}): Promise<
   const users = await prisma.user.findMany({
     where: { phone: { not: null }, ...(options.userId ? { id: options.userId } : {}) },
   });
-  return users.filter((u): u is User & { phone: string } => Boolean(u.phone) && (options.force || isPremium(u)));
+  return users
+    .filter((u): u is User & { phone: string } => Boolean(u.phone) && (options.force || isPremium(u)))
+    .flatMap((u) => {
+      const e164 = toE164(u.phone);
+      return e164 ? [{ ...u, phone: e164 }] : [];
+    });
 }
 
 async function getLatestMealPlanWithEntries(userId: string) {
@@ -68,7 +77,7 @@ export async function sendBreakfastReminders(options: ReminderOptions = {}) {
     console.log(`Enviando recordatorio de desayuno a ${user.phone}...`);
     await sendTemplateMessage(user.phone, TEMPLATE_BREAKFAST, [
       user.name,
-      `${APP_SCHEME}://(tabs)/menu`,
+      `${APP_URL}/go/menu`,
     ]);
   });
 }
@@ -86,7 +95,7 @@ export async function sendLunchAndRoutineReminders(options: ReminderOptions = {}
     const comidaEntry = mealPlan?.entries.find((e) => e.dayIndex === dayIndex && e.mealSlot === "comida");
     const mealStatusText = !comidaEntry || comidaEntry.completedAt
       ? "¡Ya registraste tu comida, sigue así!"
-      : `Aún no has registrado tu comida de hoy. Ábrela aquí: ${APP_SCHEME}://(tabs)/menu`;
+      : `Aún no has registrado tu comida de hoy. Ábrela aquí: ${APP_URL}/go/menu`;
 
     const todaysRoutineEntries = routine?.entries.filter((e) => e.dayIndex === dayIndex) ?? [];
     let workoutStatusText: string;
@@ -98,7 +107,7 @@ export async function sendLunchAndRoutineReminders(options: ReminderOptions = {}
       });
       workoutStatusText = completion
         ? "¡Ya completaste tu entrenamiento de hoy, felicidades!"
-        : `Todavía te toca entrenar hoy. Mira tu rutina aquí: ${APP_SCHEME}://(tabs)/exercise`;
+        : `Todavía te toca entrenar hoy. Mira tu rutina aquí: ${APP_URL}/go/exercise`;
     }
 
     await sendTemplateMessage(user.phone, TEMPLATE_LUNCH, [user.name, mealStatusText, workoutStatusText]);
@@ -137,7 +146,7 @@ export async function sendEveningWrapUp(options: ReminderOptions = {}) {
     } else {
       statusText =
         "Puede que hayas cumplido tus comidas o tu entrenamiento y no lo hayas anotado en la app, o simplemente hoy no se pudo — hay días así y no pasa nada. " +
-        `Si quieres, puedes reconfigurar tus días de entreno desde tu perfil: ${APP_SCHEME}://(tabs)/profile`;
+        `Si quieres, puedes reconfigurar tus días de entreno desde tu perfil: ${APP_URL}/go/profile`;
     }
 
     await sendTemplateMessage(user.phone, TEMPLATE_EVENING, [user.name, statusText]);

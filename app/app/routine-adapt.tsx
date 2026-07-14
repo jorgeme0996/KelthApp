@@ -7,9 +7,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import * as routineAdaptApi from "@/api/routineAdapt";
 import { useCurrentRoutine } from "@/hooks/useRoutine";
 import { ApiError } from "@/api/client";
-import { isWeeklyLimitError } from "@/utils/apiErrors";
-import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
-import { DAY_LABELS, ExerciseOption, RoutineAdaptChatMessage, RoutineDayChange } from "@/types";
+import { isPremiumRequiredError } from "@/utils/apiErrors";
+import { useAuth } from "@/context/AuthContext";
+import { DAY_LABELS, ExerciseOption, isPremiumUser, RoutineAdaptChatMessage, RoutineDayChange } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
 const MAX_TURNS = 12;
@@ -25,6 +25,8 @@ function optionName(option: ExerciseOption): string {
 }
 
 export default function RoutineAdaptScreen() {
+  const { user } = useAuth();
+  const premium = isPremiumUser(user);
   const queryClient = useQueryClient();
   const listRef = useRef<FlatList<RoutineAdaptChatMessage>>(null);
   const inputRef = useRef<TextInput>(null);
@@ -36,7 +38,6 @@ export default function RoutineAdaptScreen() {
   const [draft, setDraft] = useState("");
   const [adaptation, setAdaptation] = useState<{ summary: string; dayChanges: RoutineDayChange[] } | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [weeklyLimitVisible, setWeeklyLimitVisible] = useState(false);
   const [inputHeight, setInputHeight] = useState(INPUT_MIN_HEIGHT);
 
   const oldEntryById = useMemo(() => {
@@ -79,8 +80,11 @@ export default function RoutineAdaptScreen() {
       router.back();
     },
     onError: (err) => {
-      if (isWeeklyLimitError(err)) {
-        setWeeklyLimitVisible(true);
+      if (isPremiumRequiredError(err)) {
+        Alert.alert("Función Premium", "Esta función requiere una suscripción Premium.", [
+          { text: "Cancelar", style: "cancel" },
+          { text: "Ver planes", onPress: () => router.push("/premium") },
+        ]);
         return;
       }
       Alert.alert("Error", err instanceof ApiError ? err.message : "No se pudo aplicar la adaptación.");
@@ -103,6 +107,22 @@ export default function RoutineAdaptScreen() {
   };
 
   const turnCapReached = messages.length >= MAX_TURNS;
+
+  if (!premium) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Adaptar rutina con IA</Text>
+        </View>
+        <View style={styles.center}>
+          <Text style={styles.emptyText}>Esta función requiere una suscripción Premium.</Text>
+          <Pressable onPress={() => router.replace("/premium")} style={{ marginTop: spacing.md }}>
+            <Text style={styles.upgradeLink}>Ver planes Premium →</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["left", "right", "bottom"]}>
@@ -230,8 +250,6 @@ export default function RoutineAdaptScreen() {
           />
         </View>
       ) : null}
-
-      <WeeklyLimitModal visible={weeklyLimitVisible} onClose={() => setWeeklyLimitVisible(false)} />
     </SafeAreaView>
   );
 }
@@ -336,6 +354,11 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.sm,
     color: colors.textMuted,
     lineHeight: 20,
+  },
+  upgradeLink: {
+    fontFamily: fonts.bold,
+    fontSize: fontSizes.sm,
+    color: colors.primary,
   },
   inputRow: {
     flexDirection: "row",

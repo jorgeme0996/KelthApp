@@ -126,7 +126,7 @@ const proposeRoutineAdaptationTool: Anthropic.Tool = {
 
 function buildRoutineAdaptSystemPrompt(routine: RoutineWithEntries): string {
   return [
-    "Eres el copiloto de la app 'El Mejor Menú'. Tu tarea en esta conversación es ayudar a la persona a reorganizar/adaptar su rutina de ejercicio semanal completa, hablando siempre en español de México.",
+    "Eres el copiloto de la app 'KelthApp'. Tu tarea en esta conversación es ayudar a la persona a reorganizar/adaptar su rutina de ejercicio semanal completa, hablando siempre en español de México.",
     "",
     buildPersonalizationSummary(null, "fullbody", "gym", []),
     "",

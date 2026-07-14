@@ -1,5 +1,5 @@
 {
-  "name": "el-mejor-menu-server",
+  "name": "kelthapp-server",
   "version": "0.1.0",
   "private": true,
   "main": "dist/index.js",
@@ -13,7 +13,6 @@
     "seed": "ts-node --transpile-only src/scripts/seed.ts",
     "seed:exercises": "ts-node --transpile-only src/scripts/seedExercises.ts",
     "test:whatsapp": "ts-node --transpile-only src/scripts/testWhatsappReminder.ts",
-    "test:push": "ts-node --transpile-only src/scripts/testPushReminder.ts",
     "test:plan-expiration": "ts-node --transpile-only src/scripts/testPlanExpiration.ts"
   },
   "dependencies": {

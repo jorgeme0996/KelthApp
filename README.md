@@ -1,12 +1,13 @@
-# El Mejor Menú
+# KelthApp
 
-App móvil (iOS + Android) que genera un menú semanal mexicano Low Carb, su lista
-de compras y un asistente de IA para responder dudas sobre tu plan.
+App móvil (iOS + Android) de Kelth para el seguimiento del tratamiento: menú
+semanal, lista de compras, rutina de ejercicio y un asistente de IA para
+responder dudas sobre tu plan.
 
 ## Estructura del proyecto
 
 ```
-ElMejorMenu/
+KelthApp/
   app/        App Expo (React Native + TypeScript, Expo Router)
   server/     API Express + Prisma + PostgreSQL
   docker-compose.yml   Postgres local
@@ -25,12 +26,12 @@ ElMejorMenu/
 ## 1. Levantar la base de datos
 
 ```bash
-cd ElMejorMenu
+cd KelthApp
 docker compose up -d
 ```
 
-Esto levanta Postgres en `localhost:5432` con la base `elmejormenu`
-(usuario/contraseña `elmejormenu`).
+Esto levanta Postgres en `localhost:5432` con la base `kelthapp`
+(usuario/contraseña `kelthapp`).
 
 ## 2. Backend (server/)
 
@@ -99,6 +100,6 @@ Expo.
 
 ## Notas
 
-- Por ahora solo existe la dieta **Low Carb**, basada en el semáforo
-  proporcionado (`server/src/data/diets/lowcarb.json`).
+- Cada dieta se clasifica con un **semáforo** de colores (prohibido, moderado,
+  proteínas de alto valor) definido en `server/src/data/diets/*.json`.
 - Las recetas semilla están en `server/src/data/recipes/lowcarb-mexicano.json`.

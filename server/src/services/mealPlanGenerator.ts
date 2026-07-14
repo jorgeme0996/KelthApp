@@ -13,11 +13,12 @@ type Equivalents = Record<string, number>;
 // además sus propios `prohibited`/`free`/`goal` con formas distintas.
 // `semaforo`/`comodines` solo existen hoy en muscle-gain.json (ver plan de
 // "semáforo + comodines"); son opcionales para no afectar lowcarb/maintenance.
-interface DietRules {
+export interface DietRules {
   moderateEquivalents: Record<string, unknown>;
   mealSlotsByMealsPerDay: Record<string, string[]>;
   semaforo?: Record<string, string[]>;
   comodines?: Record<string, unknown>;
+  free?: Record<string, unknown>;
 }
 
 interface GeneratedEntry {
@@ -35,7 +36,7 @@ const DIET_RULES_BY_ID: Record<string, DietRules> = {
   "muscle-gain": muscleGainRules,
 };
 
-function getDietRules(dietId: string): DietRules {
+export function getDietRules(dietId: string): DietRules {
   return DIET_RULES_BY_ID[dietId] ?? lowcarbRules;
 }
 
@@ -54,7 +55,7 @@ function getDailyBudgets(dietRules: DietRules): Record<string, number> {
 // Mapa categoría -> color (naranja/amarillo/azul), derivado de `semaforo`.
 // Vacío para dietas sin semáforo (lowcarb/maintenance), lo que hace que
 // `evaluateComodines` se comporte igual que un chequeo estricto de presupuesto.
-function getCategoryColors(dietRules: DietRules): Record<string, string> {
+export function getCategoryColors(dietRules: DietRules): Record<string, string> {
   const colors: Record<string, string> = {};
   if (!dietRules.semaforo) return colors;
   for (const [color, categories] of Object.entries(dietRules.semaforo)) {

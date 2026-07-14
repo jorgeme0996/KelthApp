@@ -1,12 +1,13 @@
 import { useMemo, useState } from "react";
 import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { router } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { RecipeCard } from "@/components/RecipeCard";
 import { useCurrentMealPlan, useGenerateMealPlan, useRegenerateMealPlanDay, useSwapMealEntry } from "@/hooks/useMealPlan";
 import { ApiError } from "@/api/client";
-import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
-import { isWeeklyLimitError } from "@/utils/apiErrors";
+import { isPremiumRequiredError } from "@/utils/apiErrors";
 import { DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
@@ -21,11 +22,13 @@ export default function MenuScreen() {
   const swapMutation = useSwapMealEntry();
   const todayIndex = getTodayIndex();
   const [selectedDay, setSelectedDay] = useState(todayIndex);
-  const [weeklyLimitModal, setWeeklyLimitModal] = useState(false);
 
-  const handleWeeklyLimitedError = (err: unknown, fallbackMessage: string) => {
-    if (isWeeklyLimitError(err)) {
-      setWeeklyLimitModal(true);
+  const handlePremiumRequiredError = (err: unknown, fallbackMessage: string) => {
+    if (isPremiumRequiredError(err)) {
+      Alert.alert("Función Premium", "Esta función requiere una suscripción Premium.", [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Ver planes", onPress: () => router.push("/premium") },
+      ]);
       return;
     }
     Alert.alert("Error", err instanceof ApiError ? err.message : fallbackMessage);
@@ -68,7 +71,12 @@ export default function MenuScreen() {
   return (
     <ScreenContainer>
       <View style={styles.header}>
-        <Text style={styles.title}>Menú semanal</Text>
+        <View style={styles.titleRow}>
+          <Text style={styles.title}>Menú semanal</Text>
+          <Pressable onPress={() => router.push("/semaforo-info")} hitSlop={8}>
+            <Ionicons name="information-circle-outline" size={20} color={colors.textMuted} />
+          </Pressable>
+        </View>
         <Button
           label="Regenerar"
           variant="ghost"
@@ -76,7 +84,7 @@ export default function MenuScreen() {
             regenerateDayMutation.mutate(
               { mealPlanId: mealPlan.id, dayIndex: selectedDay },
               {
-                onError: (err) => handleWeeklyLimitedError(err, "No se pudo regenerar el menú."),
+                onError: (err) => handlePremiumRequiredError(err, "No se pudo regenerar el menú."),
               }
             )
           }
@@ -111,7 +119,7 @@ export default function MenuScreen() {
             entry={entry}
             onSwap={(id) =>
               swapMutation.mutate(id, {
-                onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar esta comida."),
+                onError: (err) => handlePremiumRequiredError(err, "No se pudo cambiar esta comida."),
               })
             }
             swapping={swapMutation.isPending && swapMutation.variables === entry.id}
@@ -119,8 +127,6 @@ export default function MenuScreen() {
         ))}
         {dayEntries.length === 0 ? <Text style={styles.emptyText}>No hay comidas para este día.</Text> : null}
       </ScrollView>
-
-      <WeeklyLimitModal visible={weeklyLimitModal} onClose={() => setWeeklyLimitModal(false)} />
     </ScreenContainer>
   );
 }
@@ -136,6 +142,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     marginBottom: spacing.sm,
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: spacing.xs,
   },
   title: {
     fontFamily: fonts.extraBold,

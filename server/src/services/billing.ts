@@ -4,14 +4,10 @@ export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
 const ACTIVE_STATUSES = ["active", "trialing"];
 
-export const TRIAL_DAYS = Number(process.env.TRIAL_DAYS ?? 7);
-
 export function isPremium(user: {
   subscriptionStatus: string | null;
   currentPeriodEnd: Date | null;
-  trialEndsAt: Date | null;
 }): boolean {
-  if (user.trialEndsAt && user.trialEndsAt > new Date()) return true;
   if (!user.subscriptionStatus || !ACTIVE_STATUSES.includes(user.subscriptionStatus)) return false;
   if (user.currentPeriodEnd && user.currentPeriodEnd < new Date()) return false;
   return true;

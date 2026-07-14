@@ -7,13 +7,12 @@ import { generateAndSaveRoutine, regenerateRoutineDay, TARGET_FILTERED_BODY_PART
 import { withExerciseMediaUrls } from "../lib/media";
 import { startOfWeek } from "../lib/week";
 import { isPremium } from "../services/billing";
-import { checkAndConsumeWeeklyAction } from "../services/usageLimits";
 import { ExerciseDraft, ExerciseOption, exerciseOptionSchema, runExerciseSwapChatTurn } from "../services/exerciseSwapAssistant";
 import { runRoutineAdaptChatTurn, proposeRoutineAdaptationInputSchema } from "../services/routineAdaptAssistant";
 
-const WEEKLY_LIMIT_ERROR = {
-  error: "Alcanzaste tu límite semanal de cambios. Actualiza a Premium para cambios ilimitados.",
-  code: "WEEKLY_ACTION_LIMIT_REACHED",
+const PREMIUM_REQUIRED_ERROR = {
+  error: "Esta función requiere Premium.",
+  code: "PREMIUM_REQUIRED",
 };
 
 const router = Router();
@@ -84,8 +83,7 @@ router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => 
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   try {
     const updated = await regenerateRoutineDay(routine.id, parsed.data.dayIndex, user.equipmentPreference);
@@ -144,8 +142,7 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   let newExerciseId = parsed.data.exerciseId;
   if (!newExerciseId) {
@@ -299,6 +296,10 @@ router.post("/entries/:entryId/ai-swap/chat", authMiddleware, async (req: AuthRe
     return res.status(404).json({ error: "Ejercicio no encontrado" });
   }
 
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
+
   const result = await runExerciseSwapChatTurn(parsed.data.mode, entry.bodyPart, entry.exercise.name, parsed.data.messages);
 
   if (result.status === "unavailable") return res.status(503).json({ error: "El asistente no está disponible" });
@@ -332,8 +333,7 @@ router.post("/entries/:entryId/ai-swap/confirm", authMiddleware, async (req: Aut
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   let exerciseId: string;
   if (parsed.data.option.kind === "catalog") {
@@ -366,6 +366,10 @@ router.post("/:id/ai-adapt/chat", authMiddleware, async (req: AuthRequest, res) 
     include: { entries: { include: { exercise: true } } },
   });
   if (!routine) return res.status(404).json({ error: "Rutina no encontrada" });
+
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   const result = await runRoutineAdaptChatTurn(routine, parsed.data.messages);
 
@@ -440,8 +444,7 @@ router.post("/:id/ai-adapt/confirm", authMiddleware, async (req: AuthRequest, re
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   // Only ever touch entries that actually belong to this routine — never trust
   // client-sent entryIds blindly.

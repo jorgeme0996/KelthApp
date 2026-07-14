@@ -5,7 +5,6 @@ export interface User {
   mealsPerDay: number;
   exerciseDaysPerWeek: number | null;
   dietType: string;
-  dailyChatLimit: number | null;
   age: number | null;
   heightCm: number | null;
   weightKg: number | null;
@@ -19,39 +18,13 @@ export interface User {
   subscriptionStatus: string | null;
   subscriptionPlan: string | null;
   currentPeriodEnd: string | null;
-  trialEndsAt: string | null;
 }
 
 // Mirrors the backend's isPremium() in server/src/services/billing.ts — keep in lockstep.
 export function isPremiumUser(user: User | null | undefined): boolean {
-  if (user?.trialEndsAt && new Date(user.trialEndsAt) > new Date()) return true;
   if (!user?.subscriptionStatus || !["active", "trialing"].includes(user.subscriptionStatus)) return false;
   if (user.currentPeriodEnd && new Date(user.currentPeriodEnd) < new Date()) return false;
   return true;
-}
-
-export function isTrialActive(user: User | null | undefined): boolean {
-  return Boolean(user?.trialEndsAt && new Date(user.trialEndsAt) > new Date());
-}
-
-export function trialDaysLeft(user: User | null | undefined): number {
-  if (!isTrialActive(user)) return 0;
-  return Math.max(1, Math.ceil((new Date(user!.trialEndsAt!).getTime() - Date.now()) / (24 * 60 * 60 * 1000)));
-}
-
-// True only while the user is on the reverse trial and hasn't converted to a
-// paid Stripe subscription yet (subscriptionPlan is only ever set by the
-// Stripe webhook) — used to decide whether to show trial UI vs the paid
-// "manage subscription" UI.
-export function isTrialOnly(user: User | null | undefined): boolean {
-  return isTrialActive(user) && !user?.subscriptionPlan;
-}
-
-// Nunca ha tenido ningún trial (ni el automático de registro ni la oferta de
-// segunda oportunidad) — trialEndsAt nunca se limpia, así que su sola
-// presencia ya significa "ya tuvo su prueba, alguna vez".
-export function isTrialOfferEligible(user: User | null | undefined): boolean {
-  return !isPremiumUser(user) && !user?.trialEndsAt;
 }
 
 export type Gender = "hombre" | "mujer" | "prefiero_no_decir";
@@ -120,6 +93,12 @@ export interface Ingredient {
   category: string;
 }
 
+export interface SemaforoEntry {
+  category: string;
+  color: string | null;
+  label: string;
+}
+
 export interface Recipe {
   id: string;
   name: string;
@@ -132,6 +111,7 @@ export interface Recipe {
   weeklyLimited: boolean;
   dietType: string;
   source: string;
+  semaforo: SemaforoEntry[];
 }
 
 export interface MealPlanEntry {
@@ -178,15 +158,13 @@ export interface Nutriologo {
   phone: string;
 }
 
-export interface ChatLimitError {
+export interface PremiumRequiredError {
   error: string;
-  code: "DAILY_LIMIT_REACHED";
-  nutriologos: Nutriologo[];
+  code: "PREMIUM_REQUIRED";
 }
 
-export interface WeeklyLimitError {
-  error: string;
-  code: "WEEKLY_ACTION_LIMIT_REACHED";
+export interface ChatPremiumRequiredError extends PremiumRequiredError {
+  nutriologos: Nutriologo[];
 }
 
 export type MealSwapMode = "fridge" | "restaurant_options" | "menu_photo";

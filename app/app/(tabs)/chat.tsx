@@ -19,21 +19,11 @@ import * as chatApi from "@/api/chat";
 import { ApiError } from "@/api/client";
 import { useAuth } from "@/context/AuthContext";
 import { NUTRIOLOGOS } from "@/data/nutriologos";
-import { ChatLimitError, ChatMessage, isPremiumUser } from "@/types";
+import { ChatMessage, ChatPremiumRequiredError, isPremiumUser } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 
 const INPUT_MIN_HEIGHT = 52;
 const INPUT_MAX_HEIGHT = 140;
-
-function isToday(isoDate: string) {
-  const date = new Date(isoDate);
-  const now = new Date();
-  return (
-    date.getFullYear() === now.getFullYear() &&
-    date.getMonth() === now.getMonth() &&
-    date.getDate() === now.getDate()
-  );
-}
 
 function nutriologosText() {
   return NUTRIOLOGOS.map((n) => `${n.name}: ${n.phone}`).join("\n");
@@ -41,7 +31,7 @@ function nutriologosText() {
 
 export default function ChatScreen() {
   const { user } = useAuth();
-  const dailyLimit = user?.dailyChatLimit ?? null;
+  const premium = isPremiumUser(user);
   const queryClient = useQueryClient();
   const listRef = useRef<FlatList<ChatMessage>>(null);
   const inputRef = useRef<TextInput>(null);
@@ -86,23 +76,15 @@ export default function ChatScreen() {
         );
       }
 
-      if (err instanceof ApiError && err.status === 429 && (err.data as ChatLimitError | undefined)?.code === "DAILY_LIMIT_REACHED") {
+      if (err instanceof ApiError && err.status === 403 && (err.data as ChatPremiumRequiredError | undefined)?.code === "PREMIUM_REQUIRED") {
         setLimitReached(true);
-        Alert.alert("Límite de preguntas alcanzado", `${err.message}\n\n${nutriologosText()}`);
+        Alert.alert("Función Premium", `${err.message}\n\n${nutriologosText()}`);
         return;
       }
 
       setError(err instanceof ApiError ? err.message : "No se pudo enviar tu mensaje.");
     },
   });
-
-  useEffect(() => {
-    if (!history || dailyLimit == null) return;
-    const todayQuestionCount = history.filter((m) => m.role === "user" && isToday(m.createdAt)).length;
-    if (todayQuestionCount >= dailyLimit) {
-      setLimitReached(true);
-    }
-  }, [history, dailyLimit]);
 
   useEffect(() => {
     if (history?.length) {
@@ -124,6 +106,26 @@ export default function ChatScreen() {
     setInputHeight(INPUT_MIN_HEIGHT);
     sendMutation.mutate(message);
   };
+
+  if (!premium) {
+    return (
+      <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
+        <View style={styles.header}>
+          <Text style={styles.title}>Tu copiloto</Text>
+          <Text style={styles.subtitle}>Pregunta sobre tu menú, tu rutina de ejercicio o cualquier duda del camino.</Text>
+        </View>
+        <View style={styles.limitCard}>
+          <Text style={styles.limitTitle}>El asistente es una función Premium</Text>
+          <Text style={[styles.limitText, { marginTop: spacing.sm }]}>
+            Con Premium tienes preguntas ilimitadas al asistente y tu asistente personal por WhatsApp.
+          </Text>
+          <Pressable onPress={() => router.push("/premium")}>
+            <Text style={styles.upgradeLink}>Hazte Premium →</Text>
+          </Pressable>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safeArea} edges={["top", "left", "right"]}>
@@ -169,19 +171,7 @@ export default function ChatScreen() {
 
       {limitReached ? (
         <View style={styles.limitCard}>
-          <Text style={styles.limitTitle}>
-            Alcanzaste tus {dailyLimit ?? ""} preguntas de hoy
-          </Text>
-          {!isPremiumUser(user) ? (
-            <>
-              <Text style={[styles.limitText, { marginTop: spacing.sm }]}>
-                Con Premium tienes preguntas ilimitadas al asistente y tu asistente personal por WhatsApp.
-              </Text>
-              <Pressable onPress={() => router.push("/premium")}>
-                <Text style={styles.upgradeLink}>Hazte Premium →</Text>
-              </Pressable>
-            </>
-          ) : null}
+          <Text style={styles.limitTitle}>El asistente es una función Premium</Text>
         </View>
       ) : (
         <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} keyboardVerticalOffset={12}>

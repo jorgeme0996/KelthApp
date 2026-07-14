@@ -22,7 +22,7 @@
   },
 
   "moderateEquivalents": {
-    "_notes": "El semáforo define el tamaño de cada 'equivalente' pero no un total diario fijo (eso lo ajusta normalmente un nutriólogo según calorías). Los 'dailyBudget' de abajo son valores genéricos razonables para un plan low-carb estándar y son los que usa el generador de menús; pueden ajustarse a futuro por usuario.",
+    "_notes": "El semáforo define el tamaño de cada 'equivalente' pero no un total diario fijo (eso lo ajusta normalmente un nutriólogo según calorías). Los 'dailyBudget' de abajo son valores genéricos razonables para un plan low-carb estándar y son los que usa el generador de menús; pueden ajustarse a futuro por usuario. PENDIENTE: asignar 'semaforo' (color por categoría) y 'comodines' (cupos semanales) para esta dieta, con la misma forma que server/src/data/diets/muscle-gain.json — requiere validación del equipo de nutrición de Kelth. Mientras tanto GET /api/recipes/:id devuelve color: null para las categorías de esta dieta (degradación segura, ver server/src/lib/semaforo.ts).",
     "leguminosas": {
       "label": "Leguminosas",
       "items": ["Frijoles", "Lentejas", "Garbanzos", "Habas"],

@@ -4,16 +4,14 @@ import { StatusBar } from "expo-status-bar";
 import { View, ActivityIndicator } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as SplashScreen from "expo-splash-screen";
-import * as Notifications from "expo-notifications";
-import * as Linking from "expo-linking";
 import {
   useFonts,
-  Nunito_400Regular,
-  Nunito_500Medium,
-  Nunito_600SemiBold,
-  Nunito_700Bold,
-  Nunito_800ExtraBold,
-} from "@expo-google-fonts/nunito";
+  Inter_400Regular,
+  Inter_500Medium,
+  Inter_600SemiBold,
+  Inter_700Bold,
+  Inter_800ExtraBold,
+} from "@expo-google-fonts/inter";
 import { AuthProvider } from "@/context/AuthContext";
 import { colors } from "@/theme";
 
@@ -23,27 +21,16 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
-    Nunito_400Regular,
-    Nunito_500Medium,
-    Nunito_600SemiBold,
-    Nunito_700Bold,
-    Nunito_800ExtraBold,
+    Inter_400Regular,
+    Inter_500Medium,
+    Inter_600SemiBold,
+    Inter_700Bold,
+    Inter_800ExtraBold,
   });
 
   useEffect(() => {
     if (fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [fontsLoaded]);
-
-  useEffect(() => {
-    // Al tocar una notificación de recordatorio, navega directo a la pantalla
-    // que mandó el servidor (data.url) usando el mismo deep link scheme que
-    // ya maneja expo-router.
-    const subscription = Notifications.addNotificationResponseReceivedListener((response) => {
-      const url = response.notification.request.content.data?.url as string | undefined;
-      if (url) Linking.openURL(url).catch(() => {});
-    });
-    return () => subscription.remove();
-  }, []);
 
   if (!fontsLoaded) {
     return (
@@ -86,6 +73,10 @@ export default function RootLayout() {
           <Stack.Screen name="billing/return" options={{ headerShown: false }} />
           <Stack.Screen
             name="premium"
+            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+          />
+          <Stack.Screen
+            name="semaforo-info"
             options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
           />
         </Stack>

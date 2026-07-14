@@ -34,7 +34,7 @@ export default function LoginScreen() {
   return (
     <ScreenContainer scroll>
       <View style={styles.header}>
-        <Text style={styles.title}>El Mejor Menú</Text>
+        <Text style={styles.title}>KelthApp</Text>
         <Text style={styles.subtitle}>Tu plan semanal y lista de compras, a la mexicana.</Text>
       </View>
 

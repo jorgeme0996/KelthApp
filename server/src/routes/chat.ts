@@ -32,9 +32,9 @@ router.post("/", authMiddleware, async (req: AuthRequest, res) => {
     case "unavailable":
       return res.status(503).json({ error: "El asistente de IA no está configurado (falta ANTHROPIC_API_KEY)" });
     case "limited":
-      return res.status(429).json({
-        error: "Si tienes más preguntas consulta con uno de nuestros nutriólogos",
-        code: "DAILY_LIMIT_REACHED",
+      return res.status(403).json({
+        error: "El asistente es una función Premium.",
+        code: "PREMIUM_REQUIRED",
         nutriologos: result.nutriologos,
       });
     case "error":

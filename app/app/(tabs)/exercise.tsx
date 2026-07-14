@@ -14,8 +14,7 @@ import {
   useWorkoutCompletions,
 } from "@/hooks/useRoutine";
 import { ApiError } from "@/api/client";
-import { WeeklyLimitModal } from "@/components/WeeklyLimitModal";
-import { isWeeklyLimitError } from "@/utils/apiErrors";
+import { isPremiumRequiredError } from "@/utils/apiErrors";
 import { BODY_PART_LABELS, BODY_PART_ORDER, DAY_LABELS } from "@/types";
 import { colors, fonts, fontSizes, radii, spacing } from "@/theme";
 import { getWorkoutCongratsMessage } from "@/utils/workoutCongrats";
@@ -34,11 +33,13 @@ export default function ExerciseScreen() {
   const { data: completions } = useWorkoutCompletions();
   const todayIndex = getTodayIndex();
   const [selectedDay, setSelectedDay] = useState(todayIndex);
-  const [weeklyLimitModal, setWeeklyLimitModal] = useState(false);
 
-  const handleWeeklyLimitedError = (err: unknown, fallbackMessage: string) => {
-    if (isWeeklyLimitError(err)) {
-      setWeeklyLimitModal(true);
+  const handlePremiumRequiredError = (err: unknown, fallbackMessage: string) => {
+    if (isPremiumRequiredError(err)) {
+      Alert.alert("Función Premium", "Esta función requiere una suscripción Premium.", [
+        { text: "Cancelar", style: "cancel" },
+        { text: "Ver planes", onPress: () => router.push("/premium") },
+      ]);
       return;
     }
     Alert.alert("Error", err instanceof ApiError ? err.message : fallbackMessage);
@@ -124,7 +125,7 @@ export default function ExerciseScreen() {
                   regenerateDayMutation.mutate(
                     { routineId: routine.id, dayIndex: selectedDay },
                     {
-                      onError: (err) => handleWeeklyLimitedError(err, "No se pudo regenerar el entrenamiento."),
+                      onError: (err) => handlePremiumRequiredError(err, "No se pudo regenerar el entrenamiento."),
                     }
                   )
                 }
@@ -162,7 +163,7 @@ export default function ExerciseScreen() {
             entry={entry}
             onSwap={(id) =>
               swapMutation.mutate(id, {
-                onError: (err) => handleWeeklyLimitedError(err, "No se pudo cambiar este ejercicio."),
+                onError: (err) => handlePremiumRequiredError(err, "No se pudo cambiar este ejercicio."),
               })
             }
             swapping={swapMutation.isPending && swapMutation.variables === entry.id}
@@ -180,8 +181,6 @@ export default function ExerciseScreen() {
           />
         ) : null}
       </ScrollView>
-
-      <WeeklyLimitModal visible={weeklyLimitModal} onClose={() => setWeeklyLimitModal(false)} />
     </ScreenContainer>
   );
 }

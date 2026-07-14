@@ -8,12 +8,12 @@ import { startOfWeek } from "../lib/week";
 import { dietIdForGoal } from "../lib/dietGoal";
 import { computeMuscleGainTier } from "../lib/comodinTier";
 import { isPremium } from "../services/billing";
-import { checkAndConsumeWeeklyAction } from "../services/usageLimits";
 import { recipeDraftSchema, runMealSwapChatTurn } from "../services/mealSwapAssistant";
+import { withSemaforo, withSemaforoOnMealPlan } from "../lib/semaforo";
 
-const WEEKLY_LIMIT_ERROR = {
-  error: "Alcanzaste tu límite semanal de cambios. Actualiza a Premium para cambios ilimitados.",
-  code: "WEEKLY_ACTION_LIMIT_REACHED",
+const PREMIUM_REQUIRED_ERROR = {
+  error: "Esta función requiere Premium.",
+  code: "PREMIUM_REQUIRED",
 };
 
 const router = Router();
@@ -43,7 +43,7 @@ router.post("/generate", authMiddleware, async (req: AuthRequest, res) => {
       dietIdForGoal(user.goal),
       computeMuscleGainTier(user.heightCm, user.weightKg),
     );
-    res.status(201).json(mealPlan);
+    res.status(201).json(withSemaforoOnMealPlan(mealPlan));
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -67,8 +67,7 @@ router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => 
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   try {
     const updated = await regenerateMealPlanDay(
@@ -80,7 +79,7 @@ router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => 
       dietIdForGoal(user.goal),
       computeMuscleGainTier(user.heightCm, user.weightKg),
     );
-    res.json(updated);
+    res.json(withSemaforoOnMealPlan(updated));
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
   }
@@ -93,7 +92,7 @@ router.get("/current", authMiddleware, async (req: AuthRequest, res) => {
     include: { entries: { include: { recipe: true } } },
   });
   if (!mealPlan) return res.status(404).json({ error: "Aún no tienes un menú generado" });
-  res.json(mealPlan);
+  res.json(withSemaforoOnMealPlan(mealPlan));
 });
 
 router.get("/:id", authMiddleware, async (req: AuthRequest, res) => {
@@ -102,7 +101,7 @@ router.get("/:id", authMiddleware, async (req: AuthRequest, res) => {
     include: { entries: { include: { recipe: true } } },
   });
   if (!mealPlan) return res.status(404).json({ error: "Menú no encontrado" });
-  res.json(mealPlan);
+  res.json(withSemaforoOnMealPlan(mealPlan));
 });
 
 router.get("/:id/shopping-list", authMiddleware, async (req: AuthRequest, res) => {
@@ -135,8 +134,7 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   let newRecipeId = parsed.data.recipeId;
   if (!newRecipeId) {
@@ -157,7 +155,7 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
     include: { recipe: true },
   });
 
-  res.json(updated);
+  res.json({ ...updated, recipe: withSemaforo(updated.recipe) });
 });
 
 const MAX_CHAT_TURNS = 12;
@@ -196,6 +194,7 @@ router.post("/entries/:entryId/ai-swap/chat", authMiddleware, async (req: AuthRe
 
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   const result = await runMealSwapChatTurn(
     parsed.data.mode,
@@ -233,8 +232,7 @@ router.post("/entries/:entryId/ai-swap/confirm", authMiddleware, async (req: Aut
   const user = await prisma.user.findUnique({ where: { id: req.userId } });
   if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
 
-  const usage = await checkAndConsumeWeeklyAction(user.id, isPremium(user));
-  if (!usage.allowed) return res.status(403).json(WEEKLY_LIMIT_ERROR);
+  if (!isPremium(user)) return res.status(403).json(PREMIUM_REQUIRED_ERROR);
 
   // Structural fields (dietType, mealSlots) come from the entry being replaced, not
   // the model's output — the model is free to name/compose the recipe, but the diet
@@ -251,7 +249,7 @@ router.post("/entries/:entryId/ai-swap/confirm", authMiddleware, async (req: Aut
     include: { recipe: true },
   });
 
-  res.json(updated);
+  res.json({ ...updated, recipe: withSemaforo(updated.recipe) });
 });
 
 // Toggle a meal-plan entry between done/not-done; used to track adherence
@@ -271,7 +269,7 @@ router.post("/entries/:entryId/complete", authMiddleware, async (req: AuthReques
     include: { recipe: true },
   });
 
-  res.json(updated);
+  res.json({ ...updated, recipe: withSemaforo(updated.recipe) });
 });
 
 export default router;

@@ -1,47 +1,60 @@
-// Paleta inspirada en el semáforo nutricional: verde (libre), ámbar (moderado),
-// coral (informativo/prohibido) sobre un fondo cálido y neutro tipo "papel".
+// Paleta de marca Kelth: verde salvia como color principal, sobre neutros
+// grises claros. Los 4 colores funcionales (rojo/ámbar/lima/cian) son el
+// semáforo del tratamiento — ver `semaforo` abajo y server/src/data/diets/*.json.
 export const colors = {
-  background: "#FBF7F1",
+  background: "#FAFAFA",
   surface: "#FFFFFF",
-  surfaceMuted: "#F3EEE6",
+  surfaceMuted: "#E5E7EB",
 
-  text: "#33312E",
-  textMuted: "#857F77",
+  text: "#1A1A1A",
+  textMuted: "#9CA3AF",
   textOnPrimary: "#FFFFFF",
 
-  primary: "#5FA777", // verde salvia - permitido / acciones principales
-  primaryDark: "#447A57",
-  primarySoft: "#E3F1E8",
+  primary: "#A8AE8C", // verde salvia - acciones principales
+  primaryDark: "#868A6F",
+  primarySoft: "#EEF0E7",
 
-  accent: "#F2A341", // ámbar - moderado / destacados
-  accentSoft: "#FBEAD2",
+  accent: "#FDCF4A", // ámbar - moderado / destacados
+  accentSoft: "#FEF6DC",
 
-  danger: "#E76F51", // coral - prohibido / alertas (uso informativo, no punitivo)
-  dangerSoft: "#FBE6E0",
+  danger: "#FD0A3D", // rojo - prohibido / alertas
+  dangerSoft: "#FFE1E6",
 
-  border: "#E8E1D6",
+  border: "#E5E7EB",
   shadow: "#000000",
 };
 
+// Semáforo del tratamiento: clasifica cada categoría de alimento según
+// server/src/data/diets/*.json (`semaforo`/`moderateEquivalents`). El nombre
+// de la categoría ("naranja") no siempre coincide con el color mostrado —
+// ver server/src/lib/semaforo.ts para el mapeo categoría→color.
+export const semaforo = {
+  rojo: "#FD0A3D", // prohibido
+  naranja: "#FDCF4A", // moderado (cereales, leguminosas, tubérculos, frutas)
+  amarillo: "#BDDC59", // moderado (oleaginosas, lácteos, quesos, aceites)
+  azul: "#01B9D5", // proteínas de alto valor biológico
+  libre: "#A8AE8C", // sin restricción
+};
+
 export const slotColors: Record<string, string> = {
-  desayuno: "#F2A341",
-  colacion_am: "#8FBF9F",
-  comida: "#5FA777",
-  colacion_pm: "#8FBF9F",
-  cena: "#7A93C9",
+  desayuno: "#FDCF4A",
+  colacion_am: "#C7CBB0",
+  comida: "#A8AE8C",
+  colacion_pm: "#C7CBB0",
+  cena: "#01B9D5",
 };
 
 export const bodyPartColors: Record<string, string> = {
-  chest: "#5FA777",
-  back: "#447A57",
-  shoulders: "#7A93C9",
-  biceps: "#8FBF9F",
-  triceps: "#6FA885",
-  "upper arms": "#8FBF9F",
-  "lower arms": "#8FBF9F",
-  "upper legs": "#F2A341",
-  "lower legs": "#F2A341",
-  waist: "#E76F51",
-  cardio: "#7A93C9",
-  neck: "#857F77",
+  chest: "#A8AE8C",
+  back: "#868A6F",
+  shoulders: "#01B9D5",
+  biceps: "#C7CBB0",
+  triceps: "#94997C",
+  "upper arms": "#C7CBB0",
+  "lower arms": "#C7CBB0",
+  "upper legs": "#FDCF4A",
+  "lower legs": "#FDCF4A",
+  waist: "#FD0A3D",
+  cardio: "#01B9D5",
+  neck: "#9CA3AF",
 };

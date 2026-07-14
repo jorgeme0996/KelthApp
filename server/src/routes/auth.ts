@@ -6,7 +6,6 @@ import { prisma } from "../prisma";
 import { signToken, authMiddleware, AuthRequest } from "../middleware/auth";
 import { passwordSchema } from "../lib/password";
 import { sendPasswordResetEmail } from "../services/mailer";
-import { TRIAL_DAYS } from "../services/billing";
 import { startOfWeek } from "../lib/week";
 import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
 import { generateAndSaveRoutine } from "../services/routineGenerator";
@@ -15,7 +14,7 @@ import { dietIdForGoal } from "../lib/dietGoal";
 const router = Router();
 
 const APP_URL = process.env.APP_URL || `http://localhost:${process.env.PORT || 4000}`;
-const APP_SCHEME = process.env.APP_SCHEME || "elmejormenu";
+const APP_SCHEME = process.env.APP_SCHEME || "kelth";
 const RESET_TOKEN_TTL_MS = 60 * 60 * 1000; // 1 hora
 
 function hashToken(token: string): string {
@@ -99,7 +98,6 @@ router.post("/register", async (req, res) => {
       dietaryRestrictions: dietaryRestrictions ?? [],
       trainingDays: trainingDays ?? [],
       phone,
-      trialEndsAt: new Date(Date.now() + TRIAL_DAYS * 24 * 60 * 60 * 1000),
     },
   });
 
@@ -214,21 +212,21 @@ router.get("/reset-password", (req, res) => {
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Restablecer contraseña · El Mejor Menú</title>
+<title>Restablecer contraseña · KelthApp</title>
 <style>
-  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #FBF7F1; color: #33312E; margin: 0; padding: 24px; }
-  .card { max-width: 400px; margin: 40px auto; background: #FFFFFF; border: 1px solid #E8E1D6; border-radius: 20px; padding: 28px; }
-  h1 { font-size: 20px; color: #447A57; margin-top: 0; }
-  p { font-size: 14px; color: #857F77; line-height: 1.5; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #FAFAFA; color: #1A1A1A; margin: 0; padding: 24px; }
+  .card { max-width: 400px; margin: 40px auto; background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 12px; padding: 28px; }
+  h1 { font-size: 20px; color: #868A6F; margin-top: 0; }
+  p { font-size: 14px; color: #9CA3AF; line-height: 1.5; }
   label { display: block; font-size: 13px; font-weight: 600; margin-top: 16px; margin-bottom: 6px; }
-  input { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 12px; border: 1.5px solid #E8E1D6; font-size: 15px; }
-  button { width: 100%; margin-top: 20px; padding: 13px; border: none; border-radius: 999px; background: #5FA777; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
+  input { width: 100%; box-sizing: border-box; padding: 12px 14px; border-radius: 8px; border: 1.5px solid #E5E7EB; font-size: 15px; }
+  button { width: 100%; margin-top: 20px; padding: 13px; border: none; border-radius: 9999px; background: #A8AE8C; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; }
   button:disabled { opacity: 0.6; cursor: default; }
-  .app-link { display: inline-block; margin-top: 4px; font-size: 13px; color: #5FA777; text-decoration: none; font-weight: 600; }
+  .app-link { display: inline-block; margin-top: 4px; font-size: 13px; color: #A8AE8C; text-decoration: none; font-weight: 600; }
   .msg { font-size: 14px; margin-top: 16px; }
-  .msg.error { color: #E76F51; }
-  .msg.success { color: #447A57; }
-  .hint { font-size: 12px; color: #857F77; margin-top: 6px; }
+  .msg.error { color: #FD0A3D; }
+  .msg.success { color: #868A6F; }
+  .hint { font-size: 12px; color: #9CA3AF; margin-top: 6px; }
 </style>
 </head>
 <body>
@@ -301,7 +299,6 @@ const serializeUser = (user: {
   mealsPerDay: number;
   exerciseDaysPerWeek: number | null;
   dietType: string;
-  dailyChatLimit: number | null;
   age: number | null;
   heightCm: number | null;
   weightKg: number | null;
@@ -315,7 +312,6 @@ const serializeUser = (user: {
   subscriptionStatus: string | null;
   subscriptionPlan: string | null;
   currentPeriodEnd: Date | null;
-  trialEndsAt: Date | null;
 }) => ({
   id: user.id,
   email: user.email,
@@ -323,7 +319,6 @@ const serializeUser = (user: {
   mealsPerDay: user.mealsPerDay,
   exerciseDaysPerWeek: user.exerciseDaysPerWeek,
   dietType: user.dietType,
-  dailyChatLimit: user.dailyChatLimit,
   age: user.age,
   heightCm: user.heightCm,
   weightKg: user.weightKg,
@@ -337,7 +332,6 @@ const serializeUser = (user: {
   subscriptionStatus: user.subscriptionStatus,
   subscriptionPlan: user.subscriptionPlan,
   currentPeriodEnd: user.currentPeriodEnd,
-  trialEndsAt: user.trialEndsAt,
 });
 
 router.get("/me", authMiddleware, async (req: AuthRequest, res) => {

@@ -39,7 +39,7 @@ export function Button({ label, onPress, variant = "primary", disabled, loading,
 const styles = StyleSheet.create({
   base: {
     height: 52,
-    borderRadius: radii.md,
+    borderRadius: radii.full,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: spacing.lg,

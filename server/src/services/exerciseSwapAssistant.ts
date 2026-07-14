@@ -94,7 +94,7 @@ const MODE_BLOCKS: Record<ExerciseSwapMode, string> = {
 
 function buildExerciseSwapSystemPrompt(mode: ExerciseSwapMode, bodyPart: string, currentExerciseName: string): string {
   return [
-    "Eres el copiloto de la app 'El Mejor Menú'. Tu tarea en esta conversación es ayudar a la persona a reemplazar UN ejercicio específico de su rutina semanal con una alternativa mejor, hablando siempre en español de México.",
+    "Eres el copiloto de la app 'KelthApp'. Tu tarea en esta conversación es ayudar a la persona a reemplazar UN ejercicio específico de su rutina semanal con una alternativa mejor, hablando siempre en español de México.",
     `El ejercicio a reemplazar es: "${currentExerciseName}" (grupo muscular: ${bodyPart}).`,
     "",
     buildPersonalizationSummary(null, "fullbody", "gym", []),

@@ -10,10 +10,8 @@ import routineRoutes from "./routes/routines";
 import exerciseRoutes from "./routes/exercises";
 import billingRoutes, { stripeWebhookHandler } from "./routes/billing";
 import whatsappWebhookRoutes from "./routes/whatsappWebhook";
-import pushRoutes from "./routes/push";
-import usageRoutes from "./routes/usage";
-import { registerPushCronJobs } from "./cron/pushReminders";
-import { registerTrialReminderCronJob } from "./cron/trialReminders";
+import deepLinkRoutes from "./routes/deepLink";
+import { registerWhatsappCronJobs } from "./cron/whatsappReminders";
 import { registerPlanExpirationCronJob } from "./cron/planExpiration";
 
 const app = express();
@@ -37,13 +35,11 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/routines", routineRoutes);
 app.use("/api/exercises", exerciseRoutes);
 app.use("/api/billing", billingRoutes);
-app.use("/api/push", pushRoutes);
-app.use("/api/usage", usageRoutes);
+app.use("/go", deepLinkRoutes);
 
 const PORT = process.env.PORT ? Number(process.env.PORT) : 4000;
 app.listen(PORT, () => {
-  console.log(`El Mejor Menú API escuchando en http://localhost:${PORT}`);
-  registerPushCronJobs();
-  registerTrialReminderCronJob();
+  console.log(`KelthApp API escuchando en http://localhost:${PORT}`);
+  registerWhatsappCronJobs();
   registerPlanExpirationCronJob();
 });
