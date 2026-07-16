@@ -30,10 +30,10 @@ export const colors = {
 // ver server/src/lib/semaforo.ts para el mapeo categoría→color.
 export const semaforo = {
   rojo: "#FD0A3D", // prohibido
-  naranja: "#FDCF4A", // moderado (cereales, leguminosas, tubérculos, frutas)
-  amarillo: "#BDDC59", // moderado (oleaginosas, lácteos, quesos, aceites)
-  azul: "#01B9D5", // proteínas de alto valor biológico
-  libre: "#A8AE8C", // sin restricción
+  naranja: "#FF8A3D", // moderado (cereales, leguminosas, tubérculos, frutas)
+  amarillo: "#FFD23D", // moderado (oleaginosas, lácteos, quesos, aceites)
+  azul: "#3B7DD8", // proteínas de alto valor biológico
+  libre: "#7CC142", // sin restricción
 };
 
 export const slotColors: Record<string, string> = {

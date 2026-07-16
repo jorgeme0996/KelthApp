@@ -6,7 +6,7 @@ import { generateAndSaveMealPlan, regenerateMealPlanDay } from "../services/meal
 import { buildShoppingList } from "../services/shoppingList";
 import { startOfWeek } from "../lib/week";
 import { dietIdForGoal } from "../lib/dietGoal";
-import { computeMuscleGainTier } from "../lib/comodinTier";
+import { computeComodinTier } from "../lib/comodinTier";
 import { isPremium } from "../services/billing";
 import { recipeDraftSchema, runMealSwapChatTurn } from "../services/mealSwapAssistant";
 import { withSemaforo, withSemaforoOnMealPlan } from "../lib/semaforo";
@@ -41,9 +41,9 @@ router.post("/generate", authMiddleware, async (req: AuthRequest, res) => {
       weekStart,
       user.dietaryRestrictions,
       dietIdForGoal(user.goal),
-      computeMuscleGainTier(user.heightCm, user.weightKg),
+      computeComodinTier(dietIdForGoal(user.goal), user.heightCm, user.weightKg),
     );
-    res.status(201).json(withSemaforoOnMealPlan(mealPlan));
+    res.status(201).json(withSemaforoOnMealPlan(mealPlan, dietIdForGoal(user.goal)));
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }
@@ -77,31 +77,37 @@ router.post("/regenerate-day", authMiddleware, async (req: AuthRequest, res) => 
       user.dietType,
       user.dietaryRestrictions,
       dietIdForGoal(user.goal),
-      computeMuscleGainTier(user.heightCm, user.weightKg),
+      computeComodinTier(dietIdForGoal(user.goal), user.heightCm, user.weightKg),
     );
-    res.json(withSemaforoOnMealPlan(updated));
+    res.json(withSemaforoOnMealPlan(updated, dietIdForGoal(user.goal)));
   } catch (err) {
     res.status(400).json({ error: (err as Error).message });
   }
 });
 
 router.get("/current", authMiddleware, async (req: AuthRequest, res) => {
-  const mealPlan = await prisma.mealPlan.findFirst({
-    where: { userId: req.userId },
-    orderBy: { createdAt: "desc" },
-    include: { entries: { include: { recipe: true } } },
-  });
+  const [mealPlan, user] = await Promise.all([
+    prisma.mealPlan.findFirst({
+      where: { userId: req.userId },
+      orderBy: { createdAt: "desc" },
+      include: { entries: { include: { recipe: true } } },
+    }),
+    prisma.user.findUnique({ where: { id: req.userId }, select: { goal: true } }),
+  ]);
   if (!mealPlan) return res.status(404).json({ error: "Aún no tienes un menú generado" });
-  res.json(withSemaforoOnMealPlan(mealPlan));
+  res.json(withSemaforoOnMealPlan(mealPlan, dietIdForGoal(user?.goal)));
 });
 
 router.get("/:id", authMiddleware, async (req: AuthRequest, res) => {
-  const mealPlan = await prisma.mealPlan.findFirst({
-    where: { id: req.params.id, userId: req.userId },
-    include: { entries: { include: { recipe: true } } },
-  });
+  const [mealPlan, user] = await Promise.all([
+    prisma.mealPlan.findFirst({
+      where: { id: req.params.id, userId: req.userId },
+      include: { entries: { include: { recipe: true } } },
+    }),
+    prisma.user.findUnique({ where: { id: req.userId }, select: { goal: true } }),
+  ]);
   if (!mealPlan) return res.status(404).json({ error: "Menú no encontrado" });
-  res.json(withSemaforoOnMealPlan(mealPlan));
+  res.json(withSemaforoOnMealPlan(mealPlan, dietIdForGoal(user?.goal)));
 });
 
 router.get("/:id/shopping-list", authMiddleware, async (req: AuthRequest, res) => {
@@ -155,7 +161,7 @@ router.post("/entries/:entryId/swap", authMiddleware, async (req: AuthRequest, r
     include: { recipe: true },
   });
 
-  res.json({ ...updated, recipe: withSemaforo(updated.recipe) });
+  res.json({ ...updated, recipe: withSemaforo(updated.recipe, dietIdForGoal(user.goal)) });
 });
 
 const MAX_CHAT_TURNS = 12;
@@ -249,7 +255,7 @@ router.post("/entries/:entryId/ai-swap/confirm", authMiddleware, async (req: Aut
     include: { recipe: true },
   });
 
-  res.json({ ...updated, recipe: withSemaforo(updated.recipe) });
+  res.json({ ...updated, recipe: withSemaforo(updated.recipe, dietIdForGoal(user.goal)) });
 });
 
 // Toggle a meal-plan entry between done/not-done; used to track adherence
@@ -263,13 +269,16 @@ router.post("/entries/:entryId/complete", authMiddleware, async (req: AuthReques
     return res.status(404).json({ error: "Comida no encontrada" });
   }
 
-  const updated = await prisma.mealPlanEntry.update({
-    where: { id: entry.id },
-    data: { completedAt: entry.completedAt ? null : new Date() },
-    include: { recipe: true },
-  });
+  const [updated, user] = await Promise.all([
+    prisma.mealPlanEntry.update({
+      where: { id: entry.id },
+      data: { completedAt: entry.completedAt ? null : new Date() },
+      include: { recipe: true },
+    }),
+    prisma.user.findUnique({ where: { id: req.userId }, select: { goal: true } }),
+  ]);
 
-  res.json({ ...updated, recipe: withSemaforo(updated.recipe) });
+  res.json({ ...updated, recipe: withSemaforo(updated.recipe, dietIdForGoal(user?.goal)) });
 });
 
 export default router;

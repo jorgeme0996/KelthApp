@@ -2,6 +2,27 @@ import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { colors, fonts, fontSizes, radii, semaforo, spacing } from "@/theme";
+import { useAuth } from "@/context/AuthContext";
+import { DietId, dietIdForGoal } from "@/types";
+
+// Colores que cada dieta realmente usa hoy (ver server/src/data/diets/*.json
+// `semaforo`). lowcarb y maintenance tienen naranja/amarillo (sin azul, ya
+// que ahí las proteínas son libres) — maintenance es el mismo plan que
+// lowcarb, solo menos restrictivo; muscle-gain tiene naranja/amarillo/azul.
+const DIET_COLORS: Record<DietId, string[]> = {
+  lowcarb: ["rojo", "naranja", "amarillo", "libre"],
+  maintenance: ["rojo", "naranja", "amarillo", "libre"],
+  "muscle-gain": ["rojo", "naranja", "amarillo", "azul", "libre"],
+};
+
+// Colores con cupo semanal de "comodines" por dieta (ver bloque `comodines`
+// en server/src/data/diets/*.json). Solo se muestra la tarjeta explicativa
+// para dietas que tienen ese bloque definido.
+const COMODIN_COLORS: Partial<Record<DietId, string[]>> = {
+  lowcarb: ["naranja", "amarillo"],
+  maintenance: ["naranja", "amarillo"],
+  "muscle-gain": ["naranja", "amarillo", "azul"],
+};
 
 const SEMAFORO_CARDS: { color: string; hex: string; title: string; description: string }[] = [
   {
@@ -37,6 +58,12 @@ const SEMAFORO_CARDS: { color: string; hex: string; title: string; description: 
 ];
 
 export default function SemaforoInfoScreen() {
+  const { user } = useAuth();
+  const dietId = dietIdForGoal(user?.goal);
+  const applicableColors = DIET_COLORS[dietId];
+  const cards = SEMAFORO_CARDS.filter((card) => applicableColors.includes(card.color));
+  const comodinColors = COMODIN_COLORS[dietId];
+
   return (
     <ScreenContainer scroll>
       <Text style={styles.title}>El semáforo de tu tratamiento</Text>
@@ -45,7 +72,7 @@ export default function SemaforoInfoScreen() {
         alineada está con tu tratamiento.
       </Text>
 
-      {SEMAFORO_CARDS.map((card) => (
+      {cards.map((card) => (
         <View key={card.color} style={styles.card}>
           <View style={[styles.dot, { backgroundColor: card.hex }]} />
           <View style={styles.cardText}>
@@ -55,16 +82,19 @@ export default function SemaforoInfoScreen() {
         </View>
       ))}
 
-      <View style={styles.comodinCard}>
-        <View style={styles.comodinHeader}>
-          <Ionicons name="sparkles-outline" size={18} color={colors.primaryDark} />
-          <Text style={styles.comodinTitle}>¿Qué son los "comodines"?</Text>
+      {comodinColors && (
+        <View style={styles.comodinCard}>
+          <View style={styles.comodinHeader}>
+            <Ionicons name="sparkles-outline" size={18} color={colors.primaryDark} />
+            <Text style={styles.comodinTitle}>¿Qué son los "comodines"?</Text>
+          </View>
+          <Text style={styles.comodinText}>
+            Cada semana tienes un cupo extra de excepciones por color ({comodinColors.join(", ")}) para los días en
+            que te pases un poco de tu porción normal — así tu menú se ajusta sin salirte por completo del
+            tratamiento.
+          </Text>
         </View>
-        <Text style={styles.comodinText}>
-          Cada semana tienes un cupo extra de excepciones por color (naranja, amarillo, azul) para los días en que te
-          pases un poco de tu porción normal — así tu menú se ajusta sin salirte por completo del tratamiento.
-        </Text>
-      </View>
+      )}
     </ScreenContainer>
   );
 }

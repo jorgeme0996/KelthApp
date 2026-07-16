@@ -10,6 +10,7 @@ import { startOfWeek } from "../lib/week";
 import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
 import { generateAndSaveRoutine } from "../services/routineGenerator";
 import { dietIdForGoal } from "../lib/dietGoal";
+import { computeComodinTier } from "../lib/comodinTier";
 
 const router = Router();
 
@@ -394,6 +395,7 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
       weekStart,
       user.dietaryRestrictions,
       dietIdForGoal(user.goal),
+      computeComodinTier(dietIdForGoal(user.goal), user.heightCm, user.weightKg),
     );
   }
 

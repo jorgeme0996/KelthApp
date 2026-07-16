@@ -22,7 +22,7 @@
   },
 
   "moderateEquivalents": {
-    "_notes": "El semáforo define el tamaño de cada 'equivalente' pero no un total diario fijo (eso lo ajusta normalmente un nutriólogo según calorías). Los 'dailyBudget' de abajo son valores genéricos razonables para un plan low-carb estándar y son los que usa el generador de menús; pueden ajustarse a futuro por usuario. PENDIENTE: asignar 'semaforo' (color por categoría) y 'comodines' (cupos semanales) para esta dieta, con la misma forma que server/src/data/diets/muscle-gain.json — requiere validación del equipo de nutrición de Kelth. Mientras tanto GET /api/recipes/:id devuelve color: null para las categorías de esta dieta (degradación segura, ver server/src/lib/semaforo.ts).",
+    "_notes": "El semáforo define el tamaño de cada 'equivalente' pero no un total diario fijo (eso lo ajusta normalmente un nutriólogo según calorías). Los 'dailyBudget' de abajo son valores genéricos razonables para un plan low-carb estándar y son los que usa el generador de menús; pueden ajustarse a futuro por usuario. Semáforo (ver bloques 'semaforo'/'comodines' abajo): estas categorías se dividen en dos colores, naranja y amarillo, igual que muscle-gain.json. Los 'comodines' (cupos semanales de excepción por color) dependen de cuántos kg de más tiene el paciente sobre su peso saludable — ver computeLowCarbTier en server/src/lib/comodinTier.ts.",
     "leguminosas": {
       "label": "Leguminosas",
       "items": ["Frijoles", "Lentejas", "Garbanzos", "Habas"],
@@ -165,6 +165,19 @@
         "Hierbas finas", "Sal del Himalaya", "Pimienta", "Hierbas de olor", "Comino", "Clavo"
       ]
     }
+  },
+
+  "semaforo": {
+    "naranja": ["leguminosas", "cereales", "verdurasModeradas", "tuberculos", "frutas", "verdurasCocidas"],
+    "amarillo": ["oleaginosas", "lacteos", "quesos", "aceitesGrasas", "embutidosMagros"],
+    "libre": ["proteinas"]
+  },
+
+  "comodines": {
+    "_notes": "Topes semanales de equivalentes por color, según cuántos kg de más tiene el paciente sobre su peso saludable (techo de IMC 25 para su estatura). Se elige automáticamente comparando su peso actual contra ese techo — ver computeLowCarbTier en server/src/lib/comodinTier.ts.",
+    "sobrepeso_1kg": { "naranja": 3, "amarillo": 3 },
+    "sobrepeso_10kg": { "naranja": 4, "amarillo": 3 },
+    "obesidad_20kg": { "naranja": 5, "amarillo": 3 }
   },
 
   "mealSlotsByMealsPerDay": {

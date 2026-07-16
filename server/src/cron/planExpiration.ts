@@ -2,6 +2,7 @@ import cron from "node-cron";
 import { prisma } from "../prisma";
 import { startOfWeek } from "../lib/week";
 import { dietIdForGoal } from "../lib/dietGoal";
+import { computeComodinTier } from "../lib/comodinTier";
 import { generateAndSaveMealPlan } from "../services/mealPlanGenerator";
 import { generateAndSaveRoutine } from "../services/routineGenerator";
 
@@ -44,6 +45,7 @@ export async function regenerateExpiredMealPlans(options: RegenOptions = {}) {
         currentWeekStart,
         user.dietaryRestrictions,
         dietIdForGoal(user.goal),
+        computeComodinTier(dietIdForGoal(user.goal), user.heightCm, user.weightKg),
       );
     } catch (err) {
       console.error(`Error generando menú semanal para ${user.id}:`, err);
