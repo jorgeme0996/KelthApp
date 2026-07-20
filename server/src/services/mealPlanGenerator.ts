@@ -102,6 +102,79 @@ function evaluateComodines(
   return { fits: true, extraUsage };
 }
 
+/**
+ * Igual que `evaluateComodines` pero nunca rechaza: cuando una categoría se
+ * queda sin comodines disponibles (o no tiene color asignado), sigue
+ * acumulando el uso y cuenta 1 "breach". Se usa solo como último recurso,
+ * cuando NINGÚN candidato del catálogo cabe dentro del cupo semanal para un
+ * slot, para elegir el que menos se pasa en vez de ignorar el cupo por
+ * completo (ver `pickWithinComodines`).
+ */
+function evaluateComodinesLenient(
+  equivalents: Equivalents,
+  dayTotals: Record<string, number>,
+  budgets: Record<string, number>,
+  categoryColors: Record<string, string>,
+  comodinesUsed: Record<string, number>,
+  comodinCaps: Record<string, number>,
+): { extraUsage: Record<string, number>; breaches: number } {
+  const extraUsage: Record<string, number> = {};
+  let breaches = 0;
+  for (const [category, amount] of Object.entries(equivalents)) {
+    const budget = budgets[category];
+    if (budget === undefined) continue;
+    const current = dayTotals[category] || 0;
+    if (current + amount <= budget) continue;
+
+    const color = categoryColors[category];
+    if (!color) {
+      breaches += 1;
+      continue;
+    }
+
+    const cap = comodinCaps[color] || 0;
+    const usedSoFar = (comodinesUsed[color] || 0) + (extraUsage[color] || 0);
+    if (usedSoFar >= cap) breaches += 1;
+    extraUsage[color] = (extraUsage[color] || 0) + 1;
+  }
+  return { extraUsage, breaches };
+}
+
+/**
+ * Elige un candidato para un slot respetando el cupo semanal de comodines
+ * como límite duro: si algún candidato de `preferredPool` cabe (ya filtrado
+ * con `evaluateComodines`), se elige de ahí al azar. Si ninguno cabe (catálogo
+ * agotado para esta combinación de presupuesto/cupo — puede pasar con cupos
+ * bajos y pocas recetas por slot), se reintenta contra TODO `allCandidates`
+ * (incluyendo recetas `weeklyLimited` ya usadas) buscando el que rompa el
+ * cupo lo menos posible, en vez de ignorar el cupo por completo. El uso
+ * (incluso si rompe el cupo en ese último recurso) siempre se contabiliza en
+ * `comodinesUsed`, para que los días/slots siguientes vean el estado real.
+ */
+function pickWithinComodines(
+  preferredPool: Recipe[],
+  allCandidates: Recipe[],
+  extraUsageById: Map<string, Record<string, number>>,
+  dayTotals: Record<string, number>,
+  budgets: Record<string, number>,
+  categoryColors: Record<string, string>,
+  comodinesUsed: Record<string, number>,
+  comodinCaps: Record<string, number>,
+): Recipe {
+  if (preferredPool.length > 0) return pickRandom(preferredPool);
+
+  const scored = allCandidates.map((r) => {
+    const equivalents = (r.equivalents as unknown as Equivalents) || {};
+    const result = evaluateComodinesLenient(equivalents, dayTotals, budgets, categoryColors, comodinesUsed, comodinCaps);
+    return { r, ...result };
+  });
+  const minBreaches = Math.min(...scored.map((s) => s.breaches));
+  const fallbackPool = scored.filter((s) => s.breaches === minBreaches);
+  const chosen = pickRandom(fallbackPool);
+  extraUsageById.set(chosen.r.id, chosen.extraUsage);
+  return chosen.r;
+}
+
 function applyComodinUsage(extraUsage: Record<string, number>, comodinesUsed: Record<string, number>) {
   for (const [color, amount] of Object.entries(extraUsage)) {
     comodinesUsed[color] = (comodinesUsed[color] || 0) + amount;
@@ -141,6 +214,44 @@ function computeUsedComodines(
   }
 
   return comodinesUsed;
+}
+
+export interface ComodinColorStatus {
+  color: string;
+  cap: number;
+  used: number;
+  remaining: number;
+}
+
+/**
+ * Estado actual (cap semanal / usados / restantes por color) para el tier de
+ * comodines del usuario, a partir de las entradas ya generadas del meal plan
+ * vigente. Usa el mismo criterio de `evaluateComodines`/`computeUsedComodines`
+ * que el generador, para que lo que se muestra en el app coincida exactamente
+ * con lo que ya se consumió al armar/regenerar el plan.
+ */
+export function getComodinStatus(
+  dietId: string,
+  tier: ComodinTier,
+  entries: { dayIndex: number; recipe: { equivalents: unknown } }[],
+): ComodinColorStatus[] {
+  const dietRules = getDietRules(dietId);
+  const budgets = getDailyBudgets(dietRules);
+  const categoryColors = getCategoryColors(dietRules);
+  const caps = getComodinCaps(dietRules, tier);
+
+  const used = computeUsedComodines(
+    entries.map((e) => ({ dayIndex: e.dayIndex, equivalents: (e.recipe.equivalents as unknown as Equivalents) || {} })),
+    budgets,
+    categoryColors,
+  );
+
+  return Object.entries(caps).map(([color, cap]) => ({
+    color,
+    cap,
+    used: used[color] || 0,
+    remaining: Math.max(0, cap - (used[color] || 0)),
+  }));
 }
 
 function addEquivalents(equivalents: Equivalents, dayTotals: Record<string, number>) {
@@ -226,10 +337,17 @@ export function generateMealPlanEntries(
       const recent = recentBySlot[slot] || [];
       let pool = eligible.filter((r) => !recent.includes(r.id));
       if (pool.length === 0) pool = eligible;
-      if (pool.length === 0) pool = all.filter((r) => !recent.includes(r.id));
-      if (pool.length === 0) pool = all;
 
-      const pick = pickRandom(pool);
+      const pick = pickWithinComodines(
+        pool,
+        all,
+        extraUsageById,
+        dayTotals,
+        budgets,
+        categoryColors,
+        comodinesUsed,
+        comodinCaps,
+      );
       addEquivalents((pick.equivalents as unknown as Equivalents) || {}, dayTotals);
       applyComodinUsage(extraUsageById.get(pick.id) || {}, comodinesUsed);
       if (pick.weeklyLimited) usedWeeklyLimited.add(pick.id);
@@ -373,9 +491,16 @@ export async function regenerateMealPlanDay(
       if (result.fits) extraUsageById.set(r.id, result.extraUsage);
       return result.fits;
     });
-    const pool = eligible.length > 0 ? eligible : all;
-
-    const pick = pickRandom(pool);
+    const pick = pickWithinComodines(
+      eligible,
+      all,
+      extraUsageById,
+      dayTotals,
+      budgets,
+      categoryColors,
+      comodinesUsed,
+      comodinCaps,
+    );
     addEquivalents((pick.equivalents as unknown as Equivalents) || {}, dayTotals);
     applyComodinUsage(extraUsageById.get(pick.id) || {}, comodinesUsed);
     if (pick.weeklyLimited) usedWeeklyLimited.add(pick.id);

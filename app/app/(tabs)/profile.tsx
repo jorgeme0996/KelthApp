@@ -77,6 +77,12 @@ export default function ProfileScreen() {
   const [phoneError, setPhoneError] = useState<string | null>(null);
   const [phoneSaved, setPhoneSaved] = useState(false);
 
+  const [heightCm, setHeightCm] = useState(user?.heightCm != null ? String(user.heightCm) : "");
+  const [weightKg, setWeightKg] = useState(user?.weightKg != null ? String(user.weightKg) : "");
+  const [savingBodyStats, setSavingBodyStats] = useState(false);
+  const [bodyStatsError, setBodyStatsError] = useState<string | null>(null);
+  const [bodyStatsSaved, setBodyStatsSaved] = useState(false);
+
   const [billingLoading, setBillingLoading] = useState(false);
   const [billingError, setBillingError] = useState<string | null>(null);
 
@@ -223,6 +229,25 @@ export default function ProfileScreen() {
     }
   };
 
+  const handleSaveBodyStats = async () => {
+    setSavingBodyStats(true);
+    setBodyStatsError(null);
+    setBodyStatsSaved(false);
+    try {
+      await updateUser({
+        heightCm: heightCm ? parseInt(heightCm, 10) : undefined,
+        weightKg: weightKg ? parseFloat(weightKg) : undefined,
+      });
+      queryClient.invalidateQueries({ queryKey: ["mealplan"] });
+      queryClient.invalidateQueries({ queryKey: ["shoppingList"] });
+      setBodyStatsSaved(true);
+    } catch (err) {
+      setBodyStatsError(err instanceof ApiError ? err.message : "No se pudo actualizar tus datos.");
+    } finally {
+      setSavingBodyStats(false);
+    }
+  };
+
   const handleManageSubscription = async () => {
     setBillingLoading(true);
     setBillingError(null);
@@ -296,6 +321,33 @@ export default function ProfileScreen() {
       </View>
       {phoneSaved && !savingPhone ? <Text style={styles.successText}>Teléfono actualizado.</Text> : null}
       {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
+
+      <Text style={styles.sectionTitle}>Altura y peso</Text>
+      <View style={styles.phoneRow}>
+        <View style={styles.phoneField}>
+          <TextField
+            label="Altura (cm)"
+            value={heightCm}
+            onChangeText={setHeightCm}
+            keyboardType="number-pad"
+            placeholder="cm"
+          />
+        </View>
+        <View style={styles.phoneField}>
+          <TextField
+            label="Peso (kg)"
+            value={weightKg}
+            onChangeText={setWeightKg}
+            keyboardType="decimal-pad"
+            placeholder="kg"
+          />
+        </View>
+      </View>
+      <Button label="Guardar" onPress={handleSaveBodyStats} loading={savingBodyStats} />
+      {bodyStatsSaved && !savingBodyStats ? (
+        <Text style={styles.successText}>Datos actualizados. Tu menú se regeneró con tus nuevos comodines.</Text>
+      ) : null}
+      {bodyStatsError ? <Text style={styles.errorText}>{bodyStatsError}</Text> : null}
 
       <Text style={styles.sectionTitle}>Tu dieta: {diet?.name ?? "Low Carb"}</Text>
       {loadingDiet ? (

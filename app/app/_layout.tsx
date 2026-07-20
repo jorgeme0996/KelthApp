@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Platform, StyleSheet } from "react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as SplashScreen from "expo-splash-screen";
 import {
@@ -44,43 +44,58 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <StatusBar style="dark" />
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Screen name="index" />
-          <Stack.Screen name="(auth)" />
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen
-            name="recipe/[id]"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-          <Stack.Screen
-            name="exercise/[id]"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-          <Stack.Screen
-            name="meal-swap"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-          <Stack.Screen
-            name="exercise-swap"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-          <Stack.Screen
-            name="routine-adapt"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-          <Stack.Screen name="billing/success" options={{ headerShown: false }} />
-          <Stack.Screen name="billing/cancel" options={{ headerShown: false }} />
-          <Stack.Screen name="billing/return" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="premium"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-          <Stack.Screen
-            name="semaforo-info"
-            options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
-          />
-        </Stack>
+        <View style={styles.webOuter}>
+          <View style={styles.webInner}>
+            <Stack screenOptions={{ headerShown: false }}>
+              <Stack.Screen name="index" />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen
+                name="recipe/[id]"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+              <Stack.Screen
+                name="exercise/[id]"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+              <Stack.Screen
+                name="meal-swap"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+              <Stack.Screen
+                name="exercise-swap"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+              <Stack.Screen
+                name="routine-adapt"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+              <Stack.Screen name="billing/success" options={{ headerShown: false }} />
+              <Stack.Screen name="billing/cancel" options={{ headerShown: false }} />
+              <Stack.Screen name="billing/return" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="premium"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+              <Stack.Screen
+                name="semaforo-info"
+                options={{ headerShown: true, headerTitle: "", headerStyle: { backgroundColor: colors.background }, headerShadowVisible: false }}
+              />
+            </Stack>
+          </View>
+        </View>
       </AuthProvider>
     </QueryClientProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  webOuter:
+    Platform.OS === "web"
+      ? { flex: 1, alignItems: "center", backgroundColor: colors.surfaceMuted }
+      : { flex: 1 },
+  webInner:
+    Platform.OS === "web"
+      ? { flex: 1, width: "100%", maxWidth: 820 }
+      : { flex: 1 },
+});

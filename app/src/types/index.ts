@@ -99,6 +99,21 @@ export interface SemaforoEntry {
   label: string;
 }
 
+export interface ComodinColorStatus {
+  color: string;
+  cap: number;
+  used: number;
+  remaining: number;
+}
+
+// Ver server/src/lib/comodinTier.ts / GET /api/mealplans/comodines-status.
+export interface ComodinesStatus {
+  dietId: DietId;
+  tier: string;
+  tierLabel: string;
+  colors: ComodinColorStatus[];
+}
+
 export interface Recipe {
   id: string;
   name: string;

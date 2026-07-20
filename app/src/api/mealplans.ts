@@ -1,5 +1,5 @@
 import { api } from "./client";
-import { MealPlan, MealPlanEntry, Recipe, ShoppingListResponse } from "@/types";
+import { ComodinesStatus, MealPlan, MealPlanEntry, Recipe, ShoppingListResponse } from "@/types";
 
 export function generateMealPlan() {
   return api.post<MealPlan>("/api/mealplans/generate", {});
@@ -27,4 +27,8 @@ export function toggleMealEntryComplete(entryId: string) {
 
 export function getRecipe(id: string) {
   return api.get<Recipe>(`/api/recipes/${id}`);
+}
+
+export function getComodinesStatus() {
+  return api.get<ComodinesStatus>("/api/mealplans/comodines-status");
 }

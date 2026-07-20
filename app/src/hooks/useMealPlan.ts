@@ -78,3 +78,10 @@ export function useShoppingList(mealPlanId: string | undefined) {
     enabled: !!mealPlanId,
   });
 }
+
+export function useComodinesStatus() {
+  return useQuery({
+    queryKey: ["mealplan", "comodines-status"],
+    queryFn: () => mealplansApi.getComodinesStatus(),
+  });
+}

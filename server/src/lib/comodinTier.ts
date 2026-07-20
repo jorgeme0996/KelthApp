@@ -18,6 +18,18 @@ export type MaintenanceComodinTier = "estandar";
 
 export type ComodinTier = MuscleGainComodinTier | LowCarbComodinTier | MaintenanceComodinTier;
 
+// Etiquetas legibles para mostrar al usuario en qué nivel está actualmente
+// (ver semaforo-info.tsx en el app).
+export const TIER_LABELS: Record<ComodinTier, string> = {
+  sobrepeso_1kg: "Sobrepeso",
+  sobrepeso_10kg: "Sobrepeso alto",
+  obesidad_20kg: "Obesidad",
+  aumento_masa_5kg: "Aumento de masa",
+  bajo_peso_10kg: "Bajo peso",
+  desnutricion_15kg: "Desnutrición",
+  estandar: "Estándar",
+};
+
 const HEALTHY_BMI_FLOOR = 18.5;
 const HEALTHY_BMI_CEILING = 25;
 

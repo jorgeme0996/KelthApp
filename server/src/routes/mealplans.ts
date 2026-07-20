@@ -2,11 +2,11 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../prisma";
 import { authMiddleware, AuthRequest } from "../middleware/auth";
-import { generateAndSaveMealPlan, regenerateMealPlanDay } from "../services/mealPlanGenerator";
+import { generateAndSaveMealPlan, regenerateMealPlanDay, getComodinStatus } from "../services/mealPlanGenerator";
 import { buildShoppingList } from "../services/shoppingList";
 import { startOfWeek } from "../lib/week";
 import { dietIdForGoal } from "../lib/dietGoal";
-import { computeComodinTier } from "../lib/comodinTier";
+import { computeComodinTier, TIER_LABELS } from "../lib/comodinTier";
 import { isPremium } from "../services/billing";
 import { recipeDraftSchema, runMealSwapChatTurn } from "../services/mealSwapAssistant";
 import { withSemaforo, withSemaforoOnMealPlan } from "../lib/semaforo";
@@ -96,6 +96,26 @@ router.get("/current", authMiddleware, async (req: AuthRequest, res) => {
   ]);
   if (!mealPlan) return res.status(404).json({ error: "Aún no tienes un menú generado" });
   res.json(withSemaforoOnMealPlan(mealPlan, dietIdForGoal(user?.goal)));
+});
+
+// Tier de comodines actual del usuario (derivado de su peso/talla) y cupo
+// semanal restante por color, calculado sobre el meal plan vigente.
+router.get("/comodines-status", authMiddleware, async (req: AuthRequest, res) => {
+  const user = await prisma.user.findUnique({ where: { id: req.userId } });
+  if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
+
+  const dietId = dietIdForGoal(user.goal);
+  const tier = computeComodinTier(dietId, user.heightCm, user.weightKg);
+
+  const mealPlan = await prisma.mealPlan.findFirst({
+    where: { userId: user.id },
+    orderBy: { createdAt: "desc" },
+    include: { entries: { select: { dayIndex: true, recipe: { select: { equivalents: true } } } } },
+  });
+
+  const colors = getComodinStatus(dietId, tier, mealPlan?.entries ?? []);
+
+  res.json({ dietId, tier, tierLabel: TIER_LABELS[tier], colors });
 });
 
 router.get("/:id", authMiddleware, async (req: AuthRequest, res) => {

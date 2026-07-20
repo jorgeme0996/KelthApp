@@ -386,7 +386,9 @@ router.patch("/me", authMiddleware, async (req: AuthRequest, res) => {
     (parsed.data.mealsPerDay !== undefined && parsed.data.mealsPerDay !== previous.mealsPerDay) ||
     (parsed.data.dietaryRestrictions !== undefined &&
       !arraysEqual(parsed.data.dietaryRestrictions, previous.dietaryRestrictions)) ||
-    (parsed.data.goal !== undefined && parsed.data.goal !== previous.goal);
+    (parsed.data.goal !== undefined && parsed.data.goal !== previous.goal) ||
+    (parsed.data.heightCm !== undefined && parsed.data.heightCm !== previous.heightCm) ||
+    (parsed.data.weightKg !== undefined && parsed.data.weightKg !== previous.weightKg);
   if (mealPlanNeedsRegen) {
     await generateAndSaveMealPlan(
       user.id,
