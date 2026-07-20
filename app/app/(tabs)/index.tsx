@@ -5,6 +5,7 @@ import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { RecipeCard } from "@/components/RecipeCard";
 import { ExerciseCard } from "@/components/ExerciseCard";
+import { MealPlanTutorialModal } from "@/components/MealPlanTutorialModal";
 import { useAuth } from "@/context/AuthContext";
 import {
   useCurrentMealPlan,
@@ -12,6 +13,7 @@ import {
   useSwapMealEntry,
   useToggleMealEntryComplete,
 } from "@/hooks/useMealPlan";
+import { useMealPlanTutorial } from "@/hooks/useMealPlanTutorial";
 import {
   useCompleteWorkoutDay,
   useCurrentRoutine,
@@ -40,6 +42,7 @@ export default function HomeScreen() {
   const generateMutation = useGenerateMealPlan();
   const swapMutation = useSwapMealEntry();
   const completeMutation = useToggleMealEntryComplete();
+  const mealPlanTutorial = useMealPlanTutorial();
 
   const { data: routine } = useCurrentRoutine();
   const generateRoutineMutation = useGenerateRoutine();
@@ -159,7 +162,9 @@ export default function HomeScreen() {
             </Text>
             <Button
               label="Generar mi menú semanal"
-              onPress={() => generateMutation.mutate()}
+              onPress={() =>
+                generateMutation.mutate(undefined, { onSuccess: () => mealPlanTutorial.openIfFirstTime() })
+              }
               loading={generateMutation.isPending}
               style={{ marginTop: spacing.md }}
             />
@@ -277,6 +282,8 @@ export default function HomeScreen() {
         <Text style={styles.assistantText}>Pregúntale a tu copiloto sobre sustituciones, porciones, ejercicios o tu plan de hoy.</Text>
         <Button label="Abrir asistente" variant="secondary" onPress={() => router.push("/(tabs)/chat")} />
       </View>
+
+      <MealPlanTutorialModal visible={mealPlanTutorial.visible} onClose={mealPlanTutorial.close} />
     </ScreenContainer>
   );
 }

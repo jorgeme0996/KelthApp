@@ -5,7 +5,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { Button } from "@/components/Button";
 import { RecipeCard } from "@/components/RecipeCard";
+import { MealPlanTutorialModal } from "@/components/MealPlanTutorialModal";
 import { useCurrentMealPlan, useGenerateMealPlan, useRegenerateMealPlanDay, useSwapMealEntry } from "@/hooks/useMealPlan";
+import { useMealPlanTutorial } from "@/hooks/useMealPlanTutorial";
 import { ApiError } from "@/api/client";
 import { isPremiumRequiredError } from "@/utils/apiErrors";
 import { DAY_LABELS, MEAL_SLOT_ORDER } from "@/types";
@@ -20,6 +22,7 @@ export default function MenuScreen() {
   const generateMutation = useGenerateMealPlan();
   const regenerateDayMutation = useRegenerateMealPlanDay();
   const swapMutation = useSwapMealEntry();
+  const mealPlanTutorial = useMealPlanTutorial();
   const todayIndex = getTodayIndex();
   const [selectedDay, setSelectedDay] = useState(todayIndex);
 
@@ -59,11 +62,14 @@ export default function MenuScreen() {
           <Text style={styles.emptyText}>Genera tu plan desde la pantalla de inicio.</Text>
           <Button
             label="Generar mi menú semanal"
-            onPress={() => generateMutation.mutate()}
+            onPress={() =>
+              generateMutation.mutate(undefined, { onSuccess: () => mealPlanTutorial.openIfFirstTime() })
+            }
             loading={generateMutation.isPending}
             style={{ marginTop: spacing.md }}
           />
         </View>
+        <MealPlanTutorialModal visible={mealPlanTutorial.visible} onClose={mealPlanTutorial.close} />
       </ScreenContainer>
     );
   }
@@ -127,6 +133,8 @@ export default function MenuScreen() {
         ))}
         {dayEntries.length === 0 ? <Text style={styles.emptyText}>No hay comidas para este día.</Text> : null}
       </ScrollView>
+
+      <MealPlanTutorialModal visible={mealPlanTutorial.visible} onClose={mealPlanTutorial.close} />
     </ScreenContainer>
   );
 }

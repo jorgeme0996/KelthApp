@@ -1,68 +1,22 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ScreenContainer } from "@/components/ScreenContainer";
 import { colors, fonts, fontSizes, radii, semaforo, spacing } from "@/theme";
 import { useAuth } from "@/context/AuthContext";
-import { DietId, dietIdForGoal } from "@/types";
+import { useComodinesStatus } from "@/hooks/useMealPlan";
+import { dietIdForGoal } from "@/types";
+import { DIET_COLORS, SEMAFORO_CARDS } from "@/utils/semaforo";
 
-// Colores que cada dieta realmente usa hoy (ver server/src/data/diets/*.json
-// `semaforo`). lowcarb y maintenance tienen naranja/amarillo (sin azul, ya
-// que ahí las proteínas son libres) — maintenance es el mismo plan que
-// lowcarb, solo menos restrictivo; muscle-gain tiene naranja/amarillo/azul.
-const DIET_COLORS: Record<DietId, string[]> = {
-  lowcarb: ["rojo", "naranja", "amarillo", "libre"],
-  maintenance: ["rojo", "naranja", "amarillo", "libre"],
-  "muscle-gain": ["rojo", "naranja", "amarillo", "azul", "libre"],
-};
-
-// Colores con cupo semanal de "comodines" por dieta (ver bloque `comodines`
-// en server/src/data/diets/*.json). Solo se muestra la tarjeta explicativa
-// para dietas que tienen ese bloque definido.
-const COMODIN_COLORS: Partial<Record<DietId, string[]>> = {
-  lowcarb: ["naranja", "amarillo"],
-  maintenance: ["naranja", "amarillo"],
-  "muscle-gain": ["naranja", "amarillo", "azul"],
-};
-
-const SEMAFORO_CARDS: { color: string; hex: string; title: string; description: string }[] = [
-  {
-    color: "rojo",
-    hex: semaforo.rojo,
-    title: "Rojo — evita",
-    description: "Alimentos que van claramente en contra de tu tratamiento (azúcar añadida, frituras, ultraprocesados). No forman parte de tu menú.",
-  },
-  {
-    color: "naranja",
-    hex: semaforo.naranja,
-    title: "Naranja — moderado",
-    description: "Cereales, leguminosas, tubérculos y frutas: aportan energía pero se controlan por porción ('equivalente') para no pasarte de tu presupuesto diario.",
-  },
-  {
-    color: "amarillo",
-    hex: semaforo.amarillo,
-    title: "Amarillo — moderado",
-    description: "Oleaginosas, lácteos, quesos, aceites y grasas: también se cuentan por equivalente, igual que el naranja, pero son un grupo distinto.",
-  },
-  {
-    color: "azul",
-    hex: semaforo.azul,
-    title: "Azul — proteína de alto valor",
-    description: "Tus fuentes de proteína prioritarias. Se permiten con más libertad porque son la base de tu tratamiento.",
-  },
-  {
-    color: "libre",
-    hex: semaforo.libre,
-    title: "Verde — libre",
-    description: "Verduras y otros alimentos sin restricción de porción: puedes comerlos con la frecuencia que quieras.",
-  },
-];
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
 
 export default function SemaforoInfoScreen() {
   const { user } = useAuth();
   const dietId = dietIdForGoal(user?.goal);
   const applicableColors = DIET_COLORS[dietId];
   const cards = SEMAFORO_CARDS.filter((card) => applicableColors.includes(card.color));
-  const comodinColors = COMODIN_COLORS[dietId];
+  const { data: comodinStatus, isLoading: isLoadingComodines } = useComodinesStatus();
 
   return (
     <ScreenContainer scroll>
@@ -82,19 +36,38 @@ export default function SemaforoInfoScreen() {
         </View>
       ))}
 
-      {comodinColors && (
+      {isLoadingComodines ? (
+        <View style={[styles.comodinCard, styles.comodinLoading]}>
+          <ActivityIndicator color={colors.primaryDark} />
+        </View>
+      ) : comodinStatus && comodinStatus.colors.length > 0 ? (
         <View style={styles.comodinCard}>
           <View style={styles.comodinHeader}>
             <Ionicons name="sparkles-outline" size={18} color={colors.primaryDark} />
             <Text style={styles.comodinTitle}>¿Qué son los "comodines"?</Text>
           </View>
           <Text style={styles.comodinText}>
-            Cada semana tienes un cupo extra de excepciones por color ({comodinColors.join(", ")}) para los días en
-            que te pases un poco de tu porción normal — así tu menú se ajusta sin salirte por completo del
-            tratamiento.
+            Cada semana tienes un cupo extra de excepciones por color para los días en que te pases un poco de tu
+            porción normal — así tu menú se ajusta sin salirte por completo del tratamiento.
           </Text>
+          <Text style={styles.comodinTier}>Tu nivel actual: {comodinStatus.tierLabel}</Text>
+          <View style={styles.comodinChips}>
+            {comodinStatus.colors.map((c) => (
+              <View key={c.color} style={styles.comodinChip}>
+                <View
+                  style={[
+                    styles.chipDot,
+                    { backgroundColor: semaforo[c.color as keyof typeof semaforo] ?? colors.border },
+                  ]}
+                />
+                <Text style={styles.comodinChipText}>
+                  {capitalize(c.color)}: {c.remaining}/{c.cap} restantes
+                </Text>
+              </View>
+            ))}
+          </View>
         </View>
-      )}
+      ) : null}
     </ScreenContainer>
   );
 }
@@ -167,5 +140,39 @@ const styles = StyleSheet.create({
     fontSize: fontSizes.xs,
     color: colors.primaryDark,
     lineHeight: 18,
+  },
+  comodinLoading: {
+    alignItems: "center",
+  },
+  comodinTier: {
+    fontFamily: fonts.bold,
+    fontSize: fontSizes.xs,
+    color: colors.primaryDark,
+    marginTop: spacing.sm,
+    marginBottom: spacing.xs,
+  },
+  comodinChips: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: spacing.xs,
+  },
+  comodinChip: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    backgroundColor: colors.surface,
+    borderRadius: radii.full,
+    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+  },
+  chipDot: {
+    width: 8,
+    height: 8,
+    borderRadius: radii.full,
+  },
+  comodinChipText: {
+    fontFamily: fonts.medium,
+    fontSize: fontSizes.xs,
+    color: colors.text,
   },
 });
